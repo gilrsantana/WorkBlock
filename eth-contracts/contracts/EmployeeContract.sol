@@ -34,21 +34,19 @@ contract EmployeeContract {
         addsEmployees.push(_address);
     }
 
-    
-
-    function updateEmployee (address _address, uint256 _taxId, string memory _name, State _state) public {
+    function updateEmployee (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) public {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
-        require(checkIfEmployeeExists(_address), "Employee not exists.");
+        require(checkIfEmployeeExists(_addressKey), "Employee not exists.");
 
         bool difAdd;
         address add;
         uint256 _id;
 
         for (uint256 i = 0; i < addsEmployees.length; i++) {
-            if (addsEmployees[i] ==  _address) {
+            if (addsEmployees[i] ==  _addressKey) {
                 _id = i;
                 break;
             }
@@ -76,11 +74,10 @@ contract EmployeeContract {
     }
 
     function getEmployeeByAddress(address _address) public view returns (Employee memory) {
-        Employee[] memory result = new Employee[](addsEmployees.length);
         Employee memory e;
-        for (uint256 i = 0; i < result.length; i++) {
-            if (result[i].employeeAddress == _address) {
-                e = result[i];
+        for (uint256 i = 0; i < addsEmployees.length; i++) {
+            if (addsEmployees[i] == _address) {
+                e = employees[i];
                 break;
             }
         }
