@@ -35,6 +35,12 @@ describe('UtilContract', () => {
             const timeStamp = -1;
             await expect(UtilDeployed.getDate(timeStamp)).to.rejectedWith();
         });
+        it("should return a formated date - leap year", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const timeStamp = 951829903;
+            const returnedValue = await UtilDeployed.getDate(timeStamp);
+            expect(returnedValue).to.equal(20000229);
+        });
     });
     
 });
