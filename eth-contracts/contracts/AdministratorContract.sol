@@ -34,19 +34,19 @@ contract AdministratorContract {
         return administrators[_id];
     }
 
-    function updateAdministrator (address _address, uint256 _taxId, string memory _name, State _state) public {
+    function updateAdministrator (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) public {
         require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
-        require(checkIfAdministratorExists(_address), "Administrator not exists.");
+        require(checkIfAdministratorExists(_addressKey), "Administrator not exists.");
 
         bool difAdd;
         address add;
         uint256 _id;
 
         for (uint256 i = 0; i < addsAdministrators.length; i++) {
-            if (addsAdministrators[i] ==  _address) {
+            if (addsAdministrators[i] ==  _addressKey) {
                 _id = i;
                 break;
             }

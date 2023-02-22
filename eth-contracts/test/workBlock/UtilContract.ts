@@ -37,6 +37,12 @@ describe('UtilContract', () => {
         });
         it("should return a formated date - leap year", async () => {
             const { UtilDeployed } = await loadFixture(setupFixture);
+            const timeStamp = 1078060303;
+            const returnedValue = await UtilDeployed.getDate(timeStamp);
+            expect(returnedValue).to.equal(20040229);
+        });
+        it("should return a formated date - leap year", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
             const timeStamp = 951829903;
             const returnedValue = await UtilDeployed.getDate(timeStamp);
             expect(returnedValue).to.equal(20000229);

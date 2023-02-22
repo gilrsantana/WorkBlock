@@ -97,12 +97,13 @@ describe('AdministratorContract', () => {
             const name = "ALICE";
             const taxId = 2222222222;
             await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
             const newState = 0;
-            await AdministratorDeployed.updateAdministrator(aliceAddress, newTaxId, newName, newState);
+            await AdministratorDeployed.updateAdministrator(aliceAddress, newAddress, newTaxId, newName, newState);
             const adm = await AdministratorDeployed.getAdministrator(1);
-            expect(adm.administratorAddress).to.equal(aliceAddress);
+            expect(adm.administratorAddress).to.equal(newAddress);
             expect(adm.idAdministrator).to.equal(1);
             expect(adm.taxId).to.equal(newTaxId);
             expect(adm.name).to.equal(newName);
@@ -114,11 +115,12 @@ describe('AdministratorContract', () => {
             const name = "ALICE";
             const taxId = 2222222222;
             await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
             const newState = 0;
             await expect(AdministratorDeployed.connect(billy).
-                updateAdministrator(aliceAddress, newTaxId, newName, newState))
+                updateAdministrator(aliceAddress, newAddress ,newTaxId, newName, newState))
                 .to.rejectedWith("Sender is not administrator.");
         });
         it("should not return an updated administrator - Address not given", async () => {
@@ -126,12 +128,13 @@ describe('AdministratorContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
-            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId);
+            const newAddress = ethers.constants.AddressZero;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
             const newState = 0;
             await expect(AdministratorDeployed
-                .updateAdministrator(ethers.constants.AddressZero, newTaxId, newName, newState))
+                .updateAdministrator(aliceAddress, newAddress, newTaxId, newName, newState))
                 .to.rejectedWith("Address not given.");
         });
         it("should not return an updated administrator - TaxId not given", async () => {
@@ -139,12 +142,13 @@ describe('AdministratorContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
-            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId);
+            const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 0;
             const newName = "AMANDA";
             const newState = 0;
             await expect(AdministratorDeployed
-                .updateAdministrator(aliceAddress, newTaxId, newName, newState))
+                .updateAdministrator(aliceAddress, newAddress, newTaxId, newName, newState))
                 .to.rejectedWith("TaxId not given.");
         });
         it("should not return an updated administrator - Name not given", async () => {
@@ -152,12 +156,13 @@ describe('AdministratorContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
-            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId);
+            const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "";
             const newState = 0;
             await expect(AdministratorDeployed
-                .updateAdministrator(aliceAddress, newTaxId, newName, newState))
+                .updateAdministrator(aliceAddress, newAddress, newTaxId, newName, newState))
                 .to.rejectedWith("Name not given.");
         });
         it("should not return an updated administrator - Administrator not exists", async () => {
@@ -171,7 +176,7 @@ describe('AdministratorContract', () => {
             const newName = "AMANDA";
             const newState = 0;
             await expect(AdministratorDeployed
-                .updateAdministrator(newAddress, newTaxId, newName, newState))
+                .updateAdministrator(newAddress, newAddress, newTaxId, newName, newState))
                 .to.rejectedWith("Administrator not exists.");
         });
     });

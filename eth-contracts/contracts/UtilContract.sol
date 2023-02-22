@@ -8,7 +8,7 @@ contract UtilContract {
         uint year;
         uint month;
         uint day;
-        uint secondsInADay = 60 * 60 * 24;
+        uint secondsInADay = 60 * 60 * 24; //86400
         uint daysSinceEpoch = timestamp / secondsInADay;
         uint yearSinceEpoch = daysSinceEpoch / 365;
         year = 1970 + yearSinceEpoch;
@@ -20,12 +20,14 @@ contract UtilContract {
             }
         }
 
+        uint8[12] memory daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
         if (daysSinceYearStart >= 59) { // Handle leap year
             if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
-                daysSinceYearStart -= 1;
+                daysInMonth[1] = 29;
             }
         }
-        uint8[12] memory daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
         for (uint i = 0; i < 12; i++) {
             if (daysSinceYearStart < daysInMonth[i]) {
                 month = i + 1;
