@@ -26,7 +26,7 @@ contract AdministratorContract {
         require(!checkIfAdministratorExists(_address), "Administrator already exists.");
 
         administrators[addsAdministrators.length] =
-                Administrator(addsAdministrators.length, msg.sender, _taxId, _name, State.Active);
+                Administrator(addsAdministrators.length, _address, _taxId, _name, State.Active);
         addsAdministrators.push(_address);
     }
 
