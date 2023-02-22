@@ -1,5 +1,10 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "block": "npx hardhat node",
+    "test": "npx hardhat test && npx hardhat watch test",
+    "test:coverage": "npx hardhat coverage"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
     "hardhat": "^2.12.7"

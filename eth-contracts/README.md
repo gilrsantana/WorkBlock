@@ -75,16 +75,19 @@ npx hardhat test && npx hardhat watch test
 npx hardhat node
 ``` 
 
+### Runing tests
 
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+- Add test script alias in package.json
 ```
+"scripts": {
+    "block": "npx hardhat node",
+    "test": "npx hardhat test && npx hardhat watch test",
+    "test:coverage": "npx hardhat coverage"
+  },
+```
+
+- npm run block => Run a blockchain local node
+
+- npm run test => Run the tests written in the test folder and keep watching the tests
+
+- npm run test:coverage => Run the coverage of tests in application
