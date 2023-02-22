@@ -4,6 +4,7 @@ pragma solidity >=0.8.17;
 contract UtilContract {
 
     function getDate(uint timestamp) public pure returns (uint yearMonthDay) {
+        require(timestamp > 0, "Timestamp should be more than zero.");
         uint year;
         uint month;
         uint day;
