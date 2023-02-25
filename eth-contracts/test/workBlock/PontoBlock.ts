@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 describe('PontoBlock', () => {
     async function setupFixture() {
-        const [owner, billy, john, alice, jeff] = await ethers.getSigners();
+        const [owner, billy, john, alice, jeff, rachel] = await ethers.getSigners();
         const UtilContract = await ethers.getContractFactory('UtilContract');
         const UtilDeployed = await UtilContract.deploy();
         await UtilDeployed.deployed();
@@ -17,233 +17,169 @@ describe('PontoBlock', () => {
         const EmployeeDeployed = await EmployeeContract.deploy(AdministratorDeployed.address);
         await EmployeeDeployed.deployed();
         const nameEmp1 = "BILLY";
-        const taxIdEmp1 = "1111111111";
+        const taxIdEmp1 = 1111111111;
         const nameEmp2 = "JOHN";
-        const taxIdEmp2 = "2222222222";
+        const taxIdEmp2 = 2222222222;
         const nameEmp3 = "ALICE";
-        const taxIdEmp3 = "3333333333";
+        const taxIdEmp3 = 3333333333;
+        const nameEmp4 = "RACHEL";
+        const taxIdEmp4 = 4444444444;
         await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1);
         await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2);
         await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3);
+        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4);
+        const inactiveEmployee =  await EmployeeDeployed.getEmployeeByAddress(rachel.address);
+        await EmployeeDeployed.updateEmployee(  inactiveEmployee.employeeAddress
+                                              , inactiveEmployee.employeeAddress
+                                              , inactiveEmployee.taxId
+                                              , inactiveEmployee.name
+                                              , 0);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
         const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address);
         await PontoBlockDeployed.deployed();
         return {
             PontoBlockDeployed,
+            UtilDeployed,
+            EmployeeDeployed,
             owner,
             billy,
             john,
             alice, 
-            jeff
+            jeff, 
+            rachel
         };
     }
-    // describe("Add an employee", () => {
-    //     it("should add an employee", async () => {
-    //         const { EmployeeDeployed, billy } = await loadFixture(setupFixture);
-    //         const billyAddress = billy.address;
-    //         const name = "BILLY";
-    //         const taxId = 1111111111;
-    //         await EmployeeDeployed.addEmployee(billyAddress, name, taxId);
-    //         const employee = await EmployeeDeployed.getEmployeeById(0);
-    //         const employees = await EmployeeDeployed.getAllEmployees();
-    //         expect(employee.employeeAddress).to.equal(billyAddress);
-    //         expect(employee.idEmployee).to.equal(0);
-    //         expect(employee.taxId).to.equal(taxId);
-    //         expect(employee.name).to.equal(name);
-    //         expect(employee.stateOf).to.equal(1);
-    //         expect(employees.length).to.equal(1);
-    //     });
-    //     it("should not add an employee - sender not administrator", async () => {
-    //         const { EmployeeDeployed, alice, john } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await expect(EmployeeDeployed.connect(john)
-    //                 .addEmployee(aliceAddress, name, taxId))
-    //                 .to.rejectedWith("Sender is not administrator.");
-    //     });
-    //     it("should not add an employee - employee already exists", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId);
-    //         await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId))
-    //             .to.rejectedWith("Employee already exists.");
-    //     });
-    //     it("should not add an employee - TaxId not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 0;
-    //         await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId))
-    //             .to.rejectedWith("TaxId not given.");
-    //     });
-    //     it("should not add an employee - Name not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name ="";
-    //         const taxId = 1111111111;
-    //         await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId))
-    //             .to.rejectedWith("Name not given.");
-    //     });
-    //     it("should not add an employee - Address not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = ethers.constants.AddressZero;
-    //         const name ="ALICE";
-    //         const taxId = 1111111111;
-    //         await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId))
-    //             .to.rejectedWith("Address not given.");
-    //     });
-    //  });
-    // describe("Return an employee", () => {
-    //     it("should return one employee ", async () => {
-    //         const { EmployeeDeployed, alice} = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const employee = await EmployeeDeployed.getEmployeeById(0);
-    //         const sameEmployee = await EmployeeDeployed.getEmployeeByAddress(aliceAddress);
-    //         expect(employee.employeeAddress).to.equal(aliceAddress);
-    //         expect(sameEmployee.employeeAddress).to.equal(aliceAddress);
-    //     });
-    //     it("should return a null employee ", async () => {
-    //         const { EmployeeDeployed, alice, billy} = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const employeeNull = await EmployeeDeployed.getEmployeeByAddress(billy.address);
-    //         const otherNullEmployee = await EmployeeDeployed.getEmployeeById(1);
-    //         expect(employeeNull.employeeAddress).to.equal(ethers.constants.AddressZero);
-    //         expect(otherNullEmployee.employeeAddress).to.equal(ethers.constants.AddressZero);
-    //     });
-    // });
-    // describe("Update employee", () => {
-    //     it("should return an updated employee", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await EmployeeDeployed.updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState);
-    //         const employee = await EmployeeDeployed.getEmployeeByAddress(newAddress);
-    //         expect(employee.employeeAddress).to.equal(newAddress);
-    //         expect(employee.idEmployee).to.equal(0);
-    //         expect(employee.taxId).to.equal(newTaxId);
-    //         expect(employee.name).to.equal(newName);
-    //         expect(employee.stateOf).to.equal(0);
-    //     });
-    //     it("should not return an updated employee - Sender is not administrator", async () => {
-    //         const { EmployeeDeployed, alice, billy } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed.connect(billy)
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState))
-    //             .to.rejectedWith("Sender is not administrator.");
-    //     });
-    //     it("should not return an updated employee - Address not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId);
-    //         const newAddress = ethers.constants.AddressZero;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState))
-    //             .to.rejectedWith("Address not given.");
-    //     });
-    //     it("should not return an updated employee - TaxId not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId);
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 0;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState))
-    //             .to.rejectedWith("TaxId not given.");
-    //     });
-    //     it("should not return an updated employee - Name not given", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState))
-    //             .to.rejectedWith("Name not given.");
-    //     });
-    //     it("should not return an updated employee - Employee not exists", async () => {
-    //         const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(newAddress, newAddress, newTaxId, newName, newState))
-    //             .to.rejectedWith("Employee not exists.");
-    //     });
-    // });
-    // describe("Getting all employees", () => {
-    //     it("should return three employees", async () => {
-    //         const { EmployeeDeployed, billy, john, alice } = await loadFixture(setupFixture);
-    //         const nameEmp1 = "BILLY";
-    //         const taxIdEmp1 = "1111111111";
-    //         const nameEmp2 = "JOHN";
-    //         const taxIdEmp2 = "2222222222";
-    //         const nameEmp3 = "ALICE";
-    //         const taxIdEmp3 = "3333333333";
-    //         await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1);
-    //         await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2);
-    //         await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3);
-    //         const employees = await EmployeeDeployed.getAllEmployees();
-    //         expect(employees.length).to.equal(3);
-    //     });
-    // });
-    // describe("Checking if employee exists", () => {
-    //     it("should return true", async () => {
-    //         const { EmployeeDeployed, john } = await loadFixture(setupFixture);
-    //         const johnAddress = john.address;
-    //         const name = "JOHN";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(johnAddress, name, taxId)
-    //         const result = await EmployeeDeployed.checkIfEmployeeExists(johnAddress);
-    //         expect(result).to.equal(true);
-    //     });
-    //     it("should return false", async () => {
-    //         const { EmployeeDeployed, billy, john } = await loadFixture(setupFixture);
-    //         const johnAddress = john.address;
-    //         const name = "JOHN";
-    //         const taxId = 2222222222;
-    //         await EmployeeDeployed.addEmployee(johnAddress, name, taxId)
-    //         const result = await EmployeeDeployed.checkIfEmployeeExists(billy.address);
-    //         expect(result).to.equal(false);
-    //     });
-    // });
+    describe("Add a start of work", () => {
+        it("should start of work", async () => {
+            const { PontoBlockDeployed, 
+                    billy, 
+                    john, 
+                    alice } = await loadFixture(setupFixture);
+            const transaction1 = await PontoBlockDeployed.connect(billy).startWork();
+            const transaction2 = await PontoBlockDeployed.connect(john).startWork();
+            const transaction3 = await PontoBlockDeployed.connect(alice).startWork();
+            const regex = /^0x/;
+            expect(regex.test(transaction1.hash)).to.true;
+            expect(regex.test(transaction2.hash)).to.true;
+            expect(regex.test(transaction3.hash)).to.true;
+        });
+        it("should not start work - Employee not registered", async () => {
+            const { PontoBlockDeployed, jeff } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(jeff).startWork())
+                    .to.rejectedWith("Employee not registered.");
+        });
+        it("should not start work - Employee is inactive", async () => {
+            const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(rachel).startWork())
+                .to.rejectedWith("Employee is inactive.");
+        });
+        it("should not start work - Start of work already registered", async () => {
+            const { PontoBlockDeployed, john } = await loadFixture(setupFixture);
+            await PontoBlockDeployed.connect(john).startWork();
+            await expect(PontoBlockDeployed.connect(john).startWork())
+                .to.rejectedWith("Start of work already registered.");
+        });
+     });
+     describe("Add an end of work", () => {
+        it("should end of work", async () => {
+            const { PontoBlockDeployed, 
+                    billy, 
+                    john, 
+                    alice } = await loadFixture(setupFixture);
+            await PontoBlockDeployed.connect(billy).startWork();
+            await PontoBlockDeployed.connect(john).startWork();
+            await PontoBlockDeployed.connect(alice).startWork();
+            const transaction1 = await PontoBlockDeployed.connect(billy).endWork();
+            const transaction2 = await PontoBlockDeployed.connect(john).endWork();
+            const transaction3 = await PontoBlockDeployed.connect(alice).endWork();
+            const regex = /^0x/;
+            expect(regex.test(transaction1.hash)).to.true;
+            expect(regex.test(transaction2.hash)).to.true;
+            expect(regex.test(transaction3.hash)).to.true;
+        });
+        it("should not end of work - Employee not registered", async () => {
+            const { PontoBlockDeployed, jeff } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(jeff).endWork())
+                    .to.rejectedWith("Employee not registered.");
+        });
+        it("should not end work - Employee is inactive", async () => {
+            const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(rachel).endWork())
+                .to.rejectedWith("Employee is inactive.");
+        });
+        it("should not end of work - End of work already registered.", async () => {
+            const { PontoBlockDeployed, john } = await loadFixture(setupFixture);
+            await PontoBlockDeployed.connect(john).startWork();
+            await PontoBlockDeployed.connect(john).endWork();
+            await expect(PontoBlockDeployed.connect(john).endWork())
+                .to.rejectedWith("End of work already registered.");
+        });
+        it("should not end of work - Start of work not registered.", async () => {
+            const { PontoBlockDeployed, john } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(john).endWork())
+                .to.rejectedWith("Start of work not registered.");
+        });
+     });
+     describe("Add an break start time", () => {
+        // it("should break start work", async () => {
+        //     const { PontoBlockDeployed, 
+        //             billy, 
+        //             john, 
+        //             alice } = await loadFixture(setupFixture);
+        //     const transaction1 = await PontoBlockDeployed.connect(billy).startWork();
+        //     const transaction2 = await PontoBlockDeployed.connect(john).startWork();
+        //     const transaction3 = await PontoBlockDeployed.connect(alice).startWork();
+        //     const regex = /^0x/;
+        //     expect(regex.test(transaction1.hash)).to.true;
+        //     expect(regex.test(transaction2.hash)).to.true;
+        //     expect(regex.test(transaction3.hash)).to.true;
+        // });
+        // it("should not start work - Employee not registered", async () => {
+        //     const { PontoBlockDeployed, jeff } = await loadFixture(setupFixture);
+        //     await expect(PontoBlockDeployed.connect(jeff).startWork())
+        //             .to.rejectedWith("Employee not registered.");
+        // });
+        // it("should not start work - Employee is inactive", async () => {
+        //     const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
+        //     await expect(PontoBlockDeployed.connect(rachel).startWork())
+        //         .to.rejectedWith("Employee is inactive.");
+        // });
+        // it("should not start work - Start of work already registered", async () => {
+        //     const { PontoBlockDeployed, john } = await loadFixture(setupFixture);
+        //     await PontoBlockDeployed.connect(john).startWork();
+        //     await expect(PontoBlockDeployed.connect(john).startWork())
+        //         .to.rejectedWith("Start of work already registered.");
+        // });
+     });
+     describe("Add an break end time", () => {
+        // it("should start work", async () => {
+        //     const { PontoBlockDeployed, 
+        //             billy, 
+        //             john, 
+        //             alice } = await loadFixture(setupFixture);
+        //     const transaction1 = await PontoBlockDeployed.connect(billy).startWork();
+        //     const transaction2 = await PontoBlockDeployed.connect(john).startWork();
+        //     const transaction3 = await PontoBlockDeployed.connect(alice).startWork();
+        //     const regex = /^0x/;
+        //     expect(regex.test(transaction1.hash)).to.true;
+        //     expect(regex.test(transaction2.hash)).to.true;
+        //     expect(regex.test(transaction3.hash)).to.true;
+        // });
+        // it("should not start work - Employee not registered", async () => {
+        //     const { PontoBlockDeployed, jeff } = await loadFixture(setupFixture);
+        //     await expect(PontoBlockDeployed.connect(jeff).startWork())
+        //             .to.rejectedWith("Employee not registered.");
+        // });
+        // it("should not start work - Employee is inactive", async () => {
+        //     const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
+        //     await expect(PontoBlockDeployed.connect(rachel).startWork())
+        //         .to.rejectedWith("Employee is inactive.");
+        // });
+        // it("should not start work - Start of work already registered", async () => {
+        //     const { PontoBlockDeployed, john } = await loadFixture(setupFixture);
+        //     await PontoBlockDeployed.connect(john).startWork();
+        //     await expect(PontoBlockDeployed.connect(john).startWork())
+        //         .to.rejectedWith("Start of work already registered.");
+        // });
+     });
 });
