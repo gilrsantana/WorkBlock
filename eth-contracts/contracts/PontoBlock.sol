@@ -83,7 +83,6 @@ contract PontoBlock {
 
     function getEmployeeRecords(address _address, uint256 _date) public view returns (EmployeeRecord memory) {
         require(employee.checkIfEmployeeExists(_address), "Employee not registered.");
-        require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
         return employeeRecords[_address][_date];
     }
 }
