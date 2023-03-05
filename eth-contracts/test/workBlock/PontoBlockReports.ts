@@ -35,7 +35,7 @@ describe('PontoBlockReports', () => {
                                               , inactiveEmployee.name
                                               , 0);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
-        const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address);
+        const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address, -3);
         await PontoBlockDeployed.deployed();
         await PontoBlockDeployed.connect(billy).startWork();
         await PontoBlockDeployed.connect(billy).breakStartTime();

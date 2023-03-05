@@ -13,68 +13,73 @@ contract PontoBlock {
         uint256 breakEndTime;
     }
 
+    int private timeZone;
+    int private oneHour = 3600;
     address owner;
     EmployeeContract private employee;
     UtilContract private util;
     uint private creationDate;
     mapping(address => mapping(uint256 => EmployeeRecord)) private employeeRecords;
 
-    constructor(address _emp, address _util) {
+
+    constructor(address _emp, address _util, int _timeZone) {
         employee = EmployeeContract(_emp);
         util = UtilContract(_util);
         owner = msg.sender;
-        creationDate = util.getDate(block.timestamp);
+        creationDate = util.getDate(getMoment());
+        timeZone = _timeZone;
     }
 
     function startWork() public {
         require(employee.checkIfEmployeeExists(msg.sender), "Employee not registered.");
         require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork == 0, "Start of work already registered.");
-        employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork = block.timestamp;
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork == 0, "Start of work already registered.");
+        
+        employeeRecords[msg.sender][util.getDate(getMoment())].startWork = getMoment();
     }
 
     function endWork() public {
         require(employee.checkIfEmployeeExists(msg.sender), "Employee not registered.");
         require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork == 0, "End of work already registered.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork != 0, "Start of work not registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].endWork == 0, "End of work already registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork != 0, "Start of work not registered.");
 
         uint256 one_hour = 3600;
-        if (employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime != 0 &&
-            employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime == 0)
+        if (employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime != 0 &&
+            employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime == 0)
         {
-                if ((block.timestamp - employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime)
+                if ((getMoment() - employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime)
                         > one_hour)
                 {
-                    employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime =
-                        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime + one_hour;
+                    employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime =
+                        employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime + one_hour;
                 }
                 else
                 {
-                    employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime = block.timestamp;
+                    employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime = getMoment();
                 }
         }
 
-        employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork = block.timestamp;
+        employeeRecords[msg.sender][util.getDate(getMoment())].endWork = getMoment();
     }
 
     function breakStartTime() public {
         require(employee.checkIfEmployeeExists(msg.sender), "Employee not registered.");
         require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime == 0, "Start of break already registered.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork != 0, "Start of work not registered.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork == 0, "End of work already registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime == 0, "Start of break already registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork != 0, "Start of work not registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].endWork == 0, "End of work already registered.");
 
-        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime = block.timestamp;
+        employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime = getMoment();
     }
 
     function breakEndTime() public {
         require(employee.checkIfEmployeeExists(msg.sender), "Employee not registered.");
         require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime == 0, "End of break already registered.");
-        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime != 0, "Start of break not registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime == 0, "End of break already registered.");
+        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime != 0, "Start of break not registered.");
 
-        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime = block.timestamp;
+        employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime = getMoment();
     }
 
     function getCreationDateContract() public view returns(uint) {
@@ -84,6 +89,18 @@ contract PontoBlock {
     function getEmployeeRecords(address _address, uint256 _date) public view returns (EmployeeRecord memory) {
         require(employee.checkIfEmployeeExists(_address), "Employee not registered.");
         return employeeRecords[_address][_date];
+    }
+
+    function getMoment() internal view returns(uint256) {
+        int adjust = timeZone * oneHour;
+        uint256 moment;
+        if (adjust < 0) {
+            adjust = adjust * -1;
+            moment = block.timestamp - uint256(adjust);
+        } else {
+            moment = block.timestamp + uint256(adjust);
+        }
+        return moment;
     }
 }
 
