@@ -1,0 +1,459 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout=null;
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Work Block</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon2.png" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top black-bg" style="background-color: #212529;" id="mainNav">
+            <div class="container" >
+                <!-- <a class="navbar-brand" href="#page-top"><img src="assets/img/navbar-logo.svg" alt="..." /></a> -->
+                <a class="navbar-brand text-warning" href="#page-top">WORK BLOCK</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ms-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="#services">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#portfolio">Conteúdos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#about">Como Funciona</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#team">Time</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Contato</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Questionario" asp-action="Index">Questionário</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container py-4" style="background-color: #212529; border-radius: 10px;" >
+                <div class="masthead-subheading">A solução definitiva em controle de ponto!</div>
+                <div class="masthead-heading text-uppercase">WORK BLOCK</div>
+                <a class="btn btn-primary btn-xl text-uppercase" href="#services">O que é <span class="text-dark">WORK BLOCK</span></a>
+            </div>
+        </header>
+        <!-- Services-->
+        <section class="page-section" id="services">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Serviços</h2>
+                    <h3 class="section-subheading text-muted">WORK BLOCK é o gerenciador de controle de ponto através da tecnologia <span class="bg-warning text-dark text-decoration-none">BLOCKCHAIN</span> .</h3>
+                </div>
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <span class="fa-stack fa-4x">
+                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                            <i class="fas fa-shopping-cart fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <h4 class="my-3">Econômico</h4>
+                        <p class="text-muted">Livre-se de aparelhos caros e sistemas com alta taxa de manutenção fazendo uso de um sistema on-line que pode ser utilizado apartir de seu dispositivo móvel ou computador.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="fa-stack fa-4x">
+                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                            <i class="fas fa-laptop fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <h4 class="my-3">Inovador</h4>
+                        <p class="text-muted">Livre-se daqueles comprovantes de papel intermináveis difíceis de adimnistrar e que com o tempo se apagam, tendo acesso em qualquer lugar aos seus registros de ponto eletrônico.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="fa-stack fa-4x">
+                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                            <i class="fas fa-lock fa-stack-1x fa-inverse"></i>
+                        </span>
+                        <h4 class="my-3">Seguro</h4>
+                        <p class="text-muted">Utilize um sistema que é confiável, imutável e autenticado, tendo a certeza que você, e somente você, terá acesso ao seus registros e não haverá perdas de dados inesperadas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Portfolio Grid-->
+        <section class="page-section bg-light" id="portfolio">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Conteúdos</h2>
+                    <h3 class="section-subheading text-muted">Conheça um pouco mais da tecnologia BLOCKCHAIN.</h3>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 1-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal1">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/portfolio/blockchain.png" alt="blockchain" />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Blockchain</div>
+                                <div class="portfolio-caption-subheading text-muted">Descubra o que é e como funciona a tecnologia blockchain</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 2-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal2">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/portfolio/smart-contract.jpg" alt="smart contract" />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Smart Contract</div>
+                                <div class="portfolio-caption-subheading text-muted">Saiba como essa importante peça funciona para interagir na blockchain</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6 mb-4">
+                        <!-- Portfolio item 3-->
+                        <div class="portfolio-item">
+                            <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal3">
+                                <div class="portfolio-hover">
+                                    <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                                </div>
+                                <img class="img-fluid" src="assets/img/portfolio/digital-wallet.jpg" alt="carteira digital" />
+                            </a>
+                            <div class="portfolio-caption">
+                                <div class="portfolio-caption-heading">Carteira Digital</div>
+                                <div class="portfolio-caption-subheading text-muted">Conheça as ferramentas responsáveis por sua identificação única na rede</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        <!-- About-->
+        <section class="page-section" id="about">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Como funciona</h2>
+                    <h3 class="section-subheading text-muted">Veja como utilizar o WORK BLOCK.</h3>
+                </div>
+                <ul class="timeline">
+                    <li>
+                        <div class="timeline-image"><img class="rounded-circle img-fluid" src="assets/img/about/1.jpg" alt="..." /></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Fase 1</h4>
+                                <h4 class="subheading">Publicar seu contrato na blockchain</h4>
+                            </div>
+                            <div class="timeline-body"><p class="text-muted">Nós configuramos o seu contrato e personalizamos o ambiente de acordo com sua necessidade, cadastrando os administradores responsáveis pela administração do sistema.</p></div>
+                        </div>
+                    </li>
+                    <li class="timeline-inverted">
+                        <div class="timeline-image"><img class="rounded-circle img-fluid" src="assets/img/about/2.jpg" alt="..." /></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Fase 2</h4>
+                                <h4 class="subheading">Cadastrar perfis de uso para utilização do sistema</h4>
+                            </div>
+                            <div class="timeline-body"><p class="text-muted">Você cadastra os administradores, operadores, funcionários e demais perfis de uso para utilização do sistema, cada um atuando dentro de seu perfil de responsabilidades. </p></div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="timeline-image"><img class="rounded-circle img-fluid" src="assets/img/about/3.jpg" alt="..." /></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Fase 3</h4>
+                                <h4 class="subheading">Utilização do sistema</h4>
+                            </div>
+                            <div class="timeline-body"><p class="text-muted">Cada pessoa cadastrada utiliza a plataforma inserindo seus registros e lendo os registros armazenados, de acordo com cada perfil de responsabilidade.</p></div>
+                        </div>
+                    </li>
+                    <li class="timeline-inverted">
+                        <div class="timeline-image"><img class="rounded-circle img-fluid" src="assets/img/about/4.jpg" alt="..." /></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading">
+                                <h4>Fase 4</h4>
+                                <h4 class="subheading">Emissão de relatórios e totalizações</h4>
+                            </div>
+                            <div class="timeline-body"><p class="text-muted">Os gestores fazem a emissão de relatórios para totalização de uso de marcação de ponto dos funcionários do sistema e cada colaborador tem a sua disposição a verificação de seus registros de forma individualizada.</p></div>
+                        </div>
+                    </li>
+                    <li class="timeline-inverted">
+                        <div class="timeline-image">
+                            <h4>
+                                Venha ser
+                                <br />
+                                WORK
+                                <br />
+                                BLOCK!
+                            </h4>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <!-- Team-->
+        <section class="page-section bg-light" id="team">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Conheça nosso Time</h2>
+                    <h3 class="section-subheading text-muted">Estamos prontos pra te entregar somente o melhor.</h3>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="team-member">
+                            <img class="mx-auto rounded-circle" src="assets/img/team/gilmar.jpeg" alt="Gilmar" />
+                            <h4>Gilmar Santana</h4>
+                            <p class="text-muted">CEO</p>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Twitter Profile"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Parveen Anand LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="team-member">
+                            <img class="mx-auto rounded-circle" src="assets/img/team/andre_neves.jpeg" alt="André Neves" />
+                            <h4>André Neves</h4>
+                            <p class="text-muted">Business Consulting</p>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Twitter Profile"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Diana Petersen LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="team-member">
+                            <img class="mx-auto rounded-circle" src="assets/img/team/matheus_martins.jpeg" alt="Mateus Martins" />
+                            <h4>Mateus Martins</h4>
+                            <p class="text-muted">Lead Developer</p>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Twitter Profile"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker Facebook Profile"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Larry Parker LinkedIn Profile"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center"><p class="large text-muted">Nosso time é formado por especialistas que tem o compromisso de entregar apenas o melhor para o cliente e entender que o seu problema, também é nosso problema.</p></div>
+                </div>
+            </div>
+        </section>
+        <!-- Clients-->
+        <div class="py-5">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-3 col-sm-6 my-3">
+                        <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="assets/img/logos/ethereum-eth.svg" alt="Ethereum" aria-label="Ethereum Logo" /></a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 my-3">
+                        <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="assets/img/logos/polygon-matic.svg" alt="Polygon" aria-label="Polygon Logo" /></a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 my-3">
+                        <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="assets/img/logos/metamask.svg" alt="Metamask" aria-label="Metamask Logo" /></a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 my-3">
+                        <a href="#!"><img class="img-fluid img-brand d-block mx-auto" src="assets/img/logos/alchemy.svg" alt="Alchemy" aria-label="Alchemy Logo" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Contact-->
+        <section class="page-section" id="contact">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Contato</h2>
+                    <h3 class="section-subheading text-light">Propostas, críticas, elogios e sugestões.</h3>
+                </div>
+                <!-- * * * * * * * * * * * * * * *-->
+                <!-- * * SB Forms Contact Form * *-->
+                <!-- * * * * * * * * * * * * * * *-->
+                <!-- This form is pre-integrated with SB Forms.-->
+                <!-- To make this form functional, sign up at-->
+                <!-- https://startbootstrap.com/solution/contact-forms-->
+                <!-- to get an API token!-->
+                <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+                    <div class="row align-items-stretch mb-5">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <!-- Name input-->
+                                <input class="form-control" id="name" type="text" placeholder="Seu Nome *" data-sb-validations="required" />
+                                <div class="invalid-feedback" data-sb-feedback="name:required">Informe seu nome.</div>
+                            </div>
+                            <div class="form-group">
+                                <!-- Email address input-->
+                                <input class="form-control" id="email" type="email" placeholder="Seu E-mail *" data-sb-validations="required,email" />
+                                <div class="invalid-feedback" data-sb-feedback="email:required">Informe seu e-mail.</div>
+                                <div class="invalid-feedback" data-sb-feedback="email:email">Ops!!! E-mail não válido.</div>
+                            </div>
+                            <div class="form-group mb-md-0">
+                                <!-- Phone number input-->
+                                <input class="form-control" id="phone" type="tel" placeholder="Seu Telefone *" data-sb-validations="required" />
+                                <div class="invalid-feedback" data-sb-feedback="phone:required">Informe seu telefone.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-textarea mb-md-0">
+                                <!-- Message input-->
+                                <textarea class="form-control" id="message" placeholder="Sua Mensagem *" data-sb-validations="required"></textarea>
+                                <div class="invalid-feedback" data-sb-feedback="message:required">Deixe sua mensagem.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit success message-->
+                    <!---->
+                    <!-- This is what your users will see when the form-->
+                    <!-- has successfully submitted-->
+                    <div class="d-none" id="submitSuccessMessage">
+                        <div class="text-center text-white mb-3">
+                            <div class="fw-bolder">Mensagem enviada com sucesso!</div>
+                            <!-- To activate this form, sign up at
+                            <br />
+                            <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a> -->
+                        </div>
+                    </div>
+                    <!-- Submit error message-->
+                    <!---->
+                    <!-- This is what your users will see when there is-->
+                    <!-- an error submitting the form-->
+                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Ops!!! Erro ao enviar mensagem.</div></div>
+                    <!-- Submit Button-->
+                    <div class="text-center"><button class="btn btn-primary btn-xl text-uppercase disabled" id="submitButton" type="submit">Enviar</button></div>
+                </form>
+            </div>
+        </section>
+        <!-- Footer-->
+        <footer class="footer py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 text-lg-start">Copyright &copy; WORK BLOCK</div>
+                    <div class="col-lg-4 my-3 my-lg-0">
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <div class="col-lg-4 text-lg-end">
+                        <a class="link-dark text-decoration-none me-3" href="#!">Política de Privacidade</a>
+                        <a class="link-dark text-decoration-none" href="#!">Termos de uso</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Portfolio Modals-->
+        <!-- Portfolio item 1 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Blockchain</h2>
+                                    <p class="item-intro text-muted">Descubra o que é e como funciona a tecnologia blockchain</p>
+                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/blockchain.png" alt="blockchain" />
+                                    <p>Blockchain é uma tecnologia de registro distribuído que permite a criação de um registro digital compartilhado, seguro e imutável. É uma rede descentralizada de computadores que trabalham juntos para armazenar e verificar transações de forma transparente, sem a necessidade de uma autoridade central para validar as operações.</p>
+
+                                    <p>A tecnologia blockchain utiliza criptografia para garantir a segurança dos dados e um consenso distribuído para verificar e registrar as transações de forma confiável. Cada transação é registrada em um bloco de dados, que é conectado a blocos anteriores para formar uma cadeia de blocos, ou blockchain.</p>
+                                        
+                                    <p>O uso mais conhecido do blockchain é para transações financeiras com criptomoedas, como o Bitcoin, mas a tecnologia também pode ser aplicada em diversos setores, como saúde, logística, cadeia de suprimentos, votação eletrônica, entre outros.</p>
+                                    
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Fechar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 2 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Smart Contract</h2>
+                                    <p class="item-intro text-muted">Saiba como essa importante peça funciona para interagir na blockchain.</p>
+                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/smart-contract.jpg" alt="smart contract" />
+                                    <p>Smart contract, ou contrato inteligente em português, é um programa de computador que automatiza a execução de um contrato entre duas ou mais partes. É uma aplicação descentralizada baseada em blockchain, que permite que transações sejam executadas sem a necessidade de intermediários ou autoridades centralizadas.</p>
+
+                                    <p>Os smart contracts são compostos por um conjunto de regras e condições definidas em código que são autoexecutáveis e imutáveis. Eles utilizam a tecnologia blockchain para garantir a segurança e a transparência das transações, além de oferecer uma redução significativa de custos e uma maior eficiência na execução de contratos.</p>
+                                        
+                                    <p>Um exemplo de aplicação de smart contracts é em transações financeiras, como o envio de pagamentos ou a compra de bens e serviços, onde as condições de pagamento são definidas previamente e o contrato é executado automaticamente assim que as condições são cumpridas. Outras aplicações incluem a gestão de identidades, votações eletrônicas, seguros, entre outras.</p>
+                                        
+                                    <p>Os smart contracts são uma inovação tecnológica promissora que tem o potencial de revolucionar a forma como as transações comerciais e financeiras são executadas e gerenciadas, trazendo mais transparência, segurança e eficiência para diversos setores.</p>
+                                    
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Fechar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Portfolio item 3 modal popup-->
+        <div class="portfolio-modal modal fade" id="portfolioModal3" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="close-modal" data-bs-dismiss="modal"><img src="assets/img/close-icon.svg" alt="Close modal" /></div>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div class="modal-body">
+                                    <!-- Project details-->
+                                    <h2 class="text-uppercase">Carteira Digital</h2>
+                                    <p class="item-intro text-muted">Conheça as ferramentas responsáveis por sua identificação única na rede.</p>
+                                    <img class="img-fluid d-block mx-auto" src="assets/img/portfolio/digital-wallet.jpg" alt="carteira digital" />
+                                    <p>Uma carteira digital, como o Metamask, é um software que permite aos usuários armazenar, enviar e receber criptomoedas de forma segura e conveniente. Essas carteiras digitais são baseadas em blockchain e oferecem um alto nível de segurança, privacidade e controle sobre os ativos digitais.</p>
+
+                                    <p>O Metamask é uma carteira digital que funciona como uma extensão do navegador, disponível para Chrome, Firefox, Brave e Edge. Ele permite que os usuários se conectem a aplicativos descentralizados baseados em blockchain, como dApps e smart contracts, diretamente do navegador, sem a necessidade de baixar software adicional.</p>
+                                    
+                                    <p>Com o Metamask, os usuários podem criar uma carteira digital para armazenar criptomoedas, como Ethereum e seus tokens, bem como comprar e vender criptomoedas em trocas descentralizadas (DEXs). A carteira Metamask também inclui recursos de segurança, como autenticação de dois fatores e a capacidade de definir uma senha para transações críticas.</p>
+                                    
+                                    <p>Além disso, o Metamask também oferece a possibilidade de acessar dApps, que são aplicativos descentralizados construídos em blockchain que oferecem serviços como jogos, finanças, entre outros. Com o Metamask, os usuários podem interagir com esses aplicativos e realizar transações diretamente do navegador.</p>
+                                    
+                                    <p>Em resumo, uma carteira digital como o Metamask é uma solução conveniente e segura para gerenciar criptomoedas e interagir com aplicativos descentralizados baseados em blockchain.</p>
+                                    
+                                    <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                        <i class="fas fa-xmark me-1"></i>
+                                        Fechar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>

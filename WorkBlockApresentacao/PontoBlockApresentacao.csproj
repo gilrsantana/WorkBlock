@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.3" />
+    <PackageReference Include="MySqlConnector" Version="2.2.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Questionario\Teste.cshtml" />
+    <Content Remove="Views\Questionario\Salvar.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Questionario\Teste.cshtml.cs" />
+    <Compile Remove="AppDb2.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,256 @@
+
+@using Microsoft.AspNetCore.Http.Headers
+@model GrupoModel
+@{
+    ViewData["Title"] = "Questionário";
+    var tipo = TempData["tipo"]?.ToString();
+}
+
+<div class="container text-center bg-warning" style="margin-bottom: 15px; padding-bottom: 15px">
+    <h1 class="display-4">Questionário</h1>
+    <h4>Responda as questões abaixo de acordo com seu perfil:</h4>
+    <div class="d-flex justify-content-evenly">
+        <div class="">
+            <button class="btn btn-primary">
+                <a
+                    class="text-light text-decoration-none"
+                    asp-controller="Questionario"
+                    asp-action="Index"
+                    asp-route-tipo="1"
+                    >
+                    Sou Profissional
+                </a>
+            </button>
+        </div>
+        <div class="">
+            <button class="btn btn-primary text-light">
+                <a
+                    class="text-light text-decoration-none"
+                    asp-controller="Questionario"
+                    asp-action="Index"
+                    asp-route-tipo="2"
+                >
+                    Sou Gestor de RH
+                </a></button>
+        </div>
+        
+    </div>
+</div>
+
+@if (TempData.ContainsKey("mensagem"))
+{
+    var mensagem = MensagemModel.Desserializar(TempData["mensagem"]?.ToString());
+    @if (mensagem.Tipo == TipoMensagem.Erro)
+    {
+        <div class="alert alert-warning mt-3 alert-dismissible fade show" role="alert">
+            @mensagem.Texto
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success mt-3 alert-dismissible fade show" role="alert">
+            @mensagem.Texto
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+    }
+}
+
+@if (Model.Questoes != null)
+{
+    <form asp-action="Index" class="bg-light p-4">
+        <input type="hidden" id="tipoResposta" name="Tipo" value="@tipo" >
+        <p>@Model.Questoes[0].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[0].ListaDeRespostas)
+                {
+                    <li class="list-group-item">
+                        <input type="radio"
+                               class="form-check-input me-1"
+                               name="Questao1"
+                               value="@item.Valor"
+                               id="@item.Id"
+                               required="true">
+                        <label for="@item.Id">
+                            @item.Valor
+                        </label>
+
+                    </li>
+                }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[1].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[1].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao2"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[2].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[2].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao3"
+                           value="@item.Valor.ToString()"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[3].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[3].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao4"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[4].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[4].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao5"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[5].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[5].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao6"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[6].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[6].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao7"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[7].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[7].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao8"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[8].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[8].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao9"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+
+        <p>@Model.Questoes[9].Titulo</p>
+        <ul class="list-group">
+            @foreach (var item in Model.Questoes[9].ListaDeRespostas)
+            {
+                <li class="list-group-item">
+                    <input type="radio"
+                           class="form-check-input me-1"
+                           name="Questao10"
+                           value="@item.Valor"
+                           id="@item.Id"
+                           required="true">
+                    <label for="@item.Id">
+                        @item.Valor
+                    </label>
+                </li>
+            }
+        </ul>
+        <br>
+        <input type="submit" class="btn btn-success" value="Enviar" class="btn-primary">
+    </form>
+}
