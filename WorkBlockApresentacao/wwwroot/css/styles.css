@@ -11718,6 +11718,10 @@ header.masthead .masthead-heading {
   height: 2.75rem;
 }
 
+.partner:hover {
+  transform: translatey(-5px);
+  transition: 0.5s;
+}
 section#contact {
   background-color: #212529;
   background-image: url("../assets/img/map-image.png");
