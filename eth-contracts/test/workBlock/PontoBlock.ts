@@ -58,7 +58,9 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(john).getEmployeeRecords(john.address, myDate)).startWork;
+            const record = await (await PontoBlockDeployed.connect(john)
+                                        .getEmployeeRecords(john.address, myDate))
+                                        .startWork;
             expect(record.toNumber() > 0).to.true;
         });
         it("should not start work - Employee not registered", async () => {
@@ -167,7 +169,6 @@ describe('PontoBlock', () => {
         it("should break end time", async () => {
             const { PontoBlockDeployed, 
                     UtilDeployed,
-                    billy, 
                     john } = await loadFixture(setupFixture);
             await PontoBlockDeployed.connect(john).startWork();
             await PontoBlockDeployed.connect(john).breakStartTime();
