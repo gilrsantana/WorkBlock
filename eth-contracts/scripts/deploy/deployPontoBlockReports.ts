@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { ethers } from "hardhat";
-import { handler } from "./handlerEnv"
+import { handler } from "../util/handlerEnv";
 
 async function toDeployPontoBlockReportsContract() {
     const employee = process.env.EMPLOYEE_ADDRESS ?? '';
