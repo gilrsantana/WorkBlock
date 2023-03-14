@@ -91,3 +91,17 @@ npx hardhat node
 - npm run test => Run the tests written in the test folder and keep watching the tests
 
 - npm run test:coverage => Run the coverage of tests in application
+
+### Deploy contract
+
+- To deploy:
+```
+npx hardhat run scripts/deploy.ts --network mumbai
+```
+
+### Verify contract
+
+- To Verify contract:
+```
+npx hardhat verify --network mumbai <contract address>
+```
