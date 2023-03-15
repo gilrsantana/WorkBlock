@@ -105,3 +105,16 @@ npx hardhat run scripts/deploy.ts --network mumbai
 ```
 npx hardhat verify --network mumbai <contract address> <optional constructor parameter1> <optional constructor parameter2> <optional constructor parameter3> ...
 ```
+
+## Solidity 2 UML
+
+- Solidity 2 UML is a plugin that creates a diagram from your contracts
+- For more instructions visit the repository of project: https://github.com/naddison36/sol2uml
+
+### Install
+
+- npm link sol2uml --only=production
+
+### Generating Class Diagram
+
+- At CLI: `sol2uml class ./contracts`
