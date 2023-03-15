@@ -103,5 +103,5 @@ npx hardhat run scripts/deploy.ts --network mumbai
 
 - To Verify contract:
 ```
-npx hardhat verify --network mumbai <contract address>
+npx hardhat verify --network mumbai <contract address> <optional constructor parameter1> <optional constructor parameter2> <optional constructor parameter3> ...
 ```
