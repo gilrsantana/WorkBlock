@@ -31,6 +31,7 @@ contract AdministratorContract {
     }
 
     function getAdministrator(uint256 _id) public view returns(Administrator memory) {
+        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         return administrators[_id];
     }
 
@@ -70,6 +71,7 @@ contract AdministratorContract {
     }
 
     function getAllAdministrators() public view returns (Administrator[] memory) {
+        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         Administrator[] memory result = new Administrator[](addsAdministrators.length);
         for (uint i = 0; i < addsAdministrators.length; i++) {
             result[i] = administrators[i];

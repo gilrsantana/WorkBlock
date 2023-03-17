@@ -70,10 +70,12 @@ contract EmployeeContract {
     }
 
     function getEmployeeById(uint256 _id) public view returns(Employee memory) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         return employees[_id];
     }
 
     function getEmployeeByAddress(address _address) public view returns (Employee memory) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         Employee memory e;
         for (uint256 i = 0; i < addsEmployees.length; i++) {
             if (addsEmployees[i] == _address) {
@@ -85,6 +87,7 @@ contract EmployeeContract {
     }
     
     function getAllEmployees() public view returns (Employee[] memory) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         Employee[] memory result = new Employee[](addsEmployees.length);
         for (uint i = 0; i < addsEmployees.length; i++) {
             result[i] = employees[i];
@@ -93,6 +96,7 @@ contract EmployeeContract {
     }
     
     function checkIfEmployeeExists(address _address) public view returns (bool){
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         for (uint i = 0; i < addsEmployees.length; i++)
             if(addsEmployees[i] == _address)
                 return true;

@@ -37,6 +37,10 @@ describe('PontoBlock', () => {
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
         const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address, -3);
         await PontoBlockDeployed.deployed();
+        await AdministratorDeployed.addAdministrator(
+                                    PontoBlockDeployed.address,
+                                    "PontoBlock",
+                                    9999999999);
         return {
             PontoBlockDeployed,
             UtilDeployed,

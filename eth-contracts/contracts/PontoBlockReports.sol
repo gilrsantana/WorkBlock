@@ -4,17 +4,20 @@ pragma solidity >=0.8.17;
 import "./EmployeeContract.sol";
 import "./PontoBlock.sol";
 import "./UtilContract.sol";
+import "./AdministratorContract.sol";
 
 contract PontoBlockReports {
 
     EmployeeContract private employee;
     PontoBlock private pontoBlock;
     UtilContract private util;
+    AdministratorContract private admin;
 
-    constructor(address _emp, address _ponto, address _util) {
+    constructor(address _emp, address _ponto, address _util, address _adm) {
         employee = EmployeeContract(_emp);
         pontoBlock = PontoBlock(_ponto);
         util = UtilContract(_util);
+        admin = AdministratorContract(_adm);
     }
 
     function getWorkTimesFromEmployeeAtDate(address _employee, uint256 _date) public view
@@ -24,9 +27,11 @@ contract PontoBlockReports {
                  uint256 _breakStartTime,
                  uint256 _breakEndTime
                 ) {
-
+        
+        require(admin.checkIfAdministratorExists(msg.sender) ||
+                msg.sender == _employee, "Sender is not authorized.");
         require(employee.checkIfEmployeeExists(_employee), "Employee not registered.");
-
+        
         PontoBlock.EmployeeRecord memory record = pontoBlock.getEmployeeRecords(_employee, _date);
         _startWork = record.startWork;
         _endWork = record.endWork;
@@ -43,6 +48,8 @@ contract PontoBlockReports {
                  uint256[] memory _breakEndTime
                 ) {
 
+        require(admin.checkIfAdministratorExists(msg.sender) ||
+                msg.sender == _employee, "Sender is not authorized.");
         require(employee.checkIfEmployeeExists(_employee) == true, "Employee not registered.");
         require(_startDate < _endDate, "Start date must be less than end date.");
         require(_startDate >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
@@ -72,7 +79,8 @@ contract PontoBlockReports {
                  uint256[] memory _breakStartTime,
                  uint256[] memory _breakEndTime
                 ) {
-
+        
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_date >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
 
         EmployeeContract.Employee[] memory allEmployees = employee.getAllEmployees();
@@ -106,6 +114,7 @@ contract PontoBlockReports {
                  uint256[][] memory _breakEndTime
                 ) {
 
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_startDate < _endDate, "Start date must be less than end date.");
         require(_startDate >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
         require(_endDate <= util.getDate(block.timestamp), "End date must be equals or less than today.");

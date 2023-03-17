@@ -37,6 +37,9 @@ describe('PontoBlockReports', () => {
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
         const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address, -3);
         await PontoBlockDeployed.deployed();
+        await AdministratorDeployed.addAdministrator(PontoBlockDeployed.address,
+                                                    "PontoBlock",
+                                                    9999999999);
         await PontoBlockDeployed.connect(billy).startWork();
         await PontoBlockDeployed.connect(billy).breakStartTime();
         await PontoBlockDeployed.connect(billy).breakEndTime();
@@ -52,8 +55,13 @@ describe('PontoBlockReports', () => {
         const PontoBlockReportsContract = await ethers.getContractFactory('PontoBlockReports');
         const ReportsDeployed = await PontoBlockReportsContract.deploy(EmployeeDeployed.address,
                                                                        PontoBlockDeployed.address,
-                                                                       UtilDeployed.address)
+                                                                       UtilDeployed.address,
+                                                                       AdministratorDeployed.address);
+        await ReportsDeployed.deployed();
 
+        await AdministratorDeployed.addAdministrator(ReportsDeployed.address,
+                                                    "PontoBlockReports",
+                                                    9999999999);
         return {
             ReportsDeployed,
             PontoBlockDeployed,
@@ -71,11 +79,13 @@ describe('PontoBlockReports', () => {
         it("should returns work times", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
-                    alice } = await loadFixture(setupFixture);
+                    alice, 
+                    owner } = await loadFixture(setupFixture);
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = await UtilDeployed.getDate((await block).timestamp);
-            const record = await ReportsDeployed.getWorkTimesFromEmployeeAtDate(alice.address, myDate);
+            
+            const record = await ReportsDeployed.connect(owner).getWorkTimesFromEmployeeAtDate(alice.address, myDate);
             expect(record._startWork.toNumber() > 0).to.true;
             expect(record._endWork.toNumber() > 0).to.true;
             expect(record._breakStartTime.toNumber() > 0).to.true;
