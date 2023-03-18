@@ -35,7 +35,10 @@ describe('PontoBlock', () => {
                                               , inactiveEmployee.name
                                               , 0);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
-        const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, UtilDeployed.address, -3);
+        const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, 
+                                                           UtilDeployed.address, 
+                                                           AdministratorDeployed.address,
+                                                           -3);
         await PontoBlockDeployed.deployed();
         await AdministratorDeployed.addAdministrator(
                                     PontoBlockDeployed.address,
@@ -62,7 +65,7 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(john)
+            const record = await (await PontoBlockDeployed
                                         .getEmployeeRecords(john.address, myDate))
                                         .startWork;
             expect(record.toNumber() > 0).to.true;
@@ -83,8 +86,8 @@ describe('PontoBlock', () => {
             await expect(PontoBlockDeployed.connect(john).startWork())
                 .to.rejectedWith("Start of work already registered.");
         });
-     });
-     describe("Add an end of work", () => {
+    });
+    describe("Add an end of work", () => {
         it("should end of work", async () => {
             const { PontoBlockDeployed, 
                     UtilDeployed,
@@ -94,7 +97,9 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(billy).getEmployeeRecords(billy.address, myDate)).endWork;
+            const record = await (await PontoBlockDeployed
+                                        .getEmployeeRecords(billy.address, myDate))
+                                        .endWork;
             expect(record.toNumber() > 0).to.true;
         });
         it("should end of work and break end time", async () => {
@@ -105,7 +110,9 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(billy).getEmployeeRecords(billy.address, myDate)).breakEndTime;
+            const record = await (await PontoBlockDeployed
+                                        .getEmployeeRecords(billy.address, myDate))
+                                        .breakEndTime;
             await expect(record.toNumber() > 0).to.true;
         });
         it("should not end of work - Employee not registered", async () => {
@@ -130,8 +137,8 @@ describe('PontoBlock', () => {
             await expect(PontoBlockDeployed.connect(john).endWork())
                 .to.rejectedWith("Start of work not registered.");
         });
-     });
-     describe("Add an break start time", () => {
+    });
+    describe("Add an break start time", () => {
         it("should break start time", async () => {
             const { PontoBlockDeployed, 
                     UtilDeployed,
@@ -141,7 +148,9 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(billy).getEmployeeRecords(billy.address, myDate)).breakStartTime;
+            const record = await (await PontoBlockDeployed
+                                        .getEmployeeRecords(billy.address, myDate))
+                                        .breakStartTime;
             await expect(record.toNumber() > 0).to.true;
         });
         it("should not break start time - Employee not registered", async () => {
@@ -168,8 +177,8 @@ describe('PontoBlock', () => {
             await expect(PontoBlockDeployed.connect(john).breakStartTime())
                 .to.rejectedWith("End of work already registered.");
         });
-     });
-     describe("Add an break end time", () => {
+    });
+    describe("Add an break end time", () => {
         it("should break end time", async () => {
             const { PontoBlockDeployed, 
                     UtilDeployed,
@@ -180,7 +189,9 @@ describe('PontoBlock', () => {
             const blkNumber = ethers.provider.getBlockNumber();
             const block = ethers.provider.getBlock(blkNumber);
             const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await (await PontoBlockDeployed.connect(john).getEmployeeRecords(john.address, myDate)).breakEndTime;
+            const record = await (await PontoBlockDeployed
+                                        .getEmployeeRecords(john.address, myDate))
+                                        .breakEndTime;
             await expect(record.toNumber() > 0).to.true;
         });
         it("should not break end time - Employee not registered", async () => {
@@ -207,7 +218,35 @@ describe('PontoBlock', () => {
             await expect(PontoBlockDeployed.connect(john).breakEndTime())
                 .to.rejectedWith("Start of break not registered.");
         });
-     });
+    });
+    describe("get employee records", () => {
+        it("should get employee records", async () => {
+            const { PontoBlockDeployed, 
+                    UtilDeployed,
+                    john } = await loadFixture(setupFixture);
+            PontoBlockDeployed.connect(john).startWork();
+            const blkNumber = ethers.provider.getBlockNumber();
+            const block = ethers.provider.getBlock(blkNumber);
+            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const record = await (await PontoBlockDeployed
+                                        .getEmployeeRecords(john.address, myDate))
+                                        .startWork;
+            expect(record.toNumber() > 0).to.true;
+        });
+        it("should not get employee records - Sender is not administrator", async () => {
+            const { PontoBlockDeployed, 
+                    UtilDeployed,
+                    john,
+                    rachel } = await loadFixture(setupFixture);
+            PontoBlockDeployed.connect(john).startWork();
+            const blkNumber = ethers.provider.getBlockNumber();
+            const block = ethers.provider.getBlock(blkNumber);
+            const myDate = UtilDeployed.getDate((await block).timestamp);
+            await expect(PontoBlockDeployed.connect(rachel)
+                        .getEmployeeRecords(john.address, myDate))
+                        .to.rejectedWith("Sender is not administrator.");
+        });
+    });
     describe("get a contract date", () => {
         it("should get a contract date", async () => {
             const { PontoBlockDeployed, 
@@ -218,6 +257,52 @@ describe('PontoBlock', () => {
             const myDate =await UtilDeployed.getDate((await block).timestamp);
             await expect(myDate.toNumber() === contractDate.toNumber()).to.true;
         });
+        it("should not get a contract date - Sender is not administrator", async () => {
+            const { PontoBlockDeployed, 
+                    rachel } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(rachel).getCreationDateContract())
+                    .to.rejectedWith("Sender is not administrator.");
+        });
     });
-
+    describe("Get owner", () => {
+        it("should get the owner", async () => {
+            const { PontoBlockDeployed, 
+                    owner } = await loadFixture(setupFixture);
+            const ownerContract = await PontoBlockDeployed.getOwner();
+            await expect(ownerContract === owner.address).to.true;
+        });
+        it("should not get the owner - Sender is not administrator", async () => {
+            const { PontoBlockDeployed, 
+                    rachel } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(rachel).getOwner())
+                    .to.rejectedWith("Sender is not administrator.");
+        });
+        it("should not get the owner - Different address", async () => {
+            const { PontoBlockDeployed, 
+                    rachel,
+                    owner } = await loadFixture(setupFixture);
+            const ownerContract = await PontoBlockDeployed.getOwner();
+            await expect(ownerContract === rachel.address).to.false;
+            await expect(ownerContract === owner.address).to.true;
+        });
+    });
+    describe("Change owner", () => {
+        it("should change the owner", async () => {
+            const { PontoBlockDeployed, 
+                    owner,
+                    alice } = await loadFixture(setupFixture);
+            await PontoBlockDeployed.changeOwner(alice.address);
+            const ownerContract = await PontoBlockDeployed.getOwner();
+            await expect(ownerContract === alice.address).to.true;
+            await expect(ownerContract === owner.address).to.false;
+        });
+        it("should not change the owner - Only owner", async () => {
+            const { PontoBlockDeployed, 
+                    rachel,
+                    alice } = await loadFixture(setupFixture);
+            await expect(PontoBlockDeployed.connect(alice)
+                    .changeOwner(rachel.address))
+                    .to.rejectedWith("Only the owner can call this function.");
+        });
+    });
 });

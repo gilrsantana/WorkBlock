@@ -3,6 +3,7 @@ pragma solidity >=0.8.17;
 
 import "./EmployeeContract.sol";
 import "./UtilContract.sol";
+import "./AdministratorContract.sol";
 
 contract PontoBlock {
 
@@ -15,19 +16,26 @@ contract PontoBlock {
 
     int private timeZone;
     int private oneHour = 3600;
-    address owner;
-    EmployeeContract private employee;
-    UtilContract private util;
+    address private owner;
     uint private creationDate;
     mapping(address => mapping(uint256 => EmployeeRecord)) private employeeRecords;
+ 
+    EmployeeContract private employee;
+    UtilContract private util;
+    AdministratorContract private admin;
 
-
-    constructor(address _emp, address _util, int _timeZone) {
+    constructor(address _emp, address _util, address _adm, int _timeZone) {
         employee = EmployeeContract(_emp);
         util = UtilContract(_util);
+        admin = AdministratorContract(_adm);
         owner = msg.sender;
         creationDate = util.getDate(getMoment());
         timeZone = _timeZone;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can call this function.");
+        _;
     }
 
     function startWork() public {
@@ -83,10 +91,12 @@ contract PontoBlock {
     }
 
     function getCreationDateContract() public view returns(uint) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         return creationDate;
     }
 
     function getEmployeeRecords(address _address, uint256 _date) public view returns (EmployeeRecord memory) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(employee.checkIfEmployeeExists(_address), "Employee not registered.");
         return employeeRecords[_address][_date];
     }
@@ -101,6 +111,15 @@ contract PontoBlock {
             moment = block.timestamp + uint256(adjust);
         }
         return moment;
+    }
+
+    function changeOwner(address _newOwner) public onlyOwner{
+        owner = _newOwner;
+    }
+
+    function getOwner() public view returns (address) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        return owner;
     }
 }
 

@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 describe('EmployeeContract', () => {
     async function setupFixture() {
-        const [owner, billy, john, alice] = await ethers.getSigners();
+        const [owner, billy, john, alice, jeff] = await ethers.getSigners();
         const AdministratorContract = await ethers.getContractFactory('AdministratorContract');
         const taxId = 1234567890;
         const name = "GILMAR RIBEIRO SANTANA";
@@ -19,7 +19,8 @@ describe('EmployeeContract', () => {
             owner,
             billy,
             john,
-            alice
+            alice, 
+            jeff
         };
     }
     describe("Add an employee", () => {
@@ -103,6 +104,24 @@ describe('EmployeeContract', () => {
             const otherNullEmployee = await EmployeeDeployed.getEmployeeById(1);
             expect(employeeNull.employeeAddress).to.equal(ethers.constants.AddressZero);
             expect(otherNullEmployee.employeeAddress).to.equal(ethers.constants.AddressZero);
+        });
+        it("should not return an employee by id - Sender is not administrator", async () => {
+            const { EmployeeDeployed, alice, billy} = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name = "ALICE";
+            const taxId = 2222222222;
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
+            await expect(EmployeeDeployed.connect(billy).getEmployeeById(0))
+                    .to.rejectedWith("Sender is not administrator.");
+        });
+        it("should not return an employee by address - Sender is not administrator", async () => {
+            const { EmployeeDeployed, alice, billy} = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name = "ALICE";
+            const taxId = 2222222222;
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId)
+            await expect(EmployeeDeployed.connect(billy).getEmployeeByAddress(aliceAddress))
+                    .to.rejectedWith("Sender is not administrator.");
         });
     });
     describe("Update employee", () => {
@@ -210,6 +229,20 @@ describe('EmployeeContract', () => {
             const employees = await EmployeeDeployed.getAllEmployees();
             expect(employees.length).to.equal(3);
         });
+        it("should not return employees - Sender is not Administrator", async () => {
+            const { EmployeeDeployed, billy, john, alice, jeff } = await loadFixture(setupFixture);
+            const nameEmp1 = "BILLY";
+            const taxIdEmp1 = "1111111111";
+            const nameEmp2 = "JOHN";
+            const taxIdEmp2 = "2222222222";
+            const nameEmp3 = "ALICE";
+            const taxIdEmp3 = "3333333333";
+            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1);
+            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2);
+            await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3);
+            await expect(EmployeeDeployed.connect(jeff).getAllEmployees())
+                    .to.rejectedWith("Sender is not administrator.");
+        });
     });
     describe("Checking if employee exists", () => {
         it("should return true", async () => {
@@ -229,6 +262,15 @@ describe('EmployeeContract', () => {
             await EmployeeDeployed.addEmployee(johnAddress, name, taxId)
             const result = await EmployeeDeployed.checkIfEmployeeExists(billy.address);
             expect(result).to.equal(false);
+        });
+        it("should not return - Sender is not Administrator", async () => {
+            const { EmployeeDeployed, billy, john } = await loadFixture(setupFixture);
+            const johnAddress = john.address;
+            const name = "JOHN";
+            const taxId = 2222222222;
+            await EmployeeDeployed.addEmployee(johnAddress, name, taxId)
+            await expect(EmployeeDeployed.connect(billy).checkIfEmployeeExists(johnAddress))
+                    .to.rejectedWith("Sender is not administrator.");
         });
     });
 });

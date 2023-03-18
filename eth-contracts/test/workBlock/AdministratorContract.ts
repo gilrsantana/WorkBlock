@@ -89,6 +89,16 @@ describe('AdministratorContract', () => {
             const admNull = await AdministratorDeployed.getAdministrator(2);
             expect(admNull.administratorAddress).to.equal(ethers.constants.AddressZero);
         });
+        it("should not return an administrator - Sender is not administrator", async () => {
+            const { AdministratorDeployed, alice, john} = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name = "ALICE";
+            const taxId = 2222222222;
+            await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
+            //const admNull = 
+            await expect(AdministratorDeployed.connect(john).getAdministrator(2))
+                    .to.rejectedWith("Sender is not administrator.");
+        });
     });
     describe("Update administrator", () => {
         it("should return an updated administrator", async () => {
@@ -181,6 +191,17 @@ describe('AdministratorContract', () => {
         });
     });
     describe("Getting all administrators", () => {
+        it("should not return four administrators - Sender is not administrator", async () => {
+            const { AdministratorDeployed, billy, john, alice } = await loadFixture(setupFixture);
+            const nameAdm1 = "BILLY";
+            const taxIdAdm1 = "1111111111";
+            const nameAdm2 = "JOHN";
+            const taxIdAdm2 = "2222222222";
+            await AdministratorDeployed.addAdministrator(billy.address, nameAdm1, taxIdAdm1);
+            await AdministratorDeployed.addAdministrator(john.address, nameAdm2, taxIdAdm2);
+            await expect(AdministratorDeployed.connect(alice).
+                getAllAdministrators()).to.rejectedWith("Sender is not administrator.");
+        });
         it("should return four administrators", async () => {
             const { AdministratorDeployed, billy, john, alice } = await loadFixture(setupFixture);
             const nameAdm1 = "BILLY";
