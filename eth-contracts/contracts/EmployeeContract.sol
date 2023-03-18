@@ -2,6 +2,7 @@
 pragma solidity >=0.8.17;
 
 import "./AdministratorContract.sol";
+import "./EmployerContract.sol";
 
 contract EmployeeContract {
 
@@ -11,6 +12,8 @@ contract EmployeeContract {
         uint256 taxId;
         string name;
         State stateOf;
+        uint256 employerId;
+        address employerAddress;
     }
 
     enum State { Inactive, Active }
@@ -18,28 +21,52 @@ contract EmployeeContract {
     address[] private addsEmployees;
 
     AdministratorContract private admin;
+    EmployerContract private employer;
 
-    constructor(address _adm) {
+    constructor(address _adm, address _employer) {
         admin = AdministratorContract(_adm);
+        employer = EmployerContract(_employer);
     }
 
-    function addEmployee(address _address, string memory _name, uint256 _taxId) public{
+    function addEmployee(address _address, 
+                        string memory _name, 
+                        uint256 _taxId, 
+                        uint256 _employerId, 
+                        address _employerAddress) 
+                        public{
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(!checkIfEmployeeExists(_address), "Employee already exists.");
         require(_taxId != 0, "TaxId not given.");
+        require(_employerId != 0, "Employer Id not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
         require(_address != address(0), "Address not given.");
+        require(_employerAddress != address(0), "Employer address not given.");
 
-        employees[addsEmployees.length] = Employee(addsEmployees.length, _address, _taxId, _name, State.Active);
+        employees[addsEmployees.length] = Employee(addsEmployees.length, 
+                                                    _address, 
+                                                    _taxId, 
+                                                    _name, 
+                                                    State.Active, 
+                                                    _employerId, 
+                                                    _employerAddress);
         addsEmployees.push(_address);
     }
 
-    function updateEmployee (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) public {
+    function updateEmployee (address _addressKey, 
+                             address _address, 
+                             uint256 _taxId, 
+                             string memory _name, 
+                             State _state, 
+                             uint256 _employerId,
+                             address _employerAddress) 
+                             public {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
+        require(_employerId != 0, "Employer Id not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
         require(checkIfEmployeeExists(_addressKey), "Employee not exists.");
+        require(_employerAddress != address(0), "Employer address not given.");
 
         bool difAdd;
         address add;
@@ -57,7 +84,13 @@ contract EmployeeContract {
             add = employees[_id].employeeAddress;
         }
 
-        employees[_id] = Employee(_id, _address, _taxId, _name, _state);
+        employees[_id] = Employee(_id, 
+                                  _address, 
+                                  _taxId, 
+                                  _name, 
+                                  _state, 
+                                  _employerId, 
+                                  _employerAddress);
 
         if (difAdd) {
             for (uint256 i = 0; i < addsEmployees.length; i++) {
