@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 describe('PontoBlockReports', () => {
     async function setupFixture() {
-        const [owner, billy, john, alice, jeff, rachel] = await ethers.getSigners();
+        const [owner, billy, john, alice, jeff, rachel, employer] = await ethers.getSigners();
         const UtilContract = await ethers.getContractFactory('UtilContract');
         const UtilDeployed = await UtilContract.deploy();
         await UtilDeployed.deployed();
@@ -13,8 +13,13 @@ describe('PontoBlockReports', () => {
         const name = "GILMAR RIBEIRO SANTANA";
         const AdministratorDeployed = await AdministratorContract.deploy(taxId, name);
         await AdministratorDeployed.deployed();
+        const EmployerContract = await ethers.getContractFactory('EmployerContract');
+        const EmployerDeployed = await EmployerContract.deploy(AdministratorDeployed.address);
+        await EmployerDeployed.deployed();
+        const emprAddress = EmployerDeployed.address;
+        const admAddress = AdministratorDeployed.address;
         const EmployeeContract = await ethers.getContractFactory("EmployeeContract");
-        const EmployeeDeployed = await EmployeeContract.deploy(AdministratorDeployed.address);
+        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress);
         await EmployeeDeployed.deployed();
         const nameEmp1 = "BILLY";
         const taxIdEmp1 = 1111111111;
@@ -24,16 +29,18 @@ describe('PontoBlockReports', () => {
         const taxIdEmp3 = 3333333333;
         const nameEmp4 = "RACHEL";
         const taxIdEmp4 = 4444444444;
-        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1);
-        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2);
-        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3);
-        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4);
+        const empr = employer.address;
+        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
+        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
+        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
+        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4, empr);
         const inactiveEmployee =  await EmployeeDeployed.getEmployeeByAddress(rachel.address);
         await EmployeeDeployed.updateEmployee(  inactiveEmployee.employeeAddress
                                               , inactiveEmployee.employeeAddress
                                               , inactiveEmployee.taxId
                                               , inactiveEmployee.name
-                                              , 0);
+                                              , 0
+                                              , empr);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
         const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, 
                                                            UtilDeployed.address,
@@ -82,12 +89,11 @@ describe('PontoBlockReports', () => {
         it("should returns work times", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = await UtilDeployed.getDate((await block).timestamp);
-            
-            const record = await ReportsDeployed.getWorkTimesFromEmployeeAtDate(alice.address, myDate);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const record = await ReportsDeployed.getWorkTimesFromEmployeeAtDate(alice.address, contractDate);
             expect(record._startWork.toNumber() > 0).to.true;
             expect(record._endWork.toNumber() > 0).to.true;
             expect(record._breakStartTime.toNumber() > 0).to.true;
@@ -96,47 +102,48 @@ describe('PontoBlockReports', () => {
         it("should returns work times - Sender is the employee searched", async () => {
             const { ReportsDeployed, 
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = await UtilDeployed.getDate((await block).timestamp);
-            
-            const record = await ReportsDeployed.connect(alice).getWorkTimesFromEmployeeAtDate(alice.address, myDate);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const record = await ReportsDeployed.connect(alice).getWorkTimesFromEmployeeAtDate(alice.address, contractDate);
             expect(record._startWork.toNumber() > 0).to.true;
             expect(record._endWork.toNumber() > 0).to.true;
             expect(record._breakStartTime.toNumber() > 0).to.true;
             expect(record._breakEndTime.toNumber() > 0).to.true;
         });
         it("should not returns work times - Employee not registered", async () => {
-            const { ReportsDeployed, UtilDeployed,jeff } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = await UtilDeployed.getDate((await block).timestamp);
-            await expect(ReportsDeployed.getWorkTimesFromEmployeeAtDate(jeff.address, myDate))
+            const { ReportsDeployed, 
+                    UtilDeployed,
+                    PontoBlockDeployed,
+                    jeff } = await loadFixture(setupFixture);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            await expect(ReportsDeployed.getWorkTimesFromEmployeeAtDate(jeff.address, contractDate))
                     .to.rejectedWith("Employee not registered.");
         });
         it("should not returns work times - Sender is not administrator", async () => {
             const { ReportsDeployed, 
                     UtilDeployed,
+                    PontoBlockDeployed,
                     jeff,
                     rachel } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = await UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             await expect(ReportsDeployed.connect(rachel)
-                        .getWorkTimesFromEmployeeAtDate(jeff.address, myDate))
+                        .getWorkTimesFromEmployeeAtDate(jeff.address, contractDate))
                     .to.rejectedWith("Sender is not authorized.");
         });
         it("should not returns work times - Sender is not the employee searched", async () => {
             const { ReportsDeployed, 
                     UtilDeployed,
+                    PontoBlockDeployed,
                     jeff,
                     rachel } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = await UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             await expect(ReportsDeployed.connect(rachel)
-                        .getWorkTimesFromEmployeeAtDate(jeff.address, myDate))
+                        .getWorkTimesFromEmployeeAtDate(jeff.address, contractDate))
                     .to.rejectedWith("Sender is not authorized.");
         });
     });
@@ -144,83 +151,79 @@ describe('PontoBlockReports', () => {
         it("should not returns work times between two dates - Sender is not administrator", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     jeff,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
-
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
             await expect(ReportsDeployed.connect(alice).
-                        getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, myDate1, myDate2))
+                        getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, contractDate2, contractDate))
                         .to.rejectedWith("Sender is not authorized.");
         });
         it("should not returns work times between two dates - Sender is not the employee searched", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     jeff,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
-
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
             await expect(ReportsDeployed.connect(alice)
-                        .getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, myDate1, myDate2))
+                        .getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, contractDate2, contractDate))
                         .to.rejectedWith("Sender is not authorized.");
         });
         it("should not returns work times between two dates - Employee not registered", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     jeff } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
 
-            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, myDate1, myDate2))
+            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(jeff.address, contractDate2, contractDate))
                     .to.rejectedWith("Employee not registered.");
         });
         it("should not returns work times between two dates - Start date must be less than end date", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
 
-            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, myDate2, myDate1))
+            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, contractDate, contractDate2))
                     .to.rejectedWith("Start date must be less than end date.");
         });
         it("should not returns work times between two dates - Start date must be equals or grather than creationDate", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
-
-            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, myDate1, myDate2))
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
+            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, contractDate2, contractDate))
                     .to.rejectedWith("Start date must be equals or grather than creationDate.");
         });
         it("should not returns work times between two dates - End date must be equals or less than today", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate1 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp + 86400;
-            const myDate2 = await UtilDeployed.getDate(value2);
-
-            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, myDate1, myDate2))
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() + 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
+            await expect(ReportsDeployed.getWorkTimeFromEmployeeBetweenTwoDates(alice.address, contractDate, contractDate2))
                     .to.rejectedWith("End date must be equals or less than today.");
         });
     });
@@ -228,15 +231,14 @@ describe('PontoBlockReports', () => {
         it("should returns work times", async () => {
             const { ReportsDeployed, 
                     UtilDeployed,
+                    PontoBlockDeployed,
                     billy,
                     john,
                     alice,
                     rachel } = await loadFixture(setupFixture);
-     
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
-            const record = await ReportsDeployed.getWorkTimesForAllEmployeesAtDate(myDate);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const record = await ReportsDeployed.getWorkTimesForAllEmployeesAtDate(contractDate);
             expect (record._empAddress.length === 4).to.true;
             expect (record._empAddress[0] === billy.address).to.true;
             expect (record._empAddress[1] === john.address).to.true;
@@ -246,40 +248,36 @@ describe('PontoBlockReports', () => {
         it("should not returns work times - Sender is not administrator", async () => {
             const { ReportsDeployed, 
                     UtilDeployed,
+                    PontoBlockDeployed,
                     billy } = await loadFixture(setupFixture);
-     
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             await expect(ReportsDeployed.connect(billy)
-                    .getWorkTimesForAllEmployeesAtDate(myDate))
+                    .getWorkTimesForAllEmployeesAtDate(contractDate))
                     .to.rejectedWith("Sender is not administrator.");
         });
         it("should not returns work times - Start date must be equals or grather than creationDate", async () => {
             const { ReportsDeployed, 
-                    UtilDeployed } = await loadFixture(setupFixture);
-     
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp - 86400);
-            await expect(ReportsDeployed.getWorkTimesForAllEmployeesAtDate(myDate))
+                    UtilDeployed,
+                    PontoBlockDeployed } = await loadFixture(setupFixture);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime.toNumber() - 86400);
+            await expect(ReportsDeployed.getWorkTimesForAllEmployeesAtDate(contractDate))
                         .to.rejectedWith("Start date must be equals or grather than creationDate.");
-
         });
     });
     describe("Work times from all employee between two dates", () => {
         it("should not returns work times between two dates - Sender is not administrator", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
-
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
             await expect(ReportsDeployed.connect(alice)
-                    .getWorkTimesForAllEmployeesBetweenTwoDates(myDate2, myDate1))
+                    .getWorkTimesForAllEmployeesBetweenTwoDates(contractDate, contractDate2))
                     .to.rejectedWith("Sender is not administrator.");
         });
         it("should not returns work times between two dates - Start date must be less than end date", async () => {
@@ -297,27 +295,35 @@ describe('PontoBlockReports', () => {
         it("should not returns work times between two dates - Start date must be equals or grather than creationDate", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate2 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp - 86400;
-            const myDate1 = await UtilDeployed.getDate(value2);
-
-            await expect(ReportsDeployed.getWorkTimesForAllEmployeesBetweenTwoDates(myDate1, myDate2))
+            // const blkNumber = ethers.provider.getBlockNumber();
+            // const block = ethers.provider.getBlock(blkNumber);
+            // const myDate2 = await UtilDeployed.getDate((await block).timestamp);
+            // const value2 = await (await block).timestamp - 86400;
+            // const myDate1 = await UtilDeployed.getDate(value2);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() - 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
+            await expect(ReportsDeployed.getWorkTimesForAllEmployeesBetweenTwoDates(contractDate2, contractDate))
                     .to.rejectedWith("Start date must be equals or grather than creationDate.");
         });
         it("should not returns work times between two dates - End date must be equals or less than today", async () => {
             const { ReportsDeployed,
                     UtilDeployed,
+                    PontoBlockDeployed,
                     alice } = await loadFixture(setupFixture);
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate1 = await UtilDeployed.getDate((await block).timestamp);
-            const value2 = await (await block).timestamp + 86400;
-            const myDate2 = await UtilDeployed.getDate(value2);
-
-            await expect(ReportsDeployed.getWorkTimesForAllEmployeesBetweenTwoDates(myDate1, myDate2))
+            // const blkNumber = ethers.provider.getBlockNumber();
+            // const block = ethers.provider.getBlock(blkNumber);
+            // const myDate1 = await UtilDeployed.getDate((await block).timestamp);
+            // const value2 = await (await block).timestamp + 86400;
+            // const myDate2 = await UtilDeployed.getDate(value2);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
+            const contractTime2 = contractTime.toNumber() + 86400;
+            const contractDate2 = await UtilDeployed.getDate(contractTime2);
+            await expect(ReportsDeployed.getWorkTimesForAllEmployeesBetweenTwoDates(contractDate, contractDate2))
                     .to.rejectedWith("End date must be equals or less than today.");
         });
     });

@@ -12,7 +12,6 @@ contract EmployeeContract {
         uint256 taxId;
         string name;
         State stateOf;
-        uint256 employerId;
         address employerAddress;
     }
 
@@ -31,24 +30,21 @@ contract EmployeeContract {
     function addEmployee(address _address, 
                         string memory _name, 
                         uint256 _taxId, 
-                        uint256 _employerId, 
                         address _employerAddress) 
                         public{
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(!checkIfEmployeeExists(_address), "Employee already exists.");
         require(_taxId != 0, "TaxId not given.");
-        require(_employerId != 0, "Employer Id not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
         require(_address != address(0), "Address not given.");
         require(_employerAddress != address(0), "Employer address not given.");
 
         employees[addsEmployees.length] = Employee(addsEmployees.length, 
-                                                    _address, 
-                                                    _taxId, 
-                                                    _name, 
-                                                    State.Active, 
-                                                    _employerId, 
-                                                    _employerAddress);
+                                                   _address, 
+                                                   _taxId, 
+                                                   _name, 
+                                                   State.Active, 
+                                                   _employerAddress);
         addsEmployees.push(_address);
     }
 
@@ -57,13 +53,11 @@ contract EmployeeContract {
                              uint256 _taxId, 
                              string memory _name, 
                              State _state, 
-                             uint256 _employerId,
                              address _employerAddress) 
                              public {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
-        require(_employerId != 0, "Employer Id not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
         require(checkIfEmployeeExists(_addressKey), "Employee not exists.");
         require(_employerAddress != address(0), "Employer address not given.");
@@ -89,7 +83,6 @@ contract EmployeeContract {
                                   _taxId, 
                                   _name, 
                                   _state, 
-                                  _employerId, 
                                   _employerAddress);
 
         if (difAdd) {
@@ -135,5 +128,10 @@ contract EmployeeContract {
                 return true;
 
         return false;
+    }
+
+    function getEmployerContract() public view returns (address _empContract) {
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        return address(employer);
     }
 }

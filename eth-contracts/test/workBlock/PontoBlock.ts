@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 
 describe('PontoBlock', () => {
     async function setupFixture() {
-        const [owner, billy, john, alice, jeff, rachel] = await ethers.getSigners();
+        const [owner, billy, john, alice, jeff, rachel, employer] = await ethers.getSigners();
         const UtilContract = await ethers.getContractFactory('UtilContract');
         const UtilDeployed = await UtilContract.deploy();
         await UtilDeployed.deployed();
@@ -13,8 +13,13 @@ describe('PontoBlock', () => {
         const name = "GILMAR RIBEIRO SANTANA";
         const AdministratorDeployed = await AdministratorContract.deploy(taxId, name);
         await AdministratorDeployed.deployed();
+        const EmployerContract = await ethers.getContractFactory('EmployerContract');
+        const EmployerDeployed = await EmployerContract.deploy(AdministratorDeployed.address);
+        await EmployerDeployed.deployed();
+        const emprAddress = EmployerDeployed.address;
+        const admAddress = AdministratorDeployed.address;
         const EmployeeContract = await ethers.getContractFactory("EmployeeContract");
-        const EmployeeDeployed = await EmployeeContract.deploy(AdministratorDeployed.address);
+        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress);
         await EmployeeDeployed.deployed();
         const nameEmp1 = "BILLY";
         const taxIdEmp1 = 1111111111;
@@ -24,30 +29,35 @@ describe('PontoBlock', () => {
         const taxIdEmp3 = 3333333333;
         const nameEmp4 = "RACHEL";
         const taxIdEmp4 = 4444444444;
-        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1);
-        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2);
-        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3);
-        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4);
+        const empr = employer.address;
+        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
+        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
+        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
+        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4, empr);
         const inactiveEmployee =  await EmployeeDeployed.getEmployeeByAddress(rachel.address);
         await EmployeeDeployed.updateEmployee(  inactiveEmployee.employeeAddress
                                               , inactiveEmployee.employeeAddress
                                               , inactiveEmployee.taxId
                                               , inactiveEmployee.name
-                                              , 0);
+                                              , 0
+                                              , empr);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");
         const PontoBlockDeployed = await PontoBlock.deploy(EmployeeDeployed.address, 
                                                            UtilDeployed.address, 
                                                            AdministratorDeployed.address,
                                                            -3);
         await PontoBlockDeployed.deployed();
-        await AdministratorDeployed.addAdministrator(
-                                    PontoBlockDeployed.address,
-                                    "PontoBlock",
-                                    9999999999);
+        await AdministratorDeployed.addAdministrator(PontoBlockDeployed.address,
+                                                    "PontoBlock",
+                                                    9999999999);
+        const minTimeZone = -12;
+        const maxTimeZone = 14;
         return {
             PontoBlockDeployed,
             UtilDeployed,
             EmployeeDeployed,
+            minTimeZone,
+            maxTimeZone,
             owner,
             billy,
             john,
@@ -61,12 +71,12 @@ describe('PontoBlock', () => {
             const { PontoBlockDeployed, 
                     UtilDeployed,
                     john } = await loadFixture(setupFixture);
-            PontoBlockDeployed.connect(john).startWork();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+
+            await PontoBlockDeployed.connect(john).startWork();
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(john.address, myDate))
+                                        .getEmployeeRecords(john.address, contractDate))
                                         .startWork;
             expect(record.toNumber() > 0).to.true;
         });
@@ -94,11 +104,10 @@ describe('PontoBlock', () => {
                     billy } = await loadFixture(setupFixture);
             await PontoBlockDeployed.connect(billy).startWork();
             await PontoBlockDeployed.connect(billy).endWork();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(billy.address, myDate))
+                                        .getEmployeeRecords(billy.address, contractDate))
                                         .endWork;
             expect(record.toNumber() > 0).to.true;
         });
@@ -107,11 +116,10 @@ describe('PontoBlock', () => {
             await PontoBlockDeployed.connect(billy).startWork();
             await PontoBlockDeployed.connect(billy).breakStartTime();
             await PontoBlockDeployed.connect(billy).endWork();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(billy.address, myDate))
+                                        .getEmployeeRecords(billy.address, contractDate))
                                         .breakEndTime;
             await expect(record.toNumber() > 0).to.true;
         });
@@ -145,11 +153,10 @@ describe('PontoBlock', () => {
                     billy } = await loadFixture(setupFixture);
             await PontoBlockDeployed.connect(billy).startWork();
             await PontoBlockDeployed.connect(billy).breakStartTime();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(billy.address, myDate))
+                                        .getEmployeeRecords(billy.address, contractDate))
                                         .breakStartTime;
             await expect(record.toNumber() > 0).to.true;
         });
@@ -186,11 +193,10 @@ describe('PontoBlock', () => {
             await PontoBlockDeployed.connect(john).startWork();
             await PontoBlockDeployed.connect(john).breakStartTime();
             await PontoBlockDeployed.connect(john).breakEndTime();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(john.address, myDate))
+                                        .getEmployeeRecords(john.address, contractDate))
                                         .breakEndTime;
             await expect(record.toNumber() > 0).to.true;
         });
@@ -225,11 +231,10 @@ describe('PontoBlock', () => {
                     UtilDeployed,
                     john } = await loadFixture(setupFixture);
             PontoBlockDeployed.connect(john).startWork();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             const record = await (await PontoBlockDeployed
-                                        .getEmployeeRecords(john.address, myDate))
+                                        .getEmployeeRecords(john.address, contractDate))
                                         .startWork;
             expect(record.toNumber() > 0).to.true;
         });
@@ -239,11 +244,10 @@ describe('PontoBlock', () => {
                     john,
                     rachel } = await loadFixture(setupFixture);
             PontoBlockDeployed.connect(john).startWork();
-            const blkNumber = ethers.provider.getBlockNumber();
-            const block = ethers.provider.getBlock(blkNumber);
-            const myDate = UtilDeployed.getDate((await block).timestamp);
+            const contractTime = await PontoBlockDeployed.getMoment();
+            const contractDate = await UtilDeployed.getDate(contractTime);
             await expect(PontoBlockDeployed.connect(rachel)
-                        .getEmployeeRecords(john.address, myDate))
+                        .getEmployeeRecords(john.address, contractDate))
                         .to.rejectedWith("Sender is not administrator.");
         });
     });
@@ -303,6 +307,17 @@ describe('PontoBlock', () => {
             await expect(PontoBlockDeployed.connect(alice)
                     .changeOwner(rachel.address))
                     .to.rejectedWith("Only the owner can call this function.");
+        });
+    });
+    describe("Getting Time Zone", () => {
+        it("should get Time Zone", async () => {
+            const { PontoBlockDeployed,
+                    minTimeZone,
+                    maxTimeZone } = await loadFixture(setupFixture);
+            const timeZone = await PontoBlockDeployed.getTimeZone();
+            await expect(timeZone !== null).to.true;
+            await expect(timeZone.toNumber() >= minTimeZone).to.true;
+            await expect(timeZone.toNumber() <=  maxTimeZone).to.true;
         });
     });
 });

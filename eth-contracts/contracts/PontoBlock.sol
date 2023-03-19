@@ -101,7 +101,7 @@ contract PontoBlock {
         return employeeRecords[_address][_date];
     }
 
-    function getMoment() internal view returns(uint256) {
+    function getMoment() public view returns(uint256) {
         int adjust = timeZone * oneHour;
         uint256 moment;
         if (adjust < 0) {
@@ -121,5 +121,10 @@ contract PontoBlock {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         return owner;
     }
+
+    function getTimeZone() public view returns (int) {
+        return timeZone;
+    }
+
 }
 
