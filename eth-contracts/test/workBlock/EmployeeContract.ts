@@ -20,8 +20,12 @@ describe('EmployeeContract', () => {
         await EmployerDeployed.addEmployer(emprAdd, emprTaxId, emprName, emprLegalAdd);
         const emprAddress = EmployerDeployed.address;
         const admAddress = AdministratorDeployed.address;
+        const UtilContract = await ethers.getContractFactory('UtilContract');
+        const UtilDeployed = await UtilContract.deploy();
+        await UtilDeployed.deployed();
+        const utilAddress = UtilDeployed.address;
         const EmployeeContract = await ethers.getContractFactory("EmployeeContract");
-        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress);
+        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress, utilAddress);
         await EmployeeDeployed.deployed();
         await AdministratorDeployed.addAdministrator(EmployeeDeployed.address,
                                                     "EmployeeContract",
@@ -44,14 +48,18 @@ describe('EmployeeContract', () => {
             const billyAddress = billy.address;
             const name = "BILLY";
             const taxId = 1111111111;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(billyAddress, name, taxId, empr);
+            await EmployeeDeployed.addEmployee(billyAddress, name, taxId, beggining, end, empr);
             const employee = await EmployeeDeployed.getEmployeeById(0);
             const employees = await EmployeeDeployed.getAllEmployees();
             expect(employee.employeeAddress).to.equal(billyAddress);
             expect(employee.idEmployee).to.equal(0);
             expect(employee.taxId).to.equal(taxId);
             expect(employee.name).to.equal(name);
+            expect(employee.begginingWorkDay).to.equal(beggining);
+            expect(employee.endWorkDay).to.equal(end);
             expect(employee.stateOf).to.equal(1);
             expect(employees.length).to.equal(1);
         });
@@ -60,18 +68,22 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
             await expect(EmployeeDeployed.connect(john)
-                    .addEmployee(aliceAddress, name, taxId, empr))
+                    .addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                     .to.rejectedWith("Sender is not administrator.");
         });
         it("should not add an employee - Employer not exists", async () => {
-            const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
+            const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = alice.address;
-            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr))
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                 .to.rejectedWith("Employer not exists.");
         });
         it("should not add an employee - employee already exists", async () => {
@@ -79,9 +91,11 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr);
-            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr))
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr);
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                 .to.rejectedWith("Employee already exists.");
         });
         it("should not add an employee - TaxId not given", async () => {
@@ -89,8 +103,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 0;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr))
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                 .to.rejectedWith("TaxId not given.");
         });
         it("should not add an employee - Name not given", async () => {
@@ -98,8 +114,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name ="";
             const taxId = 1111111111;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr))
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                 .to.rejectedWith("Name not given.");
         });
         it("should not add an employee - Address not given", async () => {
@@ -107,9 +125,44 @@ describe('EmployeeContract', () => {
             const aliceAddress = ethers.constants.AddressZero;
             const name ="ALICE";
             const taxId = 1111111111;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr))
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
                 .to.rejectedWith("Address not given.");
+        });
+        it("should not add an employee - Not valid beggining work day", async () => {
+            const { EmployeeDeployed, employer, alice } = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name ="ALICE";
+            const taxId = 1111111111;
+            const beggining = 3200;
+            const end = 1800;
+            const empr = employer.address;
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
+                .to.rejectedWith("Not valid beggining work day.");
+        });
+        it("should not add an employee - Not valid end work day", async () => {
+            const { EmployeeDeployed, employer, alice } = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name ="ALICE";
+            const taxId = 1111111111;
+            const beggining = 800;
+            const end = 1897;
+            const empr = employer.address;
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
+                .to.rejectedWith("Not valid end work day.");
+        });
+        it("should not add an employee - Beggining Work Day must be less than End Work Day", async () => {
+            const { EmployeeDeployed, employer, alice } = await loadFixture(setupFixture);
+            const aliceAddress = alice.address;
+            const name ="ALICE";
+            const taxId = 1111111111;
+            const beggining = 800;
+            const end = 800;
+            const empr = employer.address;
+            await expect(EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr))
+                .to.rejectedWith("Beggining Work Day must be less than End Work Day.");
         });
      });
     describe("Return an employee", () => {
@@ -118,8 +171,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const employee = await EmployeeDeployed.getEmployeeById(0);
             const sameEmployee = await EmployeeDeployed.getEmployeeByAddress(aliceAddress);
             expect(employee.employeeAddress).to.equal(aliceAddress);
@@ -130,8 +185,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const employeeNull = await EmployeeDeployed.getEmployeeByAddress(billy.address);
             const otherNullEmployee = await EmployeeDeployed.getEmployeeById(1);
             expect(employeeNull.employeeAddress).to.equal(ethers.constants.AddressZero);
@@ -142,8 +199,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeById(0))
                     .to.rejectedWith("Sender is not administrator.");
         });
@@ -152,8 +211,10 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeByAddress(aliceAddress))
                     .to.rejectedWith("Sender is not administrator.");
         });
@@ -172,13 +233,17 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
-            await EmployeeDeployed.updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, aNewEmprAddress);
+            await EmployeeDeployed.updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, aNewEmprAddress);
             const employee = await EmployeeDeployed.getEmployeeByAddress(newAddress);
             expect(employee.employeeAddress).to.equal(newAddress);
             expect(employee.idEmployee).to.equal(0);
@@ -192,14 +257,18 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
             await expect(EmployeeDeployed.connect(billy)
-                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
+                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
                 .to.rejectedWith("Sender is not administrator.");
         });
         it("should not return an updated employee - Address not given", async () => {
@@ -207,14 +276,18 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr);
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr);
             const newAddress = ethers.constants.AddressZero;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
             await expect(EmployeeDeployed
-                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
+                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
                 .to.rejectedWith("Address not given.");
         });
         it("should not return an updated employee - TaxId not given", async () => {
@@ -222,14 +295,18 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr);
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr);
             const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 0;
             const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
             await expect(EmployeeDeployed
-                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
+                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
                 .to.rejectedWith("TaxId not given.");
         });
         it("should not return an updated employee - Name not given", async () => {
@@ -237,14 +314,18 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
             await expect(EmployeeDeployed
-                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
+                .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
                 .to.rejectedWith("Name not given.");
         });
         it("should not return an updated employee - Employee not exists", async () => {
@@ -252,14 +333,18 @@ describe('EmployeeContract', () => {
             const aliceAddress = alice.address;
             const name = "ALICE";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             const newAddress = ethers.Wallet.createRandom().address;
             const newTaxId = 3333333333;
             const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
             const newState = 0;
             await expect(EmployeeDeployed
-                .updateEmployee(newAddress, newAddress, newTaxId, newName, newState, empr))
+                .updateEmployee(newAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
                 .to.rejectedWith("Employee not exists.");
         });
     });
@@ -272,10 +357,12 @@ describe('EmployeeContract', () => {
             const taxIdEmp2 = "2222222222";
             const nameEmp3 = "ALICE";
             const taxIdEmp3 = "3333333333";
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
-            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
-            await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
+            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, beggining, end, empr);
+            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
+            await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, beggining, end, empr);
             const employees = await EmployeeDeployed.getAllEmployees();
             expect(employees.length).to.equal(3);
         });
@@ -287,10 +374,12 @@ describe('EmployeeContract', () => {
             const taxIdEmp2 = "2222222222";
             const nameEmp3 = "ALICE";
             const taxIdEmp3 = "3333333333";
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
-            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
-            await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
+            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, beggining, end, empr);
+            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
+            await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, beggining, end, empr);
             await expect(EmployeeDeployed.connect(jeff).getAllEmployees())
                     .to.rejectedWith("Sender is not administrator.");
         });
@@ -301,8 +390,10 @@ describe('EmployeeContract', () => {
             const johnAddress = john.address;
             const name = "JOHN";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
             const result = await EmployeeDeployed.checkIfEmployeeExists(johnAddress);
             expect(result).to.equal(true);
         });
@@ -311,8 +402,10 @@ describe('EmployeeContract', () => {
             const johnAddress = john.address;
             const name = "JOHN";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
             const result = await EmployeeDeployed.checkIfEmployeeExists(billy.address);
             expect(result).to.equal(false);
         });
@@ -321,8 +414,10 @@ describe('EmployeeContract', () => {
             const johnAddress = john.address;
             const name = "JOHN";
             const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
             const empr = employer.address;
-            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
+            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).checkIfEmployeeExists(johnAddress))
                     .to.rejectedWith("Sender is not administrator.");
         });

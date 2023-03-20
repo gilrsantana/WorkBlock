@@ -16,11 +16,20 @@ describe('PontoBlockReports', () => {
         const EmployerContract = await ethers.getContractFactory('EmployerContract');
         const EmployerDeployed = await EmployerContract.deploy(AdministratorDeployed.address);
         await EmployerDeployed.deployed();
+        const emprAdd = employer.address;
+        const emprTaxId = 6666666666;
+        const emprName = "CONSTOSO COMPANY";
+        const emprLegalAdd = "JACOB ST, 1234.";
+        await EmployerDeployed.addEmployer(emprAdd, emprTaxId, emprName, emprLegalAdd);
         const emprAddress = EmployerDeployed.address;
         const admAddress = AdministratorDeployed.address;
+        const utilAddress = UtilDeployed.address;
         const EmployeeContract = await ethers.getContractFactory("EmployeeContract");
-        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress);
+        const EmployeeDeployed = await EmployeeContract.deploy(admAddress, emprAddress, utilAddress);
         await EmployeeDeployed.deployed();
+        await AdministratorDeployed.addAdministrator(EmployeeDeployed.address,
+                                                    "EmployeeContract",
+                                                    9999999999);
         const nameEmp1 = "BILLY";
         const taxIdEmp1 = 1111111111;
         const nameEmp2 = "JOHN";
@@ -29,16 +38,20 @@ describe('PontoBlockReports', () => {
         const taxIdEmp3 = 3333333333;
         const nameEmp4 = "RACHEL";
         const taxIdEmp4 = 4444444444;
+        const beggining = 800;
+        const end = 1700;
         const empr = employer.address;
-        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
-        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
-        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
-        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4, empr);
+        await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, beggining, end, empr);
+        await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
+        await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, beggining, end, empr);
+        await EmployeeDeployed.addEmployee(rachel.address, nameEmp4, taxIdEmp4, beggining, end, empr);
         const inactiveEmployee =  await EmployeeDeployed.getEmployeeByAddress(rachel.address);
         await EmployeeDeployed.updateEmployee(  inactiveEmployee.employeeAddress
                                               , inactiveEmployee.employeeAddress
                                               , inactiveEmployee.taxId
                                               , inactiveEmployee.name
+                                              , beggining
+                                              , end
                                               , 0
                                               , empr);
         const PontoBlock = await ethers.getContractFactory("PontoBlock");

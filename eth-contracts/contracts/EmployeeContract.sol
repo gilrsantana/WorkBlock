@@ -3,6 +3,7 @@ pragma solidity >=0.8.17;
 
 import "./AdministratorContract.sol";
 import "./EmployerContract.sol";
+import "./UtilContract.sol";
 
 contract EmployeeContract {
 
@@ -11,6 +12,8 @@ contract EmployeeContract {
         address employeeAddress;
         uint256 taxId;
         string name;
+        uint256 begginingWorkDay;
+        uint256 endWorkDay;
         State stateOf;
         address employerAddress;
     }
@@ -21,29 +24,38 @@ contract EmployeeContract {
 
     AdministratorContract private admin;
     EmployerContract private employer;
+    UtilContract private util;
 
-    constructor(address _adm, address _employer) {
+    constructor(address _adm, address _employer, address _util) {
         admin = AdministratorContract(_adm);
         employer = EmployerContract(_employer);
+        util = UtilContract(_util);
     }
 
     function addEmployee(address _address, 
                         string memory _name, 
                         uint256 _taxId, 
+                        uint256 _begginingWorkDay,
+                        uint256 _endWorkDay,
                         address _employerAddress) 
                         public{
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(employer.checkIfEmployerExists(_employerAddress), "Employer not exists.");
         require(!checkIfEmployeeExists(_address), "Employee already exists.");
+        require(util.validateTime(_begginingWorkDay), "Not valid beggining work day.");
+        require(util.validateTime(_endWorkDay), "Not valid end work day.");
+        require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
-        require(_address != address(0), "Address not given.");
+        require(_begginingWorkDay < _endWorkDay, "Beggining Work Day must be less than End Work Day.");
         require(_employerAddress != address(0), "Employer address not given.");
 
         employees[addsEmployees.length] = Employee(addsEmployees.length, 
                                                    _address, 
                                                    _taxId, 
                                                    _name, 
+                                                   _begginingWorkDay,
+                                                   _endWorkDay,
                                                    State.Active, 
                                                    _employerAddress);
         addsEmployees.push(_address);
@@ -53,15 +65,20 @@ contract EmployeeContract {
                              address _address, 
                              uint256 _taxId, 
                              string memory _name, 
+                             uint256 _begginingWorkDay,
+                             uint256 _endWorkDay,
                              State _state, 
                              address _employerAddress) 
                              public {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(employer.checkIfEmployerExists(_employerAddress), "Employer not exists.");
+        require(util.validateTime(_begginingWorkDay), "Not valid beggining work day.");
+        require(util.validateTime(_endWorkDay), "Not valid end work day.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
         require(checkIfEmployeeExists(_addressKey), "Employee not exists.");
+        require(_begginingWorkDay < _endWorkDay, "Beggining Work Day must be less than End Work Day.");
         require(_employerAddress != address(0), "Employer address not given.");
 
         bool difAdd;
@@ -84,6 +101,8 @@ contract EmployeeContract {
                                   _address, 
                                   _taxId, 
                                   _name, 
+                                  _begginingWorkDay,
+                                  _endWorkDay,
                                   _state, 
                                   _employerAddress);
 

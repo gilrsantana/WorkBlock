@@ -41,4 +41,16 @@ contract UtilContract {
         yearMonthDay += (month * 100);
         yearMonthDay += day;
     }
+
+    function validateTime(uint256 _time) public pure returns(bool) {
+        uint256 hour;
+        uint256 minute;
+        hour = _time / 100;
+        minute = _time % 100;
+        if ((hour >= 0 && hour <= 23) && (minute >= 0 && minute <= 59)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -48,5 +48,90 @@ describe('UtilContract', () => {
             expect(returnedValue).to.equal(20000229);
         });
     });
-    
+    describe("Time validation ", () => {
+        it("should return true - 00h 00m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 0;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return true - 23h 59m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2359;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return true - 00h 01m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 1;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return true - 23h 00m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2300;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return true - 00h 59m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 59;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return true - 17h 17m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 1717;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(true);
+        });
+        it("should return false - 00h 60m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 60;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 00h 99m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 99;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 24h 00m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2400;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 24h 01m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2401;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 24h 59m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2459;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 24h 60m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 2460;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 99h 99m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 9999;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+        it("should return false - 9999999h 99m", async () => {
+            const { UtilDeployed } = await loadFixture(setupFixture);
+            const time = 999999999;
+             const returnedValue = await UtilDeployed.validateTime(time);
+            expect(returnedValue).to.equal(false);
+        });
+    });
 });
