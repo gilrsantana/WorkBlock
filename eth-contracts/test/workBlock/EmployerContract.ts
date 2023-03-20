@@ -2,7 +2,7 @@ import { loadFixture } from '@nomicfoundation/hardhat-network-helpers';
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 
-describe('EmployeeContract', () => {
+describe('EmployerContract', () => {
     async function setupFixture() {
         const [owner, billy, john, alice, jeff, employer] = await ethers.getSigners();
         const AdministratorContract = await ethers.getContractFactory('AdministratorContract');
@@ -60,6 +60,15 @@ describe('EmployeeContract', () => {
             await expect(EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress))
                 .to.rejectedWith("Employer already exists.");
         });
+        it("should not add an employer - Address not given", async () => {
+            const { EmployerDeployed } = await loadFixture(setupFixture);
+            const employerAddress = ethers.constants.AddressZero;
+            const name = "CONSTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await expect(EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress))
+                .to.rejectedWith("Address not given.");
+        });
         it("should not add an employer - TaxId not given", async () => {
             const { EmployerDeployed, employer } = await loadFixture(setupFixture);
             const employerAddress = employer.address;
@@ -78,18 +87,18 @@ describe('EmployeeContract', () => {
             await expect(EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress))
                 .to.rejectedWith("Name not given.");
         });
-        it("should not add an employer - Address not given", async () => {
+        it("should not add an employer - Name not given", async () => {
             const { EmployerDeployed, employer } = await loadFixture(setupFixture);
-            const employerAddress = ethers.constants.AddressZero;
-            const name = "CONSTOSO COMPANY";
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
             const taxId = 1111111111;
-            const legalAddress = "JACOB ST, 2023";
+            const legalAddress = "";
             await expect(EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress))
-                .to.rejectedWith("Address not given.");
+                .to.rejectedWith("Legal address not given.");
         });
      });
-    describe("Return an employee", () => {
-        it("should return one employee ", async () => {
+    describe("Return an employer", () => {
+        it("should return one employer ", async () => {
             const { EmployerDeployed, employer } = await loadFixture(setupFixture);
             const employerAddress = employer.address;
             const name = "CONTOSO COMPANY";
@@ -101,7 +110,7 @@ describe('EmployeeContract', () => {
             expect(empr.employerAddress).to.equal(employerAddress);
             expect(sameEmployee.employerAddress).to.equal(employerAddress);
         });
-        it("should return a null employee ", async () => {
+        it("should return a null employer ", async () => {
             const { EmployerDeployed, employer, billy } = await loadFixture(setupFixture);
             const employerAddress = employer.address;
             const name = "CONTOSO COMPANY";
@@ -113,200 +122,216 @@ describe('EmployeeContract', () => {
             expect(employerNull.employerAddress).to.equal(ethers.constants.AddressZero);
             expect(otherNullEmployer.employerAddress).to.equal(ethers.constants.AddressZero);
         });
-    //     it("should not return an employee by id - Sender is not administrator", async () => {
-    //         const { EmployeeDeployed, alice, billy, employer} = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         await expect(EmployeeDeployed.connect(billy).getEmployeeById(0))
-    //                 .to.rejectedWith("Sender is not administrator.");
-    //     });
-    //     it("should not return an employee by address - Sender is not administrator", async () => {
-    //         const { EmployeeDeployed, alice, billy, employer} = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         await expect(EmployeeDeployed.connect(billy).getEmployeeByAddress(aliceAddress))
-    //                 .to.rejectedWith("Sender is not administrator.");
-    //     });
+        it("should not return an employer by id - Sender is not administrator", async () => {
+            const { EmployerDeployed, 
+                    billy, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            await expect(EmployerDeployed.connect(billy).getEmployerById(0))
+                    .to.rejectedWith("Sender is not administrator.");
+        });
+        it("should not return an employer by address - Sender is not administrator", async () => {
+            const { EmployerDeployed, 
+                    billy, 
+                    employer} = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            await expect(EmployerDeployed.connect(billy).getEmployerByAddress(employerAddress))
+                    .to.rejectedWith("Sender is not administrator.");
+        });
     });
-    // describe("Update employee", () => {
-    //     it("should return an updated employee", async () => {
-    //         const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await EmployeeDeployed.updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr);
-    //         const employee = await EmployeeDeployed.getEmployeeByAddress(newAddress);
-    //         expect(employee.employeeAddress).to.equal(newAddress);
-    //         expect(employee.idEmployee).to.equal(0);
-    //         expect(employee.taxId).to.equal(newTaxId);
-    //         expect(employee.name).to.equal(newName);
-    //         expect(employee.stateOf).to.equal(0);
-    //     });
-    //     it("should not return an updated employee - Sender is not administrator", async () => {
-    //         const { EmployeeDeployed, alice, billy, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed.connect(billy)
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
-    //             .to.rejectedWith("Sender is not administrator.");
-    //     });
-    //     it("should not return an updated employee - Address not given", async () => {
-    //         const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr);
-    //         const newAddress = ethers.constants.AddressZero;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
-    //             .to.rejectedWith("Address not given.");
-    //     });
-    //     it("should not return an updated employee - TaxId not given", async () => {
-    //         const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr);
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 0;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
-    //             .to.rejectedWith("TaxId not given.");
-    //     });
-    //     it("should not return an updated employee - Name not given", async () => {
-    //         const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newState, empr))
-    //             .to.rejectedWith("Name not given.");
-    //     });
-    //     it("should not return an updated employee - Employee not exists", async () => {
-    //         const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
-    //         const aliceAddress = alice.address;
-    //         const name = "ALICE";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, empr)
-    //         const newAddress = ethers.Wallet.createRandom().address;
-    //         const newTaxId = 3333333333;
-    //         const newName = "AMANDA";
-    //         const newState = 0;
-    //         await expect(EmployeeDeployed
-    //             .updateEmployee(newAddress, newAddress, newTaxId, newName, newState, empr))
-    //             .to.rejectedWith("Employee not exists.");
-    //     });
-    // });
-    // describe("Getting all employees", () => {
-    //     it("should return three employees", async () => {
-    //         const { EmployeeDeployed, billy, john, alice, employer } = await loadFixture(setupFixture);
-    //         const nameEmp1 = "BILLY";
-    //         const taxIdEmp1 = "1111111111";
-    //         const nameEmp2 = "JOHN";
-    //         const taxIdEmp2 = "2222222222";
-    //         const nameEmp3 = "ALICE";
-    //         const taxIdEmp3 = "3333333333";
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
-    //         await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
-    //         await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
-    //         const employees = await EmployeeDeployed.getAllEmployees();
-    //         expect(employees.length).to.equal(3);
-    //     });
-    //     it("should not return employees - Sender is not Administrator", async () => {
-    //         const { EmployeeDeployed, billy, john, alice, jeff, employer } = await loadFixture(setupFixture);
-    //         const nameEmp1 = "BILLY";
-    //         const taxIdEmp1 = "1111111111";
-    //         const nameEmp2 = "JOHN";
-    //         const taxIdEmp2 = "2222222222";
-    //         const nameEmp3 = "ALICE";
-    //         const taxIdEmp3 = "3333333333";
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, empr);
-    //         await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, empr);
-    //         await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, empr);
-    //         await expect(EmployeeDeployed.connect(jeff).getAllEmployees())
-    //                 .to.rejectedWith("Sender is not administrator.");
-    //     });
-    // });
-    // describe("Checking if employee exists", () => {
-    //     it("should return true", async () => {
-    //         const { EmployeeDeployed, john, employer } = await loadFixture(setupFixture);
-    //         const johnAddress = john.address;
-    //         const name = "JOHN";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
-    //         const result = await EmployeeDeployed.checkIfEmployeeExists(johnAddress);
-    //         expect(result).to.equal(true);
-    //     });
-    //     it("should return false", async () => {
-    //         const { EmployeeDeployed, billy, john, employer } = await loadFixture(setupFixture);
-    //         const johnAddress = john.address;
-    //         const name = "JOHN";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
-    //         const result = await EmployeeDeployed.checkIfEmployeeExists(billy.address);
-    //         expect(result).to.equal(false);
-    //     });
-    //     it("should not return - Sender is not Administrator", async () => {
-    //         const { EmployeeDeployed, billy, john, employer } = await loadFixture(setupFixture);
-    //         const johnAddress = john.address;
-    //         const name = "JOHN";
-    //         const taxId = 2222222222;
-    //         const empr = employer.address;
-    //         await EmployeeDeployed.addEmployee(johnAddress, name, taxId, empr)
-    //         await expect(EmployeeDeployed.connect(billy).checkIfEmployeeExists(johnAddress))
-    //                 .to.rejectedWith("Sender is not administrator.");
-    //     });
-    // });
-    // describe("Getting Employer Contract Address", () => {
-    //     it("should returns the address", async () => {
-    //         const { EmployeeDeployed, 
-    //                 EmployerDeployed } = await loadFixture(setupFixture);
-    //         const empr = EmployerDeployed.address;
-    //         const theAddress = await EmployeeDeployed.getEmployerContract();
-    //         expect(theAddress === empr).to.equal(true);
-    //     });
-    //     it("should not return - Sender is not Administrator", async () => {
-    //         const { EmployeeDeployed, 
-    //                 billy } = await loadFixture(setupFixture);
-    //         await expect(EmployeeDeployed.connect(billy).getEmployerContract())
-    //                     .to.rejectedWith("Sender is not administrator.");
-    //     });
-    // });
+    describe("Update employer", () => {
+        it("should return an updated employer", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newName = "AMANDA";
+            const newTaxId = 3333333333;
+            const newLegalAddress = "MARY ST, 1999";
+            await EmployerDeployed.updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress);
+            const empr = await EmployerDeployed.getEmployerByAddress(newAddress);
+            expect(empr.employerAddress).to.equal(newAddress);
+            expect(empr.idEmployer).to.equal(0);
+            expect(empr.taxId).to.equal(newTaxId);
+            expect(empr.name).to.equal(newName);
+            expect(empr.legalAddress).to.equal(newLegalAddress);
+        });
+        it("should not return an updated employer - Sender is not administrator", async () => {
+            const { EmployerDeployed, 
+                    employer, 
+                    billy } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newName = "AMANDA";
+            const newTaxId = 3333333333;
+            const newLegalAddress = "MARY ST, 1999";
+            await expect(EmployerDeployed.connect(billy)
+                .updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("Sender is not administrator.");
+        });
+        it("should not return an updated employer - Address not given", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.constants.AddressZero;
+            const newName = "AMANDA";
+            const newTaxId = 3333333333;
+            const newLegalAddress = "MARY ST, 1999";
+            await expect(EmployerDeployed
+                .updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("Address not given.");
+        });
+        it("should not return an updated employer - TaxId not given", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newName = "AMANDA";
+            const newTaxId = 0;
+            const newLegalAddress = "MARY ST, 1999";
+            await expect(EmployerDeployed
+                .updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("TaxId not given.");
+        });
+        it("should not return an updated employer - Name not given", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newName = "";
+            const newTaxId = 2222222222;
+            const newLegalAddress = "MARY ST, 1999";
+            await expect(EmployerDeployed
+                .updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("Name not given.");
+        });
+        it("should not return an updated employer - Name not given", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newName = "SUCCESS COMPANY";
+            const newTaxId = 2222222222;
+            const newLegalAddress = "";
+            await expect(EmployerDeployed
+                .updateEmployer(employerAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("Legal address not given.");
+        });
+        it("should not return an updated employer - Employer not exists", async () => {
+            const { EmployerDeployed, 
+                    employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newTaxId = 3333333333;
+            const newName = "AMANDA";
+            const newLegalAddress = "MARY ST, 1999";
+            await expect(EmployerDeployed
+                .updateEmployer(newAddress, newAddress, newTaxId, newName, newLegalAddress))
+                .to.rejectedWith("Employer not exists.");
+        });
+    });
+    describe("Getting all employers", () => {
+        it("should return three employers", async () => {
+            const { EmployerDeployed, billy, john, alice, employer } = await loadFixture(setupFixture);
+            const nameEmpr1 = "BILLY COMPANY";
+            const taxIdEmpr1 = 1111111111;
+            const legalAdd1 = "MATHEUS ST, 100";
+            const nameEmpr2 = "JOHN COMPANY";
+            const taxIdEmpr2 = 2222222222;
+            const legalAdd2 = "MARK ST, 200";
+            const nameEmpr3 = "ALICE COMPANY";
+            const taxIdEmpr3 = 3333333333;
+            const legalAdd3 = "LUCK ST, 300";
+            await EmployerDeployed.addEmployer(billy.address, taxIdEmpr1, nameEmpr1, legalAdd1);
+            await EmployerDeployed.addEmployer(john.address, taxIdEmpr2, nameEmpr2, legalAdd2);
+            await EmployerDeployed.addEmployer(alice.address, taxIdEmpr3, nameEmpr3, legalAdd3);
+            const employers = await EmployerDeployed.getAllEmployers();
+            expect(employers.length).to.equal(3);
+        });
+        it("should not return employers - Sender is not Administrator", async () => {
+            const { EmployerDeployed, billy, john, alice, jeff } = await loadFixture(setupFixture);
+            const nameEmpr1 = "BILLY COMPANY";
+            const taxIdEmpr1 = 1111111111;
+            const legalAdd1 = "MATHEUS ST, 100";
+            const nameEmpr2 = "JOHN COMPANY";
+            const taxIdEmpr2 = 2222222222;
+            const legalAdd2 = "MARK ST, 200";
+            const nameEmpr3 = "ALICE COMPANY";
+            const taxIdEmpr3 = 3333333333;
+            const legalAdd3 = "LUCK ST, 300";
+            await EmployerDeployed.addEmployer(billy.address, taxIdEmpr1, nameEmpr1, legalAdd1);
+            await EmployerDeployed.addEmployer(john.address, taxIdEmpr2, nameEmpr2, legalAdd2);
+            await EmployerDeployed.addEmployer(alice.address, taxIdEmpr3, nameEmpr3, legalAdd3);
+            await expect(EmployerDeployed.connect(jeff).getAllEmployers())
+                    .to.rejectedWith("Sender is not administrator.");
+        });
+    });
+    describe("Checking if employer exists", () => {
+        it("should return true", async () => {
+            const { EmployerDeployed, employer } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const result = await EmployerDeployed.checkIfEmployerExists(employerAddress);
+            expect(result).to.equal(true);
+        });
+        it("should return false", async () => {
+            const { EmployerDeployed, employer, billy } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            const result = await EmployerDeployed.checkIfEmployerExists(billy.address);
+            expect(result).to.equal(false);
+        });
+        it("should not return - Sender is not Administrator", async () => {
+            const { EmployerDeployed, employer, billy } = await loadFixture(setupFixture);
+            const employerAddress = employer.address;
+            const name = "CONTOSO COMPANY";
+            const taxId = 1111111111;
+            const legalAddress = "JACOB ST, 2023";
+            await EmployerDeployed.addEmployer(employerAddress, taxId, name, legalAddress);
+            await expect(EmployerDeployed.connect(billy).checkIfEmployerExists(employerAddress))
+                    .to.rejectedWith("Sender is not administrator.");
+        });
+    });
 });
