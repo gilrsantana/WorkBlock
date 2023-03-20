@@ -33,6 +33,7 @@ contract EmployeeContract {
                         address _employerAddress) 
                         public{
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(employer.checkIfEmployerExists(_employerAddress), "Employer not exists.");
         require(!checkIfEmployeeExists(_address), "Employee already exists.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
@@ -56,6 +57,7 @@ contract EmployeeContract {
                              address _employerAddress) 
                              public {
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(employer.checkIfEmployerExists(_employerAddress), "Employer not exists.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
