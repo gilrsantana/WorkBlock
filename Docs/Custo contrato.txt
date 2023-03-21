@@ -1,0 +1,99 @@
+== GOERLI TESTNET ETHEREUM ==
+
+CUSTO DEPLOY
+inicial
+    0.3582 goerli eth
+deploy util (custo 0.0009 ETH - 1.38 USD - 7.20 BRL)
+    0.3573 goerli eth
+deploy administrator (custo 0.0041 ETH - 6.28 USD - 32.79 BRL)
+    0.3532 goerli eth
+deploy employee (custo 0.0042 ETH - 6.44 USD - 33.59 BRL)
+    0.3490 goerli eth
+deploy pontoblock (custo 0.0048 ETH - 7.36 USD - 38.39 BRL)
+    0.3442 goerli eth
+deploy pontoblockreports (custo 0.0052 ETH - 7.97 USD - 41.59 BRL)
+    0.3390 goerli eth
+
+CUSTO TOTAL:
+ETH -   0.0192
+USD -  29.4300
+BRL - 153.5600
+
+
+CUSTO OPERAÇÕES
+inicial
+    0.3390 goerli eth
+addEmployee (custo 0.0002 ETH - 0.31 USD - 1.60 BRL)
+    0.3388 goerli eth
+startWork (custo 0.0001 ETH - 0.15 USD - 0.80 BRL)
+    0.3387 goerli eth
+breakStartTime (custo 0.0002 ETH - 0.31 USD - 1.60 BRL)
+    0.3385 goerli eth
+breakEndTime (custo 0.0001 ETH - 0.15 USD - 0.80 BRL)
+    0.3384 goerli eth
+endWork (custo 0.0002 ETH - 0.31 USD - 1.60 BRL)
+    0.3382 goerli eth
+
+
+PREVISÃO PARA 100 FUNCIONÁRIOS:
+custo diário por funcionário -> 4.80 BRL
+dias úteis no mês = 22
+custo funcionário mês -> 22 * 4.80 BRL = 105.60 BRL
+100 funcionários mês -> 105.60 BRL x 100 = 10560.00 BRL
+100 funcionários ano -> 10560.00 BRL x 12 = 126720.00 BRL
+
+
+== MUMBAI TESTNET POLYGON ==
+
+CUSTO DEPLOY
+inicial
+    0.8898 MATIC
+deploy util (custo 0.0009 MATIC - 0.0012 USD - 0.0060 BRL)
+    0.8889 MATIC
+deploy administrator (custo 0.0041 MATIC - 0.0052 USD - 0.0273 BRL)
+    0.8848 MATIC
+deploy employee (custo 0.0042 MATIC - 0.0054 USD - 0.0280 BRL)
+    0.8806 MATIC
+deploy pontoblock (custo 0.0048 MATIC - 0.0061 USD - 0.0320 BRL)
+    0.8758 MATIC
+deploy pontoblockreports (custo 0.0052 MATIC - 0.0066 USD - 0.0347 BRL)
+    0.8706 MATIC
+
+CUSTO TOTAL:
+MATIC - 0.0192
+USD -   0.0245
+BRL -   0.1280
+
+
+CUSTO OPERAÇÕES
+inicial
+    0.8706 MATIC
+addEmployee (custo 0.0003 MATIC - 0.000385 USD - 0.0020 BRL)
+    0.8703 MATIC
+startWork (custo 0.0002 MATIC - 0.000257 USD - 0.0013 BRL)
+    0.8701 MATIC
+breakStartTime (custo 0.0003 MATIC - .000385 USD - 0.0020 BRL)
+    0.8698 MATIC
+breakEndTime (custo 0.0005 MATIC - 0.000642 USD - 0.0033 BRL)
+    0.8693 MATIC
+endWork (custo 0.0006 MATIC - 0.000770 USD - 0.0040 BRL)
+    0.8687 MATIC
+
+
+PREVISÃO PARA 100 FUNCIONÁRIOS:
+custo diário por funcionário -> 0.0106 BRL
+dias úteis no mês = 22
+custo funcionário mês -> 22 * 0.0106 BRL = 0.2332 BRL
+100 funcionários mês -> 0.2332 BRL x 100 = 23.32 BRL
+100 funcionários ano -> 23.32 BRL x 12 = 279.84 BRL
+
+CUSTO RELATORIOS
+inicial
+    0.8685 MATIC
+getWorkTimeFromEmployeeBetweenTwoDates
+
+getWorkTimesForAllEmployeesAtDate
+
+getWorkTimesForAllEmployeesBetweenTwoDates
+
+getWorkTimesFromEmployeeAtDate
