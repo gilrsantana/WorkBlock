@@ -7,8 +7,9 @@ async function toDeployPontoBlockReportsContract() {
     const employee = process.env.EMPLOYEE_ADDRESS ?? '';
     const ponto = process.env.PONTOBLOCK_ADDRESS ?? '';
     const util = process.env.UTIL_ADDRESS ?? '';
+    const admin = process.env.ADMINISTRATOR_ADDRESS ?? '';
     const PontoBlockReports = await ethers.getContractFactory("PontoBlockReports");
-    const pontoBlockReports = await PontoBlockReports.deploy(employee, ponto, util);
+    const pontoBlockReports = await PontoBlockReports.deploy(employee, ponto, util, admin);
     await pontoBlockReports.deployed()
     const key = "PONTOBLOCKREPORTS_ADDRESS";
     handler(key, pontoBlockReports.address)
