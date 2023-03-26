@@ -50,8 +50,7 @@ contract AdministratorContract {
         _;
     }
 
-    function addAdministrator
-             (address _address, string memory _name, uint256 _taxId) 
+    function addAdministrator (address _address, string memory _name, uint256 _taxId) 
              public 
              onlyAdmin() 
              adminNotAddedYet(_address) {
@@ -63,8 +62,11 @@ contract AdministratorContract {
         emit AdminAdded(msg.sender, _address, _name, _taxId, block.timestamp);
     }
 
-    function updateAdministrator 
-             (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) 
+    function updateAdministrator (address _addressKey, 
+                                  address _address, 
+                                  uint256 _taxId, 
+                                  string memory _name, 
+                                  State _state) 
              public 
              onlyAdmin()
              adminAddedYet(_addressKey) {
@@ -103,7 +105,7 @@ contract AdministratorContract {
         emit AdminUpdated(msg.sender, _addressKey, _address, _name, _taxId, _state, block.timestamp);
     }
 
-    function getAdministrator(uint256 _id) 
+    function getAdministrator (uint256 _id) 
              public view 
              onlyAdmin()
              returns(Administrator memory) {
@@ -111,7 +113,7 @@ contract AdministratorContract {
         return administrators[_id];
     }
 
-    function getAllAdministrators() 
+    function getAllAdministrators () 
              public view 
              onlyAdmin()
              returns (Administrator[] memory) {
@@ -123,7 +125,9 @@ contract AdministratorContract {
         return result;
     }
 
-    function checkIfAdministratorExists(address _address) public view returns (bool){
+    function checkIfAdministratorExists (address _address) 
+             public view 
+             returns (bool){
         for (uint i = 0; i < addsAdministrators.length; i++)
             if(addsAdministrators[i] == _address)
                 return true;

@@ -51,8 +51,10 @@ contract EmployerContract {
         _;
     }
 
-    function addEmployer
-             (address _address, uint256 _taxId, string memory _name, string memory _legalAddress) 
+    function addEmployer (address _address, 
+                          uint256 _taxId, 
+                          string memory _name, 
+                          string memory _legalAddress) 
              public 
              onlyAdmin()
              employerNotAddedYet(_address) {
@@ -68,8 +70,11 @@ contract EmployerContract {
         emit EmployerAdded(msg.sender, _address, _name, _taxId, _legalAddress, block.timestamp);
     }
 
-    function updateEmployer 
-             (address _addressKey, address _address, uint256 _taxId, string memory _name, string memory _legalAddress) 
+    function updateEmployer (address _addressKey, 
+                             address _address, 
+                             uint256 _taxId, 
+                             string memory _name, 
+                             string memory _legalAddress) 
              public 
              onlyAdmin()
              employerAddedYet(_addressKey) {
@@ -109,8 +114,7 @@ contract EmployerContract {
         emit EmployerUpdated(msg.sender, _addressKey, _address, _name, _taxId, _legalAddress, block.timestamp);
     }
 
-    function getEmployerById
-             (uint256 _id) 
+    function getEmployerById (uint256 _id) 
              public view 
              onlyAdmin()
              returns (Employer memory) {
@@ -118,8 +122,7 @@ contract EmployerContract {
         return employers[_id];
     }
 
-    function getEmployerByAddress
-             (address _address) 
+    function getEmployerByAddress (address _address) 
              public view 
              onlyAdmin()
              returns (Employer memory) {
@@ -146,8 +149,7 @@ contract EmployerContract {
         return result;
     }
     
-    function checkIfEmployerExists
-             (address _address) 
+    function checkIfEmployerExists (address _address) 
              public view 
              onlyAdmin()
              returns (bool){
