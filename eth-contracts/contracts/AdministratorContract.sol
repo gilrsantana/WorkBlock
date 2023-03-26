@@ -3,6 +3,9 @@ pragma solidity >=0.8.17;
 
 contract AdministratorContract {
 
+    mapping (uint256 => Administrator) private administrators;
+    address[] private addsAdministrators;
+
     struct Administrator {
         uint256 idAdministrator;
         address administratorAddress;
@@ -12,35 +15,63 @@ contract AdministratorContract {
     }
 
     enum State { Inactive, Active }
-    mapping (uint256 => Administrator) private administrators;
-    address[] private addsAdministrators;
+
+    event AdminAdded(address indexed from_, 
+                     address indexed address_, 
+                     string name_, 
+                     uint256 taxId_, 
+                     uint256 timestamp_);
+
+    event AdminUpdated(address indexed from_, 
+                       address indexed oldAddress_, 
+                       address indexed newAddress_, 
+                       string name_, 
+                       uint256 taxId_, 
+                       State state_,
+                       uint256 timestamp_);
 
     constructor(uint256 _taxId, string memory _name) {
         addsAdministrators.push(msg.sender);
-        administrators[0] =
-                Administrator(0, msg.sender, _taxId, _name, State.Active);
+        administrators[0] = Administrator(0, msg.sender, _taxId, _name, State.Active);
     }
 
-    function addAdministrator(address _address, string memory _name, uint256 _taxId) public{
+    modifier onlyAdmin {
         require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        _;
+    }
+
+    modifier adminNotAddedYet(address _address) {
         require(!checkIfAdministratorExists(_address), "Administrator already exists.");
+        _;
+    }
+
+    modifier adminAddedYet(address _address) {
+        require(checkIfAdministratorExists(_address), "Administrator not exists.");
+        _;
+    }
+
+    function addAdministrator
+             (address _address, string memory _name, uint256 _taxId) 
+             public 
+             onlyAdmin() 
+             adminNotAddedYet(_address) {
 
         administrators[addsAdministrators.length] =
                 Administrator(addsAdministrators.length, _address, _taxId, _name, State.Active);
         addsAdministrators.push(_address);
+
+        emit AdminAdded(msg.sender, _address, _name, _taxId, block.timestamp);
     }
 
-    function getAdministrator(uint256 _id) public view returns(Administrator memory) {
-        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
-        return administrators[_id];
-    }
+    function updateAdministrator 
+             (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) 
+             public 
+             onlyAdmin()
+             adminAddedYet(_addressKey) {
 
-    function updateAdministrator (address _addressKey, address _address, uint256 _taxId, string memory _name, State _state) public {
-        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
         require(_address != address(0), "Address not given.");
         require(_taxId != 0, "TaxId not given.");
         require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked("")), "Name not given.");
-        require(checkIfAdministratorExists(_addressKey), "Administrator not exists.");
 
         bool difAdd;
         address add;
@@ -68,10 +99,23 @@ contract AdministratorContract {
                 }
             }
         }
+
+        emit AdminUpdated(msg.sender, _addressKey, _address, _name, _taxId, _state, block.timestamp);
     }
 
-    function getAllAdministrators() public view returns (Administrator[] memory) {
-        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+    function getAdministrator(uint256 _id) 
+             public view 
+             onlyAdmin()
+             returns(Administrator memory) {
+
+        return administrators[_id];
+    }
+
+    function getAllAdministrators() 
+             public view 
+             onlyAdmin()
+             returns (Administrator[] memory) {
+
         Administrator[] memory result = new Administrator[](addsAdministrators.length);
         for (uint i = 0; i < addsAdministrators.length; i++) {
             result[i] = administrators[i];
