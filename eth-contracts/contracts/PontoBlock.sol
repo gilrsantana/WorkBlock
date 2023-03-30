@@ -4,6 +4,7 @@ pragma solidity >=0.8.17;
 import "./EmployeeContract.sol";
 import "./UtilContract.sol";
 import "./AdministratorContract.sol";
+import "../enums/enumState.sol";
 
 contract PontoBlock {
     
@@ -54,7 +55,7 @@ contract PontoBlock {
     }
 
     modifier activeEmployee() {
-        require(employee.getEmployeeByAddress(msg.sender).stateOf == EmployeeContract.State.Active, "Employee is inactive.");
+        require(employee.getEmployeeByAddress(msg.sender).stateOf == State.Active, "Employee is inactive.");
         _;
     }
 

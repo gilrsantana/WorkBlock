@@ -4,6 +4,7 @@ pragma solidity >=0.8.17;
 import "./AdministratorContract.sol";
 import "./EmployerContract.sol";
 import "./UtilContract.sol";
+import "../enums/enumState.sol";
 
 contract EmployeeContract {
 
@@ -23,8 +24,6 @@ contract EmployeeContract {
         State stateOf;
         address employerAddress;
     }
-
-    enum State { Inactive, Active }
 
     event EmployeeAdded(address indexed from_, 
                         address indexed address_, 
