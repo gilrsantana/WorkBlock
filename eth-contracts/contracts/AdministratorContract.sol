@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17;
 
-import "../enums/enumState.sol";
-
 contract AdministratorContract  {
 
     mapping (uint256 => Administrator) private administrators;
@@ -16,7 +14,7 @@ contract AdministratorContract  {
         State stateOf;
     }
 
-    // enum State { Inactive, Active }
+    enum State { Inactive, Active }
 
     event AdminAdded(address indexed from_, 
                      address indexed address_, 
