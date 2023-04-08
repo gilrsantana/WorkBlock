@@ -36,7 +36,7 @@ contract AdministratorContract  {
     }
 
     modifier onlyAdmin {
-        require(checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
         _;
     }
 
@@ -129,9 +129,24 @@ contract AdministratorContract  {
              public view 
              returns (bool){
         for (uint i = 0; i < addsAdministrators.length; i++)
-            if(addsAdministrators[i] == _address)
+        
+            if(addsAdministrators[i] == _address && 
+                    checkIfAdministratorIsActive(_address) )
                 return true;
 
         return false;
+    }
+
+    function checkIfAdministratorIsActive (address _address)
+             public view
+             returns (bool)  {
+                   
+        for (uint i = 0; i < addsAdministrators.length; i++) {
+            if(addsAdministrators[i] == _address && 
+                administrators[i].stateOf == State.Active) 
+                    return true;      
+        }
+
+        return false;    
     }
 }

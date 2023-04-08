@@ -73,7 +73,7 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await expect(EmployeeDeployed.connect(john)
                     .addEmployee(aliceAddress, name, taxId, beggining, end, empr))
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not add an employee - Employer not exists", async () => {
             const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
@@ -204,7 +204,7 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeById(0))
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not return an employee by address - Sender is not administrator", async () => {
             const { EmployeeDeployed, alice, billy, employer} = await loadFixture(setupFixture);
@@ -216,7 +216,7 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeByAddress(aliceAddress))
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("Update employee", () => {
@@ -269,7 +269,7 @@ describe('EmployeeContract', () => {
             const newState = 0;
             await expect(EmployeeDeployed.connect(billy)
                 .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
-                .to.rejectedWith("Sender is not administrator.");
+                .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not return an updated employee - Address not given", async () => {
             const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
@@ -381,7 +381,7 @@ describe('EmployeeContract', () => {
             await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
             await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, beggining, end, empr);
             await expect(EmployeeDeployed.connect(jeff).getAllEmployees())
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("Checking if employee exists", () => {
@@ -419,7 +419,7 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).checkIfEmployeeExists(johnAddress))
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("Getting Employer Contract Address", () => {
@@ -434,7 +434,7 @@ describe('EmployeeContract', () => {
             const { EmployeeDeployed, 
                     billy } = await loadFixture(setupFixture);
             await expect(EmployeeDeployed.connect(billy).getEmployerContract())
-                        .to.rejectedWith("Sender is not administrator.");
+                        .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
 });

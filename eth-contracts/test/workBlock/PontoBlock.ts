@@ -261,7 +261,7 @@ describe('PontoBlock', () => {
             const contractDate = await UtilDeployed.getDate(contractTime);
             await expect(PontoBlockDeployed.connect(rachel)
                         .getEmployeeRecords(john.address, contractDate))
-                        .to.rejectedWith("Sender is not administrator.");
+                        .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("get a contract date", () => {
@@ -278,7 +278,7 @@ describe('PontoBlock', () => {
             const { PontoBlockDeployed, 
                     rachel } = await loadFixture(setupFixture);
             await expect(PontoBlockDeployed.connect(rachel).getCreationDateContract())
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("Get owner", () => {
@@ -292,7 +292,7 @@ describe('PontoBlock', () => {
             const { PontoBlockDeployed, 
                     rachel } = await loadFixture(setupFixture);
             await expect(PontoBlockDeployed.connect(rachel).getOwner())
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not get the owner - Different address", async () => {
             const { PontoBlockDeployed, 

@@ -56,7 +56,7 @@ describe('AdministratorContract', () => {
             const taxId = 2222222222;
             await expect(AdministratorDeployed.connect(john).
                 addAdministrator(aliceAddress, name, taxId))
-                .to.rejectedWith("Sender is not administrator.");
+                .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not add an administrator - administrator already exists", async () => {
             const { AdministratorDeployed, alice } = await loadFixture(setupFixture);
@@ -97,7 +97,7 @@ describe('AdministratorContract', () => {
             await AdministratorDeployed.addAdministrator(aliceAddress, name, taxId)
             //const admNull = 
             await expect(AdministratorDeployed.connect(john).getAdministrator(2))
-                    .to.rejectedWith("Sender is not administrator.");
+                    .to.rejectedWith("Sender must be administrator and be active.");
         });
     });
     describe("Update administrator", () => {
@@ -131,7 +131,7 @@ describe('AdministratorContract', () => {
             const newState = 0;
             await expect(AdministratorDeployed.connect(billy).
                 updateAdministrator(aliceAddress, newAddress ,newTaxId, newName, newState))
-                .to.rejectedWith("Sender is not administrator.");
+                .to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should not return an updated administrator - Address not given", async () => {
             const { AdministratorDeployed, alice } = await loadFixture(setupFixture);
@@ -200,7 +200,7 @@ describe('AdministratorContract', () => {
             await AdministratorDeployed.addAdministrator(billy.address, nameAdm1, taxIdAdm1);
             await AdministratorDeployed.addAdministrator(john.address, nameAdm2, taxIdAdm2);
             await expect(AdministratorDeployed.connect(alice).
-                getAllAdministrators()).to.rejectedWith("Sender is not administrator.");
+                getAllAdministrators()).to.rejectedWith("Sender must be administrator and be active.");
         });
         it("should return four administrators", async () => {
             const { AdministratorDeployed, billy, john, alice } = await loadFixture(setupFixture);
@@ -226,6 +226,20 @@ describe('AdministratorContract', () => {
         it("should return false", async () => {
             const { AdministratorDeployed, billy } = await loadFixture(setupFixture);
             const result = await AdministratorDeployed.checkIfAdministratorExists(billy.address);
+            expect(result).to.equal(false);
+        });
+    });
+    describe("Checking if administrator is active", () => {
+        it("should return true", async () => {
+            const { AdministratorDeployed, owner } = await loadFixture(setupFixture);
+            const result = await AdministratorDeployed.checkIfAdministratorIsActive(owner.address);
+            expect(result).to.equal(true);
+        });
+        it("should return false", async () => {
+            const { AdministratorDeployed, billy } = await loadFixture(setupFixture);
+            await AdministratorDeployed.addAdministrator(billy.address, "BILLY", 123456789);
+            await AdministratorDeployed.updateAdministrator(billy.address, billy.address, 123456789, "BILLY", 0);
+            const result = await AdministratorDeployed.checkIfAdministratorIsActive(billy.address);
             expect(result).to.equal(false);
         });
     });

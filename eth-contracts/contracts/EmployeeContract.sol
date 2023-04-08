@@ -51,7 +51,7 @@ contract EmployeeContract {
     }
 
     modifier onlyAdmin() {
-        require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
         _;
     }
 
