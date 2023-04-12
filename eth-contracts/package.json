@@ -10,8 +10,10 @@
     "hardhat": "^2.12.7"
   },
   "dependencies": {
+    "@types/mysql": "^2.15.21",
     "dotenv": "^16.0.3",
     "hardhat-watcher": "^2.5.0",
+    "mysql": "^2.18.1",
     "solidity-coverage": "^0.8.2"
   }
 }
