@@ -118,3 +118,6 @@ npx hardhat verify --network mumbai <contract address> <optional constructor par
 ### Generating Class Diagram
 
 - At CLI: `sol2uml class ./contracts`
+
+### Run Migrations
+-  npx ts-node-dev ./node_modules/typeorm/cli.js "-d" "./src/database/data-source.ts" "migration:run" 
