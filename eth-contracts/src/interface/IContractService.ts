@@ -10,5 +10,5 @@ export interface IContractService {
     getContractAbi(_id: string): Promise<string>;
     getContractBytecode(_id: string): Promise<string>;
     insertContract(_model: IContractModel): Promise<boolean>;
-    updateContract(_model: contractModel): Promise<boolean>; 
+    updateContract(_model: IContractModel): Promise<boolean>; 
 }

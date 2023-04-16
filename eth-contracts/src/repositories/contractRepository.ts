@@ -5,10 +5,13 @@ import { contractModel } from "../models/contractModel";
 import { AppDataSource } from "../database/data-source";
 
 export class contractRepository implements IContractRepository {
-    async theRepository(): Promise<Repository<contractModel>> {
+
+    private async theRepository(): Promise<Repository<contractModel>> {
         if (AppDataSource.isInitialized) {
+            console.log("função theRepository, data source já inicializado")
             return AppDataSource.getRepository(contractModel);
         } else {
+            console.log("função theRepository, data source ainda não inicializado")
             return (await AppDataSource.initialize()).getRepository(contractModel);
         }
     }

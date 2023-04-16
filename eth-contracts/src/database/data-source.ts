@@ -14,6 +14,6 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: true,
     entities: [contractModel],
-    //migrations: [CreateContractsTable1681567569268],
+    migrations: [CreateContractsTable1681567569268],
     subscribers: []
 })

@@ -1,14 +1,14 @@
 import { IContractService } from "../interface/IContractService";
 import { IContractRepository } from "../interface/IContractRepository";
 import { IContractModel } from "../interface/IContractModel";
-import { contractModel } from "../models/contractModel";
+import { contractRepository } from "../repositories/contractRepository";
 
 export class contractService implements IContractService {
     
     repository: IContractRepository;
 
-    constructor(_repository: IContractRepository) {
-        this.repository = _repository;
+    constructor(_model: IContractModel) {
+        this.repository = new contractRepository();
     }
     async getContractById(_id: string): Promise<IContractModel | null> {
         const result = await this.repository.getContractById(_id);
@@ -27,14 +27,14 @@ export class contractService implements IContractService {
     getContractBytecode(_id: string): Promise<string> {
         throw new Error("Method not implemented.");
     }
-    async insertContract(_model: contractModel): Promise<boolean> {
+    async insertContract(_model: IContractModel): Promise<boolean> {
         const result = await this.repository.addContract(_model);
         if (result.identifiers.length == 1)
             return true;
         else
             return false;
     }
-    async updateContract(_model: contractModel): Promise<boolean> {
+    async updateContract(_model: IContractModel): Promise<boolean> {
         const result = await this.repository.updateContract(_model);
         if (result.affected)
             return true;
