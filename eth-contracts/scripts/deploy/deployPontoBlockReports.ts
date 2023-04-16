@@ -1,7 +1,4 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 import { ethers } from "hardhat";
-import { handler } from "../util/handlerEnv";
 import { AppDataSource } from "../../src/database/data-source";
 import { IContractService } from "../../src/interface/IContractService";
 import { contractModel } from "../../src/models/contractModel";
