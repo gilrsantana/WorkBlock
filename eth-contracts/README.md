@@ -119,5 +119,9 @@ npx hardhat verify --network mumbai <contract address> <optional constructor par
 
 - At CLI: `sol2uml class ./contracts`
 
-### Run Migrations
+### Create Migration
+
+- npx typeorm migration:create src/database/migrations/CreateContractsTable 
+
+### Run Migration
 -  npx ts-node-dev ./node_modules/typeorm/cli.js "-d" "./src/database/data-source.ts" "migration:run" 
