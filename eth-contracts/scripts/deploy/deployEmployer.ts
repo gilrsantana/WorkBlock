@@ -1,12 +1,12 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { ethers } from "hardhat";
-import { handler } from "../util/handlerEnv"
 import { IContractService } from "../../src/interface/IContractService";
 import { contractService } from "../../src/service/contractService";
 import { contractModel } from "../../src/models/contractModel";
 import { IContractModel } from "../../src/interface/IContractModel";
 import { utilTools } from "../../src/util/utilTools";
+import { AppDataSource } from "../../src/database/data-source";
 
 async function toDeployEmployerContract() {
     const service: IContractService = new contractService(new contractModel());
@@ -24,5 +24,6 @@ async function toDeployEmployerContract() {
 toDeployEmployerContract().catch((error) => {
     console.error('Error at toDeployEmployerContract:' + error);
     process.exitCode = 1;
+    AppDataSource.destroy();
 });
 

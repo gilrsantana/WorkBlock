@@ -8,10 +8,8 @@ export class contractRepository implements IContractRepository {
 
     private async theRepository(): Promise<Repository<contractModel>> {
         if (AppDataSource.isInitialized) {
-            console.log("função theRepository, data source já inicializado")
             return AppDataSource.getRepository(contractModel);
         } else {
-            console.log("função theRepository, data source ainda não inicializado")
             return (await AppDataSource.initialize()).getRepository(contractModel);
         }
     }

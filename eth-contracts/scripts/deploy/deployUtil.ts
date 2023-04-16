@@ -3,6 +3,7 @@ import { contractService } from "../../src/service/contractService";
 import { IContractService } from "../../src/interface/IContractService";
 import { utilTools } from "../../src/util/utilTools";
 import { IContractModel } from "../../src/interface/IContractModel";
+import { AppDataSource } from "../../src/database/data-source";
 
 async function toDeployUtilContract() {
     const Util = await ethers.getContractFactory("UtilContract");
@@ -18,5 +19,6 @@ async function toDeployUtilContract() {
 toDeployUtilContract().catch((error) => {
     console.error('Error at toDeployUtilContract:' + error);
     process.exitCode = 1;
+    AppDataSource.destroy();
 });
 

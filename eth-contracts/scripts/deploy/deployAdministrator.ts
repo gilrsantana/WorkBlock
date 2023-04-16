@@ -5,6 +5,7 @@ import { IContractService } from "../../src/interface/IContractService";
 import { contractService } from "../../src/service/contractService";
 import { utilTools } from "../../src/util/utilTools";
 import { IContractModel } from "../../src/interface/IContractModel";
+import { AppDataSource } from "../../src/database/data-source";
 
 async function toDeployAdministratorContract() {
     const taxID = process.env.ADMINISTRATOR_TAXID ?? 0;
@@ -21,6 +22,7 @@ async function toDeployAdministratorContract() {
 toDeployAdministratorContract().catch((error) => {
     console.error('Error at toDeployAdministratorContract:' + error);
     process.exitCode = 1;
+    AppDataSource.destroy();
 });
 
 
