@@ -1,4 +1,7 @@
 .vscode
 .idea
 bin
+.vs/
 WorkBlockApresentacao/appsettings.json
+/.vs/WorkBlock/v17/.wsuo
+/.vs/slnx.sqlite
