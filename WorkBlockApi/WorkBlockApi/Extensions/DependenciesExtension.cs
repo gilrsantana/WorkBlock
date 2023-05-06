@@ -15,9 +15,11 @@ public static class DependenciesExtension
             Provider = builder.Configuration.GetValue<string>("Provider") ?? ""
         };
         services.AddSingleton(apiConfiguration);
+        services.AddMemoryCache();
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        
     }
 
     public static void AddContext(this IServiceCollection services, WebApplicationBuilder builder)

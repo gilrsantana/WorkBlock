@@ -20,5 +20,7 @@ public class ContractModelRepository : IContractModelRepository
                 .Contracts
                 .FirstOrDefaultAsync(
                     x => x.Name == contractName);
-        
+
+    public async Task<List<ContractModel>> GetAllContractsAsync()
+        => await _context.Contracts.ToListAsync();
 }
