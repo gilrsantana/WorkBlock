@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\WorkBlockBackend",
+    "\\WorkBlockBackend\\WorkBlockBackend"
   ],
-  "SelectedNode": "\\PontoBlockApresentacao.sln",
+  "SelectedNode": "\\WorkBlockBackend\\WorkBlockBackend.sln",
   "PreviewInSolutionExplorer": false
 }
