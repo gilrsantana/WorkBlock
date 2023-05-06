@@ -37,22 +37,17 @@ public class UtilContractController : ControllerBase
             var utilContract = UtilContract;
 
             if (utilContract == null)
-            {
                 return NotFound();
-            }
 
             var contract = _web3.Eth.GetContract(utilContract.Abi, utilContract.AddressContract);
-
             var getDate = contract.GetFunction("getDate");
 
-            if (timestamp == 0) 
-            { 
+            if (timestamp == 0)
                 timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-            }
 
-            var mydate = await getDate.CallAsync<uint>(timestamp);
+            var returnDate = await getDate.CallAsync<uint>(timestamp);
 
-            return Ok(mydate);
+            return Ok(returnDate);
         }
         catch (Exception )
         {
