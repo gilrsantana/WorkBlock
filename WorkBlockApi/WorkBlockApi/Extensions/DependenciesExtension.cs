@@ -12,7 +12,8 @@ public static class DependenciesExtension
         var apiConfiguration = new ApiConfiguration
         {
             PrivateKey = builder.Configuration.GetValue<string>("PrivateKey") ?? "",
-            Provider = builder.Configuration.GetValue<string>("Provider") ?? ""
+            Provider = builder.Configuration.GetValue<string>("Provider") ?? "",
+            AdminAddress = builder.Configuration.GetValue<string>("AdminAddress") ?? ""
         };
         services.AddSingleton(apiConfiguration);
         services.AddMemoryCache();

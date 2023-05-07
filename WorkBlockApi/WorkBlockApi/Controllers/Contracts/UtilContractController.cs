@@ -5,7 +5,7 @@ using Nethereum.Web3.Accounts;
 using WorkBlockApi.Interfaces;
 using WorkBlockApi.Model;
 
-namespace WorkBlockApi.Controllers;
+namespace WorkBlockApi.Controllers.Contracts;
 
 [ApiController]
 [Route("v1/contracts/utilcontract")]
@@ -19,27 +19,25 @@ public class UtilContractController : ControllerBase
     private ContractModel? UtilContract { get; }
 
     public UtilContractController(
-        IContractModelRepository contractModelRepository, 
-        ApiConfiguration configuration, 
+        IContractModelRepository contractModelRepository,
+        ApiConfiguration configuration,
         IMemoryCache memoryCache)
     {
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        UtilContract = (( GetContractsInMemory())!).Result.FirstOrDefault(x => x.Name == ContractName);
+        UtilContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
     }
 
     [HttpGet("getdate")]
-    public async Task<IActionResult> GetDateAsync( int timestamp)
+    public async Task<IActionResult> GetDateAsync(int timestamp)
     {
         try
         {
-            var utilContract = UtilContract;
-
-            if (utilContract == null)
+            if (UtilContract == null)
                 return NotFound();
 
-            var contract = _web3.Eth.GetContract(utilContract.Abi, utilContract.AddressContract);
+            var contract = _web3.Eth.GetContract(UtilContract.Abi, UtilContract.AddressContract);
             var getDate = contract.GetFunction("getDate");
 
             if (timestamp == 0)
@@ -49,7 +47,7 @@ public class UtilContractController : ControllerBase
 
             return Ok(returnDate);
         }
-        catch (Exception )
+        catch (Exception)
         {
             return BadRequest("Internal Server error");
         }
@@ -63,22 +61,16 @@ public class UtilContractController : ControllerBase
             if (hour < 0)
                 return BadRequest("Hour must be equals or grater than zero");
 
-            var utilContract = UtilContract;
-
-            if (utilContract == null)
-            {
+            if (UtilContract == null)
                 return NotFound();
-            }
 
-            var contract = _web3.Eth.GetContract(utilContract.Abi, utilContract.AddressContract);
-
+            var contract = _web3.Eth.GetContract(UtilContract.Abi, UtilContract.AddressContract);
             var getDate = contract.GetFunction("validateTime");
-        
             var isValid = await getDate.CallAsync<bool>(hour);
 
             return Ok(isValid);
         }
-        catch (Exception )
+        catch (Exception)
         {
             return BadRequest("Internal Server error");
         }
