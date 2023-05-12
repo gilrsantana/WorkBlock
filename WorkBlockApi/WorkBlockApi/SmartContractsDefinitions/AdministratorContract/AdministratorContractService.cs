@@ -149,7 +149,7 @@ public partial class AdministratorContractService
 
     public Task<GetAllAdministratorsOutputDTO> GetAllAdministratorsQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryDeserializingToObjectAsync<GetAllAdministratorsFunction, GetAllAdministratorsOutputDTO>(null, blockParameter);
+        return ContractHandler.QueryDeserializingToObjectAsync<GetAllAdministratorsFunction, GetAllAdministratorsOutputDTO>(null!, blockParameter);
     }
 
     public Task<string> UpdateAdministratorRequestAsync(UpdateAdministratorFunction updateAdministratorFunction)

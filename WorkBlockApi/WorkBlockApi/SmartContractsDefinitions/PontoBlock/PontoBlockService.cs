@@ -67,7 +67,7 @@ public partial class PontoBlockService
 
     public Task<TransactionReceipt> BreakEndTimeRequestAndWaitForReceiptAsync(CancellationTokenSource? cancellationToken = null)
     {
-        return ContractHandler.SendRequestAndWaitForReceiptAsync<BreakEndTimeFunction>(null, cancellationToken);
+        return ContractHandler.SendRequestAndWaitForReceiptAsync<BreakEndTimeFunction>(null!, cancellationToken);
     }
 
     public Task<string> BreakStartTimeRequestAsync(BreakStartTimeFunction breakStartTimeFunction)
@@ -90,7 +90,7 @@ public partial class PontoBlockService
 
     public Task<TransactionReceipt> BreakStartTimeRequestAndWaitForReceiptAsync(CancellationTokenSource? cancellationToken = null)
     {
-        return ContractHandler.SendRequestAndWaitForReceiptAsync<BreakStartTimeFunction>(null, cancellationToken);
+        return ContractHandler.SendRequestAndWaitForReceiptAsync<BreakStartTimeFunction>(null!, cancellationToken);
     }
 
     public Task<string> ChangeOwnerRequestAsync(ChangeOwnerFunction changeOwnerFunction)
@@ -145,7 +145,7 @@ public partial class PontoBlockService
 
     public Task<TransactionReceipt> EndWorkRequestAndWaitForReceiptAsync(CancellationTokenSource? cancellationToken = null)
     {
-        return ContractHandler.SendRequestAndWaitForReceiptAsync<EndWorkFunction>(null, cancellationToken);
+        return ContractHandler.SendRequestAndWaitForReceiptAsync<EndWorkFunction>(null!, cancellationToken);
     }
 
     public Task<BigInteger> 
@@ -159,7 +159,7 @@ public partial class PontoBlockService
         
     public Task<BigInteger> GetCreationDateContractQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryAsync<GetCreationDateContractFunction, BigInteger>(null, blockParameter);
+        return ContractHandler.QueryAsync<GetCreationDateContractFunction, BigInteger>(null!, blockParameter);
     }
 
     public Task<GetEmployeeRecordsOutputDTO> 
@@ -194,7 +194,7 @@ public partial class PontoBlockService
         
     public Task<BigInteger> GetMomentQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryAsync<GetMomentFunction, BigInteger>(null, blockParameter);
+        return ContractHandler.QueryAsync<GetMomentFunction, BigInteger>(null!, blockParameter);
     }
 
     public Task<string> 
@@ -208,7 +208,7 @@ public partial class PontoBlockService
         
     public Task<string> GetOwnerQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryAsync<GetOwnerFunction, string>(null, blockParameter);
+        return ContractHandler.QueryAsync<GetOwnerFunction, string>(null!, blockParameter);
     }
 
     public Task<BigInteger> 
@@ -222,7 +222,7 @@ public partial class PontoBlockService
         
     public Task<BigInteger> GetTimeZoneQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryAsync<GetTimeZoneFunction, BigInteger>(null, blockParameter);
+        return ContractHandler.QueryAsync<GetTimeZoneFunction, BigInteger>(null!, blockParameter);
     }
 
     public Task<string> StartWorkRequestAsync(StartWorkFunction startWorkFunction)
@@ -245,6 +245,6 @@ public partial class PontoBlockService
 
     public Task<TransactionReceipt> StartWorkRequestAndWaitForReceiptAsync(CancellationTokenSource? cancellationToken = null)
     {
-        return ContractHandler.SendRequestAndWaitForReceiptAsync<StartWorkFunction>(null, cancellationToken);
+        return ContractHandler.SendRequestAndWaitForReceiptAsync<StartWorkFunction>(null!, cancellationToken);
     }
 }

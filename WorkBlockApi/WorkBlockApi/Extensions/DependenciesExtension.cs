@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
 using WorkBlockApi.Data;
 using WorkBlockApi.Interfaces;
 using WorkBlockApi.Repositories;
@@ -17,7 +18,17 @@ public static class DependenciesExtension
         };
         services.AddSingleton(apiConfiguration);
         services.AddMemoryCache();
-        services.AddControllers();
+        services
+            .AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            })
+            .AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+            });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         

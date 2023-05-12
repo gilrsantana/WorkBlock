@@ -121,7 +121,7 @@ public partial class EmployerContractService
 
     public Task<GetAllEmployersOutputDTO> GetAllEmployersQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryDeserializingToObjectAsync<GetAllEmployersFunction, GetAllEmployersOutputDTO>(null, blockParameter);
+        return ContractHandler.QueryDeserializingToObjectAsync<GetAllEmployersFunction, GetAllEmployersOutputDTO>(null!, blockParameter);
     }
 
     public Task<GetEmployerByAddressOutputDTO> 

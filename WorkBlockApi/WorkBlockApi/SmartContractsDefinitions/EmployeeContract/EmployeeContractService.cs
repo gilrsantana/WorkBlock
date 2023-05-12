@@ -117,7 +117,7 @@ public partial class EmployeeContractService
 
     public Task<GetAllEmployeesOutputDTO> GetAllEmployeesQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryDeserializingToObjectAsync<GetAllEmployeesFunction, GetAllEmployeesOutputDTO>(null, blockParameter);
+        return ContractHandler.QueryDeserializingToObjectAsync<GetAllEmployeesFunction, GetAllEmployeesOutputDTO>(null!, blockParameter);
     }
 
     public Task<GetEmployeeByAddressOutputDTO> 
@@ -164,7 +164,7 @@ public partial class EmployeeContractService
         
     public Task<string> GetEmployerContractQueryAsync(BlockParameter? blockParameter = null)
     {
-        return ContractHandler.QueryAsync<GetEmployerContractFunction, string>(null, blockParameter);
+        return ContractHandler.QueryAsync<GetEmployerContractFunction, string>(null!, blockParameter);
     }
 
     public Task<string> UpdateEmployeeRequestAsync(UpdateEmployeeFunction updateEmployeeFunction)

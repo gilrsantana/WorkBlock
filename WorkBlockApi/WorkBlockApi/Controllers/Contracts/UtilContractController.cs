@@ -4,6 +4,8 @@ using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using WorkBlockApi.Interfaces;
 using WorkBlockApi.Model;
+using WorkBlockApi.SmartContractsDefinitions.UtilContract;
+using WorkBlockApi.ViewModels;
 
 namespace WorkBlockApi.Controllers.Contracts;
 
@@ -30,26 +32,23 @@ public class UtilContractController : ControllerBase
     }
 
     [HttpGet("getdate")]
-    public async Task<IActionResult> GetDateAsync(int timestamp)
+    public async Task<IActionResult> GetDateAsync(ulong timestamp)
     {
         try
         {
-            if (UtilContract == null)
-                return NotFound();
+            if (UtilContract == null) 
+                return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
+            var service = new UtilContractService(_web3, UtilContract.AddressContract);
 
-            var contract = _web3.Eth.GetContract(UtilContract.Abi, UtilContract.AddressContract);
-            var getDate = contract.GetFunction("getDate");
+            if (timestamp == 0) 
+                timestamp = (ulong)DateTimeOffset.Now.ToUnixTimeSeconds();
+            var returnDate = await service.GetDateQueryAsync(timestamp);
 
-            if (timestamp == 0)
-                timestamp = (int)DateTimeOffset.Now.ToUnixTimeSeconds();
-
-            var returnDate = await getDate.CallAsync<uint>(timestamp);
-
-            return Ok(returnDate);
+            return Ok(new ResultViewModel<ulong>((ulong)returnDate));
         }
         catch (Exception)
         {
-            return BadRequest("Internal Server error");
+            return StatusCode(500, new ResultViewModel<ulong>("UCX01 - Internal Server Error"));
         }
     }
 
@@ -58,21 +57,18 @@ public class UtilContractController : ControllerBase
     {
         try
         {
-            if (hour < 0)
-                return BadRequest("Hour must be equals or grater than zero");
-
             if (UtilContract == null)
-                return NotFound();
-
-            var contract = _web3.Eth.GetContract(UtilContract.Abi, UtilContract.AddressContract);
-            var getDate = contract.GetFunction("validateTime");
-            var isValid = await getDate.CallAsync<bool>(hour);
-
-            return Ok(isValid);
+                return NotFound(new ResultViewModel<bool>("Contract Not Found"));
+            if (hour < 0)
+                return NotFound(new ResultViewModel<bool>("Invalid Format. Hour must be equal to or greater than zero"));
+            var service = new UtilContractService(_web3, UtilContract.AddressContract);
+            var isValid = await service.ValidateTimeQueryAsync(hour);
+            
+            return Ok(new ResultViewModel<bool>(isValid));
         }
         catch (Exception)
         {
-            return BadRequest("Internal Server error");
+            return StatusCode(500, new ResultViewModel<bool>("UCX02 - Internal Server Error"));
         }
     }
 
