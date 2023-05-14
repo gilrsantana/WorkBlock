@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WorkBlockApi.Data;
 using WorkBlockApi.Interfaces;
-using WorkBlockApi.Model;
+using WorkBlockApi.Models;
 
 namespace WorkBlockApi.Repositories;
 

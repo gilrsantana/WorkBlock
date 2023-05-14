@@ -1,10 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Nethereum.ABI.FunctionEncoding;
+using Nethereum.Contracts;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using WorkBlockApi.Data;
+using WorkBlockApi.Extensions;
 using WorkBlockApi.Interfaces;
-using WorkBlockApi.Model;
+using WorkBlockApi.Models;
+using WorkBlockApi.Models.Administrator.Events;
 using WorkBlockApi.SmartContractsDefinitions.AdministratorContract;
+using WorkBlockApi.SmartContractsDefinitions.AdministratorContract.ContractDefinition;
+using WorkBlockApi.ViewModels;
+using WorkBlockApi.ViewModels.Events.Administrator;
 
 namespace WorkBlockApi.Controllers.Contracts;
 
@@ -33,14 +42,65 @@ public class AdministratorContractController : ControllerBase
     }
 
     [HttpPost("AddAdministrator")]
-    public async Task<IActionResult> AddAdministrator(string name, ulong taxId, string address)
+    public async Task<IActionResult> AddAdministrator([FromBody]AdministratorViewModel model, [FromServices] WorkBlockContext context)
     {
-        if (AdministratorContract is null) return BadRequest("Internal Server error.");
-        var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-        var result = await service.AddAdministratorRequestAsync(address, name, taxId);
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            
+            var result = await service.AddAdministratorRequestAsync(model.Address, model.Name.ToUpper(), model.TaxId);
+            //var adminAddedEventHandler =
+            //    _web3.Eth.GetEvent<AdminAddedEventDTOBase>(AdministratorContract.AddressContract);
+            //var filter = adminAddedEventHandler.CreateFilterInput(null, new[] { model.Address });
 
-        return Ok(result);
+            //var logs = await adminAddedEventHandler.GetAllChangesAsync(filter);
+
+            //if (logs.Count <= 0)
+            //    return NotFound(new ResultViewModel<AdminAddedEventViewModel>("Not found event from model address"));
+
+            //var resultAdd = new AdminAddedEventModel()
+            //{
+            //    AddressFrom = logs[0].Event.From,
+            //    AdministratorAddress = logs[0].Event.Address,
+            //    AdministratorName = logs[0].Event.Name,
+            //    AdministratorTaxId = ((ulong)logs[0].Event.Taxid).ToString(),
+            //    Time = DateTimeOffset.FromUnixTimeSeconds((long)logs[0].Event.Timestamp).DateTime,
+            //    HashTransaction = result
+            //};
+
+            var resultAdd = new AdminAddedEventModel
+            {
+                AddressFrom = _configuration.AdminAddress,
+                AdministratorAddress = $"0x{model.Address}",
+                AdministratorName = model.Name.ToUpper(),
+                AdministratorTaxId = model.TaxId.ToString(),
+                Time = DateTime.UtcNow,
+                HashTransaction = result
+            };
+
+            await context.AdminAddedEvents.AddAsync(resultAdd);
+            await context.SaveChangesAsync();
+
+            return StatusCode(201, new ResultViewModel<AdminAddedEventModel>(resultAdd));
+
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminAddedEventDTOBase>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminAddedEventViewModel>(e.Message));
+        }
     }
+
+
+
+
 
     // [HttpPost("UpdateAdministrator")]
     // public async Task<IActionResult> UpdateAdministrator(string addressKey, string addressToUpdate, uint256 taxId, string name, int state, string fromAddress)
@@ -65,43 +125,43 @@ public class AdministratorContractController : ControllerBase
     //     return Ok(transactionHash);
     // }
 
-    [HttpGet("GetAdministrator")]
-    public async Task<IActionResult> GetAdministrator(int id)
-    {
-        try
-        {
-            if (id < 0) return NotFound("Id must be equals or grater than zero.");
+    //[HttpGet("GetAdministrator")]
+    //public async Task<IActionResult> GetAdministrator(int id)
+    //{
+    //    try
+    //    {
+    //        if (id < 0) return NotFound("Id must be equals or grater than zero.");
 
-            if (AdministratorContract is null) return BadRequest("Internal Server error.");
-            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-            var admin = await service.GetAdministratorQueryAsync(id);
-            ulong adminId = (ulong)admin.ReturnValue1.IdAdministrator;
-            ulong adminTaxId = (ulong)admin.ReturnValue1.TaxId;
-            return Ok(new
-            {
-                adminId,
-                admin.ReturnValue1.Name,
-                adminTaxId,
-                admin.ReturnValue1.AdministratorAddress,
-                admin.ReturnValue1.StateOf
-            });
-        }
-        catch (Exception ex)
-        {
-            return BadRequest($"Internal Server error. {ex.Message.ToString()}");
-        }
-    }
+    //        if (AdministratorContract is null) return BadRequest("Internal Server error.");
+    //        var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+    //        var admin = await service.GetAdministratorQueryAsync(id);
+    //        ulong adminId = (ulong)admin.ReturnValue1.IdAdministrator;
+    //        ulong adminTaxId = (ulong)admin.ReturnValue1.TaxId;
+    //        return Ok(new
+    //        {
+    //            adminId,
+    //            admin.ReturnValue1.Name,
+    //            adminTaxId,
+    //            admin.ReturnValue1.AdministratorAddress,
+    //            admin.ReturnValue1.StateOf
+    //        });
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return BadRequest($"Internal Server error. {ex.Message.ToString()}");
+    //    }
+    //}
 
-    [HttpGet("GetAllAdministrators")]
-    public async Task<IActionResult> GetAllAdministrators()
-    {
-        if (AdministratorContract is null) return BadRequest("Internal Server error.");
-        var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-        var administrators = await service.GetAllAdministratorsQueryAsync();
+    //[HttpGet("GetAllAdministrators")]
+    //public async Task<IActionResult> GetAllAdministrators()
+    //{
+    //    if (AdministratorContract is null) return BadRequest("Internal Server error.");
+    //    var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+    //    var administrators = await service.GetAllAdministratorsQueryAsync();
 
 
-        return Ok(administrators);
-    }
+    //    return Ok(administrators);
+    //}
 
     // [HttpGet("CheckIfAdministratorExists")]
     // public async Task<IActionResult> CheckIfAdministratorExists(string address, string fromAddress)

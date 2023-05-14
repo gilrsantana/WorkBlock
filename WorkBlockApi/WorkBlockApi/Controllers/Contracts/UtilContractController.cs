@@ -3,7 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using WorkBlockApi.Interfaces;
-using WorkBlockApi.Model;
+using WorkBlockApi.Models;
 using WorkBlockApi.SmartContractsDefinitions.UtilContract;
 using WorkBlockApi.ViewModels;
 

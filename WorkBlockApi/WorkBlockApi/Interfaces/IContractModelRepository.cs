@@ -1,4 +1,4 @@
-﻿using WorkBlockApi.Model;
+﻿using WorkBlockApi.Models;
 
 namespace WorkBlockApi.Interfaces;
 

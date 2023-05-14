@@ -1,6 +1,6 @@
 ﻿using WorkBlockApi.Interfaces;
 
-namespace WorkBlockApi.Model;
+namespace WorkBlockApi.Models;
 
 public class ContractModel : IContractModel
 {
