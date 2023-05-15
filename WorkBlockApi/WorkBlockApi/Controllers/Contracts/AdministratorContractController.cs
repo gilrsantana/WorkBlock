@@ -41,7 +41,7 @@ public class AdministratorContractController : ControllerBase
         AdministratorContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
     }
 
-    [HttpPost("AddAdministrator")]
+    [HttpPost("Add")]
     public async Task<IActionResult> AddAdministrator([FromBody]AdministratorViewModel model, [FromServices] WorkBlockContext context)
     {
         try
@@ -53,6 +53,8 @@ public class AdministratorContractController : ControllerBase
             var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
             
             var result = await service.AddAdministratorRequestAsync(model.Address, model.Name.ToUpper(), model.TaxId);
+
+            #region Event
             //var adminAddedEventHandler =
             //    _web3.Eth.GetEvent<AdminAddedEventDTOBase>(AdministratorContract.AddressContract);
             //var filter = adminAddedEventHandler.CreateFilterInput(null, new[] { model.Address });
@@ -71,6 +73,8 @@ public class AdministratorContractController : ControllerBase
             //    Time = DateTimeOffset.FromUnixTimeSeconds((long)logs[0].Event.Timestamp).DateTime,
             //    HashTransaction = result
             //};
+
+            #endregion
 
             var resultAdd = new AdminAddedEventModel
             {
@@ -94,36 +98,56 @@ public class AdministratorContractController : ControllerBase
         }
         catch (Exception e)
         {
-            return StatusCode(500, new ResultViewModel<AdminAddedEventViewModel>(e.Message));
+            return StatusCode(500, new ResultViewModel<AdminAddedEventModel>(e.Message));
         }
     }
 
+    [HttpPut("Update/{key:string}")]
+    public async Task<IActionResult> UpdateAdministrator([FromRoute] string key, 
+                                                         [FromBody] AdministratorViewModel model, 
+                                                         [FromServices] WorkBlockContext context)
+    {
+        try
+        {
+            if(AdministratorContract is null)
+                return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
+            
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
+            
+            if (string.IsNullOrEmpty(key))
+                return BadRequest(new ResultViewModel<string>("Key is a mandatory parameter"));
 
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
 
+            var result = await service.UpdateAdministratorRequestAsync(key, model.Address, model.TaxId, model.Name.ToUpper(), model.State);
 
+            var resultUpdate = new AdminUpdatedEventModel
+            {
+                AddressFrom = _configuration.AdminAddress,
+                OldAddress = $"0x{key}",
+                NewAddress = $"0x{model.Address}",
+                AdministratorName = model.Name.ToUpper(),
+                AdministratorTaxId = model.TaxId.ToString(),
+                State = model.State,
+                Time = DateTime.UtcNow,
+                HashTransaction = result
+            };
 
-    // [HttpPost("UpdateAdministrator")]
-    // public async Task<IActionResult> UpdateAdministrator(string addressKey, string addressToUpdate, uint256 taxId, string name, int state, string fromAddress)
-    // {
-    //     var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //     var function = contract.GetFunction("updateAdministrator");
+            await context.AdminUpdatedEvents.AddAsync(resultUpdate);
+            await context.SaveChangesAsync();
 
-    //     var transactionInput = function.CreateTransactionInput(from: fromAddress,
-    //         gas: new HexBigInteger(500000),
-    //         value: new HexBigInteger(BigInteger.Zero),
-    //         functionInput: new
-    //         {
-    //             _addressKey = addressKey,
-    //             _address = addressToUpdate,
-    //             _name = name,
-    //             _taxId = taxId,
-    //             _state = state
-    //         });
-
-    //     var transactionHash = await _web3.Eth.TransactionManager.SendTransactionAsync(transactionInput);
-
-    //     return Ok(transactionHash);
-    // }
+            return StatusCode(200, new ResultViewModel<AdminUpdatedEventModel>(resultUpdate));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventDTO>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.Message));
+        }
+    }
 
     //[HttpGet("GetAdministrator")]
     //public async Task<IActionResult> GetAdministrator(int id)

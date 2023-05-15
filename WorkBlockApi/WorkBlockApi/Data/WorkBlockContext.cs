@@ -8,6 +8,7 @@ public class WorkBlockContext : DbContext
 {
     public DbSet<ContractModel> Contracts { get; set; }
     public DbSet<AdminAddedEventModel>  AdminAddedEvents { get; set; }
+    public DbSet<AdminUpdatedEventModel> AdminUpdatedEvents { get; set; }
 
     public WorkBlockContext(DbContextOptions<WorkBlockContext> options)
     : base(options)
