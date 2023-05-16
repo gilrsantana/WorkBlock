@@ -9,6 +9,7 @@ using WorkBlockApi.Data;
 using WorkBlockApi.Extensions;
 using WorkBlockApi.Interfaces;
 using WorkBlockApi.Models;
+using WorkBlockApi.Models.Administrator;
 using WorkBlockApi.Models.Administrator.Events;
 using WorkBlockApi.SmartContractsDefinitions.AdministratorContract;
 using WorkBlockApi.SmartContractsDefinitions.AdministratorContract.ContractDefinition;
@@ -102,7 +103,7 @@ public class AdministratorContractController : ControllerBase
         }
     }
 
-    [HttpPut("Update/{key:string}")]
+    [HttpPut("Update/{key}")]
     public async Task<IActionResult> UpdateAdministrator([FromRoute] string key, 
                                                          [FromBody] AdministratorViewModel model, 
                                                          [FromServices] WorkBlockContext context)
@@ -149,150 +150,117 @@ public class AdministratorContractController : ControllerBase
         }
     }
 
-    //[HttpGet("GetAdministrator")]
-    //public async Task<IActionResult> GetAdministrator(int id)
-    //{
-    //    try
-    //    {
-    //        if (id < 0) return NotFound("Id must be equals or grater than zero.");
+    [HttpGet("Get/{id:int}")]
+    public async Task<IActionResult> Get([FromRoute] int id)
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-    //        if (AdministratorContract is null) return BadRequest("Internal Server error.");
-    //        var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-    //        var admin = await service.GetAdministratorQueryAsync(id);
-    //        ulong adminId = (ulong)admin.ReturnValue1.IdAdministrator;
-    //        ulong adminTaxId = (ulong)admin.ReturnValue1.TaxId;
-    //        return Ok(new
-    //        {
-    //            adminId,
-    //            admin.ReturnValue1.Name,
-    //            adminTaxId,
-    //            admin.ReturnValue1.AdministratorAddress,
-    //            admin.ReturnValue1.StateOf
-    //        });
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return BadRequest($"Internal Server error. {ex.Message.ToString()}");
-    //    }
-    //}
+            if (id < 0) 
+                return NotFound(new ResultViewModel<string>("Invalid Format. Id must be equal to or greater than zero"));
 
-    //[HttpGet("GetAllAdministrators")]
-    //public async Task<IActionResult> GetAllAdministrators()
-    //{
-    //    if (AdministratorContract is null) return BadRequest("Internal Server error.");
-    //    var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-    //    var administrators = await service.GetAllAdministratorsQueryAsync();
+            
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var admin = await service.GetAdministratorQueryAsync(id);
+            var returnAdmin = new AdministratorModel
+            {
+                IdAdministrator = (uint)admin.ReturnValue1.IdAdministrator,
+                Address = admin.ReturnValue1.AdministratorAddress,
+                Name = admin.ReturnValue1.Name,
+                TaxId = admin.ReturnValue1.TaxId.ToString(),
+                State = admin.ReturnValue1.StateOf
+            };
+            return StatusCode(200, new ResultViewModel<AdministratorModel>(returnAdmin));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.Message));
+        }
+    }
 
+    [HttpGet("GetAll/")]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-    //    return Ok(administrators);
-    //}
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var administrators = await service.GetAllAdministratorsQueryAsync();
+            IList<AdministratorModel> list = administrators.ReturnValue1.Select(administrator => new AdministratorModel
+                {
+                    IdAdministrator = (uint)administrator.IdAdministrator,
+                    Address = administrator.AdministratorAddress,
+                    Name = administrator.Name,
+                    TaxId = administrator.TaxId.ToString(),
+                    State = administrator.StateOf
+                })
+                .ToList();
 
-    // [HttpGet("CheckIfAdministratorExists")]
-    // public async Task<IActionResult> CheckIfAdministratorExists(string address, string fromAddress)
-    // {
-    //     var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //     var function = contract.GetFunction("checkIfAdministratorExists");
+            return StatusCode(200, new ResultViewModel<IList<AdministratorModel>>(list));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.Message));
+        }
+    }
 
-    //     var result = await function.CallAsync<bool>(fromAddress, address);
+    [HttpGet("Check/{address}")]
+    public async Task<IActionResult> Check([FromRoute] string address)
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-    //     return Ok(result);
-    // }
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var result = await service.CheckIfAdministratorExistsQueryAsync(address);
 
-    // [HttpGet("CheckIfAdministratorIsActive")]
-    // public async Task<IActionResult> CheckIfAdministratorIsActive(string address, string fromAddress)
-    // {
-    //     var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //     var function = contract.GetFunction("checkIfAdministratorIsActive");
+            return StatusCode(200, new ResultViewModel<bool>(result));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventDTO>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.Message));
+        }
+    }
 
-    //     var result = await function.CallAsync<bool>(fromAddress, address);
+    [HttpGet("CheckActive/{address}")]
+    public async Task<IActionResult> CheckActive([FromRoute]string address)
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-    //     return Ok(result);
-    // }
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var result = await service.CheckIfAdministratorIsActiveQueryAsync(address);
 
-    //[HttpGet("getbyid/{id:int}")]
-    //public async Task<ActionResult<Administrator>> GetAdministratorByIdAsync(int id)
-    //{
-    //    try
-    //    {
-    //        if (id < 0)
-    //            return BadRequest("id must be equals or grater than zero");
-
-    //        if (AdministratorContract == null)
-    //            return NotFound();
-
-
-    //        var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //        var getAdministratorFunction = contract.GetFunction("getAdministrator");
-
-    //        var transactionInput = getAdministratorFunction.CreateCallInput(id);
-    //        var callResult = await _web3.Eth.Transactions.Call.SendRequestAsync(transactionInput, _configuration.PrivateKey, _configuration.AdminAddress);
-
-    //        var administrator = new Administrator();
-    //        administrator.IdAdministrator = callResult.DecodeSimpleType<uint256>();
-    //        administrator.AdministratorAddress = callResult.DecodeAddress();
-    //        administrator.TaxId = callResult.DecodeSimpleType<uint256>();
-    //        administrator.Name = callResult.Decode<string>();
-    //        administrator.StateOf = callResult.DecodeEnumeration<State>();
-
-    //        //var hexString = id.ToString("X32");
-    //        //var num = uint.Parse(hexString);
-
-    //        //var senderAddress = _configuration.AdminAddress;
-    //        //var function = new GetAdministratorFunction()
-    //        //{
-    //        //    Id = id,
-    //        //    FromAddress = senderAddress
-    //        //};
-
-
-    //        //var functionHandler = _web3.Eth.GetContractQueryHandler<GetAdministratorFunction>();
-    //        //var ad = new Administrator();
-
-    //        // //ad = await functionHandler.QueryAsync<Administrator>(AdministratorContract.AddressContract, function);
-    //        // ad = await functionHandler
-    //        //     .QueryDeserializingToObjectAsync<Administrator>(function, AdministratorContract.AddressContract);
-
-    //        // var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //        // var getAdministrator = contract.GetFunction("getAdministrator");
-    //        // var gas = await getAdministrator.EstimateGasAsync(senderAddress, null, null, id);
-
-    //        // var result = await getAdministrator
-    //        //     .CallAsync<Administrator>(senderAddress, gas, null, id);
-
-    //        return Ok(ad);
-    //    }
-    //    catch (Exception)
-    //    {
-    //        return BadRequest("Internal Server error");
-    //    }
-    //}
-
-    //[HttpGet("getall")]
-    //public async Task<IActionResult> GetAllAdministratorsAsync()
-    //{
-    //    try
-    //    {
-    //        if (AdministratorContract == null)
-    //            return NotFound();
-
-    //        var senderAddress = _configuration.AdminAddress;
-    //        var contract = _web3.Eth.GetContract(AdministratorContract.Abi, AdministratorContract.AddressContract);
-    //        var getAllAdministrators = contract.GetFunction("getAllAdministrators");
-    //        var value = new BigInteger();
-    //        var gas = await getAllAdministrators.EstimateGasAsync(senderAddress, null, null);
-
-    //        var result = await getAllAdministrators.CallDeserializingToObjectAsync<Administrator>(senderAddress, null, null);
-    //        return Ok(result);
-    //    }
-    //    catch (SmartContractRevertException e)
-    //    {
-    //        return BadRequest($"Internal Server error. {e}");
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        return BadRequest($"Internal Server error. {e}");
-    //    }
-    //}
+            return StatusCode(200, new ResultViewModel<bool>(result));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventDTO>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.Message));
+        }
+    }
 
     private Task<List<ContractModel>>? GetContractsInMemory()
     {
