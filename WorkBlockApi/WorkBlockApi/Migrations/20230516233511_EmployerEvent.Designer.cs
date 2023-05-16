@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkBlockApi.Data;
 
@@ -10,9 +11,11 @@ using WorkBlockApi.Data;
 namespace WorkBlockApi.Migrations
 {
     [DbContext(typeof(WorkBlockContext))]
-    partial class WorkBlockContextModelSnapshot : ModelSnapshot
+    [Migration("20230516233511_EmployerEvent")]
+    partial class EmployerEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
