@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Nethereum.ABI.FunctionEncoding;
-using Nethereum.Contracts;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using WorkBlockApi.Data;
@@ -14,7 +12,6 @@ using WorkBlockApi.Models.Administrator.Events;
 using WorkBlockApi.SmartContractsDefinitions.AdministratorContract;
 using WorkBlockApi.SmartContractsDefinitions.AdministratorContract.ContractDefinition;
 using WorkBlockApi.ViewModels;
-using WorkBlockApi.ViewModels.Events.Administrator;
 
 namespace WorkBlockApi.Controllers.Contracts;
 
@@ -42,13 +39,81 @@ public class AdministratorContractController : ControllerBase
         AdministratorContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
     }
 
+    [HttpGet("Get/{id:int}")]
+    public async Task<IActionResult> Get([FromRoute] int id)
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
+
+            if (id < 0)
+                return NotFound(new ResultViewModel<string>("Invalid Format. Id must be equal to or greater than zero"));
+
+
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var admin = await service.GetAdministratorQueryAsync(id);
+            var returnAdmin = new AdministratorModel
+            {
+                IdAdministrator = (uint)admin.ReturnValue1.IdAdministrator,
+                Address = admin.ReturnValue1.AdministratorAddress,
+                Name = admin.ReturnValue1.Name,
+                TaxId = admin.ReturnValue1.TaxId.ToString(),
+                State = admin.ReturnValue1.StateOf
+            };
+            return StatusCode(200, new ResultViewModel<AdministratorModel>(returnAdmin));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.Message));
+        }
+    }
+
+    [HttpGet("GetAll/")]
+    public async Task<IActionResult> GetAllAsync()
+    {
+        try
+        {
+            if (AdministratorContract is null)
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
+
+            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
+            var administrators = await service.GetAllAdministratorsQueryAsync();
+            IList<AdministratorModel> list = administrators
+                .ReturnValue1
+                .Select(administrator => new AdministratorModel
+                {
+                    IdAdministrator = (uint)administrator.IdAdministrator,
+                    Address = administrator.AdministratorAddress,
+                    Name = administrator.Name,
+                    TaxId = administrator.TaxId.ToString(),
+                    State = administrator.StateOf
+                })
+                .ToList();
+
+            return StatusCode(200, new ResultViewModel<IList<AdministratorModel>>(list));
+        }
+        catch (SmartContractRevertException e)
+        {
+            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.RevertMessage));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.Message));
+        }
+    }
+
     [HttpPost("Add")]
     public async Task<IActionResult> AddAdministrator([FromBody]AdministratorViewModel model, [FromServices] WorkBlockContext context)
     {
         try
         {
             if (AdministratorContract is null)
-                return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
             if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
             var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
@@ -111,7 +176,7 @@ public class AdministratorContractController : ControllerBase
         try
         {
             if(AdministratorContract is null)
-                return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
+                return NotFound(new ResultViewModel<string>("Contract Not Found"));
             
             if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
@@ -142,77 +207,11 @@ public class AdministratorContractController : ControllerBase
         }
         catch (SmartContractRevertException e)
         {
-            return StatusCode(500, new ResultViewModel<AdminUpdatedEventDTO>(e.RevertMessage));
+            return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.RevertMessage));
         }
         catch (Exception e)
         {
             return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.Message));
-        }
-    }
-
-    [HttpGet("Get/{id:int}")]
-    public async Task<IActionResult> Get([FromRoute] int id)
-    {
-        try
-        {
-            if (AdministratorContract is null)
-                return NotFound(new ResultViewModel<string>("Contract Not Found"));
-
-            if (id < 0) 
-                return NotFound(new ResultViewModel<string>("Invalid Format. Id must be equal to or greater than zero"));
-
-            
-            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-            var admin = await service.GetAdministratorQueryAsync(id);
-            var returnAdmin = new AdministratorModel
-            {
-                IdAdministrator = (uint)admin.ReturnValue1.IdAdministrator,
-                Address = admin.ReturnValue1.AdministratorAddress,
-                Name = admin.ReturnValue1.Name,
-                TaxId = admin.ReturnValue1.TaxId.ToString(),
-                State = admin.ReturnValue1.StateOf
-            };
-            return StatusCode(200, new ResultViewModel<AdministratorModel>(returnAdmin));
-        }
-        catch (SmartContractRevertException e)
-        {
-            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.RevertMessage));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new ResultViewModel<AdministratorModel>(e.Message));
-        }
-    }
-
-    [HttpGet("GetAll/")]
-    public async Task<IActionResult> GetAllAsync()
-    {
-        try
-        {
-            if (AdministratorContract is null)
-                return NotFound(new ResultViewModel<string>("Contract Not Found"));
-
-            var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
-            var administrators = await service.GetAllAdministratorsQueryAsync();
-            IList<AdministratorModel> list = administrators.ReturnValue1.Select(administrator => new AdministratorModel
-                {
-                    IdAdministrator = (uint)administrator.IdAdministrator,
-                    Address = administrator.AdministratorAddress,
-                    Name = administrator.Name,
-                    TaxId = administrator.TaxId.ToString(),
-                    State = administrator.StateOf
-                })
-                .ToList();
-
-            return StatusCode(200, new ResultViewModel<IList<AdministratorModel>>(list));
-        }
-        catch (SmartContractRevertException e)
-        {
-            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.RevertMessage));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, new ResultViewModel<IList<AdministratorModel>>(e.Message));
         }
     }
 
@@ -231,11 +230,11 @@ public class AdministratorContractController : ControllerBase
         }
         catch (SmartContractRevertException e)
         {
-            return StatusCode(500, new ResultViewModel<AdminUpdatedEventDTO>(e.RevertMessage));
+            return StatusCode(500, new ResultViewModel<bool>(e.RevertMessage));
         }
         catch (Exception e)
         {
-            return StatusCode(500, new ResultViewModel<AdminUpdatedEventModel>(e.Message));
+            return StatusCode(500, new ResultViewModel<bool>(e.Message));
         }
     }
 

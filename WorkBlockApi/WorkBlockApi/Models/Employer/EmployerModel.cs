@@ -2,7 +2,7 @@
 
 public class EmployerModel
 {
-    public uint IdAdministrator { get; set; }
+    public uint IdEmployer { get; set; }
     public string Address { get; set; } = null!;
     public string TaxId { get; set; } = null!;
     public string Name { get; set; } = null!;
