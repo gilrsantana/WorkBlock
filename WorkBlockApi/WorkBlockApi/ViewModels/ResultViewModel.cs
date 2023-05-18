@@ -16,13 +16,7 @@ public class ResultViewModel<T>
         Data = data;
     }
 
-    public ResultViewModel(List<string> errors)
-    {
-        Errors = errors;
-    }
+    public ResultViewModel(List<string> errors) => Errors = errors;
 
-    public ResultViewModel(string error)
-    {
-        Errors.Add(error);
-    }
+    public ResultViewModel(string error) => Errors.Add(error);
 }
