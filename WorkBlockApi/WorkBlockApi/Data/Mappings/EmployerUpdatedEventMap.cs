@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Org.BouncyCastle.Crypto.Parameters;
 using WorkBlockApi.Models.Employer.Events;
 
 namespace WorkBlockApi.Data.Mappings;

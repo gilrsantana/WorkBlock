@@ -7,13 +7,8 @@ using WorkBlockApi.Data;
 using WorkBlockApi.Extensions;
 using WorkBlockApi.Interfaces;
 using WorkBlockApi.Models;
-using WorkBlockApi.Models.Administrator;
-using WorkBlockApi.Models.Administrator.Events;
 using WorkBlockApi.Models.Employer;
 using WorkBlockApi.Models.Employer.Events;
-using WorkBlockApi.Models.ValueObjects;
-using WorkBlockApi.SmartContractsDefinitions.AdministratorContract;
-using WorkBlockApi.SmartContractsDefinitions.AdministratorContract.ContractDefinition;
 using WorkBlockApi.SmartContractsDefinitions.EmployerContract;
 using WorkBlockApi.ViewModels;
 
