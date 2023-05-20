@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkBlockApi.Data;
 
@@ -10,9 +11,11 @@ using WorkBlockApi.Data;
 namespace WorkBlockApi.Migrations
 {
     [DbContext(typeof(WorkBlockContext))]
-    partial class WorkBlockContextModelSnapshot : ModelSnapshot
+    [Migration("20230520011615_EmployeeEventMap")]
+    partial class EmployeeEventMap
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,57 +139,6 @@ namespace WorkBlockApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("EmployeeAddedEvents");
-                });
-
-            modelBuilder.Entity("WorkBlockApi.Models.Employee.Events.EmployeeUpdatedEventModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("AddressFrom")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<TimeOnly>("EmployeeBegginingWorkDay")
-                        .HasColumnType("time(6)");
-
-                    b.Property<TimeOnly>("EmployeeEndWorkDay")
-                        .HasColumnType("time(6)");
-
-                    b.Property<string>("EmployeeName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("EmployeeTaxId")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("EmployerAddress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("HashTransaction")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("NewAddress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("OldAddress")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<byte>("State")
-                        .HasColumnType("tinyint unsigned");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmployeeUpdatedEvents");
                 });
 
             modelBuilder.Entity("WorkBlockApi.Models.Employer.Events.EmployerAddedEventModel", b =>
