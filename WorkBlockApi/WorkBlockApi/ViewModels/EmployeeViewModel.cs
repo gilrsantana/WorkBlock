@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkBlockApi.Models.ValueObjects;
 
 namespace WorkBlockApi.ViewModels;
 

@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.Cms;
-
-namespace WorkBlockApi.Models.Employee.Events;
+﻿namespace WorkBlockApi.Models.Employee.Events;
 
 public class EmployeeAddedEventModel
 {
