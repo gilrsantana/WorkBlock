@@ -25,7 +25,7 @@ public class MensagemModel
         return JsonConvert.SerializeObject(mensagemModel);
     }
 
-    public static MensagemModel Desserializar(string? mensagemString)
+    public static MensagemModel Desserializar(string mensagemString)
     {
         return JsonConvert.DeserializeObject<MensagemModel>(mensagemString!)!;
     }
