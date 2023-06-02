@@ -181,7 +181,15 @@ public class PontoBlockController : ControllerBase
 
             var result = await service.GetEmployeeRecordsQueryAsync(address, (ulong)date);
 
-            return StatusCode(200, new ResultViewModel<GetEmployeeRecordsOutputDTO>(result));
+            var employeeRecord = new EmployeeRecord
+            {
+                StartWork = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.StartWork).UtcDateTime,
+                BreakStartTime = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.BreakStartTime).UtcDateTime,
+                BreakEndTime = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.BreakEndTime).UtcDateTime,
+                EndWork = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.EndWork).UtcDateTime
+            };
+
+            return StatusCode(200, new ResultViewModel<EmployeeRecord>(employeeRecord));
         }
         catch (SmartContractRevertException e)
         {
