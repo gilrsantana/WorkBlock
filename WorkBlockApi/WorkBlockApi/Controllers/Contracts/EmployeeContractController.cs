@@ -298,7 +298,7 @@ public class EmployeeContractController : ControllerBase
             var service = new EmployeeContractService(_web3, EmployeeContract.AddressContract);
             var result = await service.GetEmployerContractQueryAsync();
 
-            return StatusCode(200, new ResultViewModel<string>(result));
+            return StatusCode(200, new ResultViewModel<string>(result, new List<string>()));
         }
         catch (SmartContractRevertException e)
         {

@@ -17,6 +17,11 @@ public class WorkBlockContext : DbContext
     public DbSet<EmployeeUpdatedEventModel> EmployeeUpdatedEvents { get; set; }
 
     public WorkBlockContext(DbContextOptions<WorkBlockContext> options)
-    : base(options)
+        : base(options)
     { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ContractModel>().ToTable(nameof(Contracts), t => t.ExcludeFromMigrations());
+    }
 }
