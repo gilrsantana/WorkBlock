@@ -4,6 +4,7 @@ using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using WorkBlockApi.Interfaces;
+using WorkBlockApi.Models.PontoBlock;
 using WorkBlockApi.Models;
 using WorkBlockApi.SmartContractsDefinitions.PontoBlock;
 using WorkBlockApi.SmartContractsDefinitions.PontoBlock.ContractDefinition;
@@ -181,7 +182,7 @@ public class PontoBlockController : ControllerBase
 
             var result = await service.GetEmployeeRecordsQueryAsync(address, (ulong)date);
 
-            var employeeRecord = new EmployeeRecord
+            var employeeRecord = new EmployeeRecordModel
             {
                 StartWork = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.StartWork).UtcDateTime,
                 BreakStartTime = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.BreakStartTime).UtcDateTime,
@@ -189,7 +190,7 @@ public class PontoBlockController : ControllerBase
                 EndWork = DateTimeOffset.FromUnixTimeSeconds((int)result.ReturnValue1.EndWork).UtcDateTime
             };
 
-            return StatusCode(200, new ResultViewModel<EmployeeRecord>(employeeRecord));
+            return StatusCode(200, new ResultViewModel<EmployeeRecordModel>(employeeRecord));
         }
         catch (SmartContractRevertException e)
         {

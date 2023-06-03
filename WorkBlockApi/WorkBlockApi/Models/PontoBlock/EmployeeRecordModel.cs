@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices.JavaScript;
+﻿namespace WorkBlockApi.Models.PontoBlock;
 
-namespace WorkBlockApi.Controllers.Contracts;
-
-public class EmployeeRecord
+public class EmployeeRecordModel
 {
     public DateTime StartWork { get; set; }
 
