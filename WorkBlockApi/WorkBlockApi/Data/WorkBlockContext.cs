@@ -8,13 +8,13 @@ namespace WorkBlockApi.Data;
 
 public class WorkBlockContext : DbContext
 {
-    public DbSet<ContractModel> Contracts { get; set; }
-    public DbSet<AdminAddedEventModel>  AdminAddedEvents { get; set; }
-    public DbSet<AdminUpdatedEventModel> AdminUpdatedEvents { get; set; }
-    public DbSet<EmployerAddedEventModel> EmployerAddedEvents { get; set; }
-    public DbSet<EmployerUpdatedEventModel> EmployerUpdatedEvents { get; set; }
-    public DbSet<EmployeeAddedEventModel> EmployeeAddedEvents { get; set; }
-    public DbSet<EmployeeUpdatedEventModel> EmployeeUpdatedEvents { get; set; }
+    public DbSet<ContractModel> Contracts { get; set; } = null!;
+    public DbSet<AdminAddedEventModel>  AdminAddedEvents { get; set; } = null!;
+    public DbSet<AdminUpdatedEventModel> AdminUpdatedEvents { get; set; } = null!;
+    public DbSet<EmployerAddedEventModel> EmployerAddedEvents { get; set; } = null!;
+    public DbSet<EmployerUpdatedEventModel> EmployerUpdatedEvents { get; set; } = null!;
+    public DbSet<EmployeeAddedEventModel> EmployeeAddedEvents { get; set; } = null!;
+    public DbSet<EmployeeUpdatedEventModel> EmployeeUpdatedEvents { get; set; } = null!;
 
     public WorkBlockContext(DbContextOptions<WorkBlockContext> options)
         : base(options)

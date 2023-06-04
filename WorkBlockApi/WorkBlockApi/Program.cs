@@ -5,5 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiConfiguration(builder);
 builder.Services.AddContext(builder);
 builder.Services.AddRepositories();
+builder.Services.AddCorsConfiguration();
 
 builder.Services.LoadConfiguration(builder.Build());

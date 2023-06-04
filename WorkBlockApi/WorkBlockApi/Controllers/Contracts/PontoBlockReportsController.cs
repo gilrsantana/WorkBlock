@@ -208,6 +208,7 @@ public class PontoBlockReportsController : ControllerBase
         }
         catch (Exception e)
         {
+            System.Console.WriteLine(e.Message.ToString());
             return null;
         }
         
@@ -229,6 +230,7 @@ public class PontoBlockReportsController : ControllerBase
         }
         catch (Exception e)
         {
+            System.Console.WriteLine(e.Message.ToString());
             return null;
         }
     }
