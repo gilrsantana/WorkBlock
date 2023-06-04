@@ -63,10 +63,10 @@ contract PontoBlock {
         employeeAddedYet(msg.sender) 
         activeEmployee() {
         
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork == 0, "Start of work already registered.");
-        employeeRecords[msg.sender][util.getDate(getMoment())].startWork = getMoment();
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork == 0, "Start of work already registered.");
+        employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork = block.timestamp;
 
-        emit StartWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(getMoment())].startWork, block.timestamp);
+        emit StartWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork, block.timestamp);
     }
 
     function endWork() 
@@ -74,28 +74,28 @@ contract PontoBlock {
         employeeAddedYet(msg.sender) 
         activeEmployee() {
 
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].endWork == 0, "End of work already registered.");
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork != 0, "Start of work not registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork == 0, "End of work already registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork != 0, "Start of work not registered.");
 
         uint256 one_hour = 3600;
-        if (employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime != 0 &&
-            employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime == 0)
+        if (employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime != 0 &&
+            employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime == 0)
         {
-                if ((getMoment() - employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime)
+                if ((block.timestamp - employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime)
                         > one_hour)
                 {
-                    employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime =
-                        employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime + one_hour;
+                    employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime =
+                        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime + one_hour;
                 }
                 else
                 {
-                    employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime = getMoment();
+                    employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime = block.timestamp;
                 }
         }
 
-        employeeRecords[msg.sender][util.getDate(getMoment())].endWork = getMoment();
+        employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork = block.timestamp;
 
-        emit EndWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(getMoment())].endWork, block.timestamp);
+        emit EndWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork, block.timestamp);
     }
 
     function breakStartTime() 
@@ -103,13 +103,13 @@ contract PontoBlock {
         employeeAddedYet(msg.sender) 
         activeEmployee() {
 
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime == 0, "Start of break already registered.");
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].startWork != 0, "Start of work not registered.");
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].endWork == 0, "End of work already registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime == 0, "Start of break already registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].startWork != 0, "Start of work not registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].endWork == 0, "End of work already registered.");
 
-        employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime = getMoment();
+        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime = block.timestamp;
 
-        emit BreakStartWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime, block.timestamp);
+        emit BreakStartWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime, block.timestamp);
     }
 
     function breakEndTime() 
@@ -117,12 +117,12 @@ contract PontoBlock {
         employeeAddedYet(msg.sender) 
         activeEmployee() {
 
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime == 0, "End of break already registered.");
-        require(employeeRecords[msg.sender][util.getDate(getMoment())].breakStartTime != 0, "Start of break not registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime == 0, "End of break already registered.");
+        require(employeeRecords[msg.sender][util.getDate(block.timestamp)].breakStartTime != 0, "Start of break not registered.");
 
-        employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime = getMoment();
+        employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime = block.timestamp;
 
-        emit BreakEndWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(getMoment())].breakEndTime, block.timestamp);
+        emit BreakEndWorkRegistered(msg.sender, employeeRecords[msg.sender][util.getDate(block.timestamp)].breakEndTime, block.timestamp);
     }
 
     function getCreationDateContract() 
