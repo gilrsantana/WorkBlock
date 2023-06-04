@@ -37,7 +37,12 @@ contract EmployerContract {
     }
 
     modifier onlyAdmin {
-        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator.");
+        _;
+    }
+
+    modifier adminIsActive() {
+        require(admin.checkIfAdministratorIsActive(msg.sender), "Administrator is not active.");
         _;
     }
 
@@ -57,6 +62,7 @@ contract EmployerContract {
                           string memory _legalAddress) 
              public 
              onlyAdmin()
+             adminIsActive()
              employerNotAddedYet(_address) {
 
         require(_taxId != 0, "TaxId not given.");
@@ -77,6 +83,7 @@ contract EmployerContract {
                              string memory _legalAddress) 
              public 
              onlyAdmin()
+             adminIsActive()
              employerAddedYet(_addressKey) {
 
         require(_address != address(0), "Address not given.");
@@ -117,6 +124,7 @@ contract EmployerContract {
     function getEmployerById (uint256 _id) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (Employer memory) {
 
         return employers[_id];
@@ -125,6 +133,7 @@ contract EmployerContract {
     function getEmployerByAddress (address _address) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (Employer memory) {
         
         Employer memory e;
@@ -140,6 +149,7 @@ contract EmployerContract {
     function getAllEmployers() 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (Employer[] memory) {
 
         Employer[] memory result = new Employer[](addsEmployers.length);
@@ -152,6 +162,7 @@ contract EmployerContract {
     function checkIfEmployerExists (address _address) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (bool){
 
         for (uint i = 0; i < addsEmployers.length; i++)

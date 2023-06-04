@@ -28,7 +28,8 @@ contract PontoBlockReports {
                  uint256 _breakEndTime
                 ) {
         
-        require(admin.checkIfAdministratorExists(msg.sender) ||
+        require((admin.checkIfAdministratorExists(msg.sender) && 
+                admin.checkIfAdministratorIsActive(msg.sender)) ||
                 msg.sender == _employee, "Sender is not authorized.");
         require(employee.checkIfEmployeeExists(_employee), "Employee not registered.");
         
@@ -48,8 +49,10 @@ contract PontoBlockReports {
                  uint256[] memory _breakEndTime
                 ) {
 
-        require(admin.checkIfAdministratorExists(msg.sender) ||
+        require((admin.checkIfAdministratorExists(msg.sender) && 
+                admin.checkIfAdministratorIsActive(msg.sender)) ||
                 msg.sender == _employee, "Sender is not authorized.");
+   
         require(employee.checkIfEmployeeExists(_employee) == true, "Employee not registered.");
         require(_startDate < _endDate, "Start date must be less than end date.");
         require(_startDate >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
@@ -81,6 +84,7 @@ contract PontoBlockReports {
                 ) {
         
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(admin.checkIfAdministratorIsActive(msg.sender), "Administrator is not active.");
         require(_date >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
 
         EmployeeContract.Employee[] memory allEmployees = employee.getAllEmployees();
@@ -115,6 +119,7 @@ contract PontoBlockReports {
                 ) {
 
         require(admin.checkIfAdministratorExists(msg.sender), "Sender is not administrator.");
+        require(admin.checkIfAdministratorIsActive(msg.sender), "Administrator is not active.");
         require(_startDate < _endDate, "Start date must be less than end date.");
         require(_startDate >= pontoBlock.getCreationDateContract(), "Start date must be equals or grather than creationDate.");
         require(_endDate <= util.getDate(block.timestamp), "End date must be equals or less than today.");

@@ -19,6 +19,12 @@ describe("PontoBlock", () => {
       name
     );
     await AdministratorDeployed.deployed();
+    const aliceAddress = alice.address;
+    const nameAlice = "ALICE";
+    const taxIdAlice = 2222222222;
+    await AdministratorDeployed.addAdministrator(aliceAddress, nameAlice, taxIdAlice)
+    const newState = 0;
+    await AdministratorDeployed.updateAdministrator(aliceAddress, aliceAddress, taxId, name, newState);
     const EmployerContract = await ethers.getContractFactory(
       "EmployerContract"
     );
@@ -352,7 +358,22 @@ describe("PontoBlock", () => {
           john.address,
           contractDate
         )
-      ).to.rejectedWith("Sender must be administrator and be active.");
+      ).to.rejectedWith("Sender must be administrator.");
+    });
+    it("should not get employee records - Administrator is not active", async () => {
+      const { PontoBlockDeployed, UtilDeployed, john, rachel, alice } =
+        await loadFixture(setupFixture);
+      PontoBlockDeployed.connect(john).startWork();
+      const blkNumber = ethers.provider.getBlockNumber();
+      const block = ethers.provider.getBlock(blkNumber);
+      const contractTime = (await block).timestamp;
+      const contractDate = await UtilDeployed.getDate(contractTime);
+      await expect(
+        PontoBlockDeployed.connect(alice).getEmployeeRecords(
+          john.address,
+          contractDate
+        )
+      ).to.rejectedWith("Administrator is not active.");
     });
   });
   describe("get a contract date", () => {
@@ -370,7 +391,13 @@ describe("PontoBlock", () => {
       const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
       await expect(
         PontoBlockDeployed.connect(rachel).getCreationDateContract()
-      ).to.rejectedWith("Sender must be administrator and be active.");
+      ).to.rejectedWith("Sender must be administrator.");
+    });
+    it("should not get a contract date - Administrator is not active", async () => {
+      const { PontoBlockDeployed, rachel, alice } = await loadFixture(setupFixture);
+      await expect(
+        PontoBlockDeployed.connect(alice).getCreationDateContract()
+      ).to.rejectedWith("Administrator is not active.");
     });
   });
   describe("Get owner", () => {
@@ -383,7 +410,13 @@ describe("PontoBlock", () => {
       const { PontoBlockDeployed, rachel } = await loadFixture(setupFixture);
       await expect(
         PontoBlockDeployed.connect(rachel).getOwner()
-      ).to.rejectedWith("Sender must be administrator and be active.");
+      ).to.rejectedWith("Sender must be administrator.");
+    });
+    it("should not get the owner - Administrator is not active", async () => {
+      const { PontoBlockDeployed, rachel, alice } = await loadFixture(setupFixture);
+      await expect(
+        PontoBlockDeployed.connect(alice).getOwner()
+      ).to.rejectedWith("Administrator is not active.");
     });
     it("should not get the owner - Different address", async () => {
       const { PontoBlockDeployed, rachel, owner } = await loadFixture(

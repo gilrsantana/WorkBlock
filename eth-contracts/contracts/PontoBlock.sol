@@ -44,7 +44,12 @@ contract PontoBlock {
     }
 
     modifier onlyAdmin() {
-        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator.");
+        _;
+    }
+
+    modifier adminIsActive() {
+        require(admin.checkIfAdministratorIsActive(msg.sender), "Administrator is not active.");
         _;
     }
 
@@ -128,6 +133,7 @@ contract PontoBlock {
     function getCreationDateContract() 
         public view 
         onlyAdmin()
+        adminIsActive()
         returns(uint) {
 
         return creationDate;
@@ -136,6 +142,7 @@ contract PontoBlock {
     function getEmployeeRecords (address _address, uint256 _date) 
         public view 
         onlyAdmin()
+        adminIsActive()
         employeeAddedYet(_address)
         returns (EmployeeRecord memory) {
 
@@ -166,6 +173,7 @@ contract PontoBlock {
     function getOwner() 
         public view 
         onlyAdmin()
+        adminIsActive()
         returns (address) {
 
         return owner;

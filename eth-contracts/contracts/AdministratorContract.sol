@@ -36,7 +36,7 @@ contract AdministratorContract  {
     }
 
     modifier onlyAdmin {
-        require(checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
+        require(checkIfAdministratorExists(msg.sender), "Sender must be administrator.");
         _;
     }
 
@@ -50,9 +50,15 @@ contract AdministratorContract  {
         _;
     }
 
+    modifier adminIsActive(address _address) {
+        require(checkIfAdministratorIsActive(_address), "Administrator is not active.");
+        _;
+    }
+
     function addAdministrator (address _address, string memory _name, uint256 _taxId) 
              public 
              onlyAdmin() 
+             adminIsActive(msg.sender)
              adminNotAddedYet(_address) {
 
         administrators[addsAdministrators.length] =
@@ -69,6 +75,7 @@ contract AdministratorContract  {
                                   State _state) 
              public 
              onlyAdmin()
+             adminIsActive(msg.sender)
              adminAddedYet(_addressKey) {
 
         require(_address != address(0), "Address not given.");
@@ -108,6 +115,7 @@ contract AdministratorContract  {
     function getAdministrator (uint256 _id) 
              public view 
              onlyAdmin()
+             adminIsActive(msg.sender)
              returns(Administrator memory) {
 
         return administrators[_id];
@@ -116,6 +124,7 @@ contract AdministratorContract  {
     function getAllAdministrators () 
              public view 
              onlyAdmin()
+             adminIsActive(msg.sender)
              returns (Administrator[] memory) {
 
         Administrator[] memory result = new Administrator[](addsAdministrators.length);
@@ -129,9 +138,7 @@ contract AdministratorContract  {
              public view 
              returns (bool){
         for (uint i = 0; i < addsAdministrators.length; i++)
-        
-            if(addsAdministrators[i] == _address && 
-                    checkIfAdministratorIsActive(_address) )
+            if(addsAdministrators[i] == _address)
                 return true;
 
         return false;

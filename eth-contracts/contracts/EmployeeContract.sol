@@ -51,7 +51,12 @@ contract EmployeeContract {
     }
 
     modifier onlyAdmin() {
-        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator and be active.");
+        require(admin.checkIfAdministratorExists(msg.sender), "Sender must be administrator.");
+        _;
+    }
+
+    modifier adminIsActive() {
+        require(admin.checkIfAdministratorIsActive(msg.sender), "Administrator is not active.");
         _;
     }
 
@@ -85,6 +90,7 @@ contract EmployeeContract {
                           address _employerAddress) 
              public 
              onlyAdmin() 
+             adminIsActive()
              employerAddedYet(_employerAddress)
              employeeNotAddedYet(_address) 
              validWorkday(_begginingWorkDay, _endWorkDay) {
@@ -117,6 +123,7 @@ contract EmployeeContract {
                              address _employerAddress) 
              public 
              onlyAdmin() 
+             adminIsActive()
              employerAddedYet(_employerAddress)
              employeeAddedYet(_addressKey) 
              validWorkday(_begginingWorkDay, _endWorkDay) {
@@ -167,6 +174,7 @@ contract EmployeeContract {
              (uint256 _id) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns(Employee memory) {
 
         return employees[_id];
@@ -176,6 +184,7 @@ contract EmployeeContract {
              (address _address) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (Employee memory) {
 
         Employee memory e;
@@ -191,6 +200,7 @@ contract EmployeeContract {
     function getAllEmployees() 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (Employee[] memory) {
 
         Employee[] memory result = new Employee[](addsEmployees.length);
@@ -204,6 +214,7 @@ contract EmployeeContract {
              (address _address) 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (bool){
 
         for (uint i = 0; i < addsEmployees.length; i++)
@@ -216,6 +227,7 @@ contract EmployeeContract {
     function getEmployerContract() 
              public view 
              onlyAdmin()
+             adminIsActive()
              returns (address _empContract) {
 
         return address(employer);

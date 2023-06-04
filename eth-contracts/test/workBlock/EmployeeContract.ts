@@ -10,6 +10,12 @@ describe('EmployeeContract', () => {
         const name = "GILMAR RIBEIRO SANTANA";
         const AdministratorDeployed = await AdministratorContract.deploy(taxId, name);
         await AdministratorDeployed.deployed();
+        const aliceAddress = alice.address;
+        const nameAlice = "ALICE";
+        const taxIdAlice = 2222222222;
+        await AdministratorDeployed.addAdministrator(aliceAddress, nameAlice, taxIdAlice)
+        const newState = 0;
+        await AdministratorDeployed.updateAdministrator(aliceAddress, aliceAddress, taxId, name, newState);
         const EmployerContract = await ethers.getContractFactory('EmployerContract');
         const EmployerDeployed = await EmployerContract.deploy(AdministratorDeployed.address);
         await EmployerDeployed.deployed();
@@ -73,7 +79,19 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await expect(EmployeeDeployed.connect(john)
                     .addEmployee(aliceAddress, name, taxId, beggining, end, empr))
-                    .to.rejectedWith("Sender must be administrator and be active.");
+                    .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not add an employee - Administrator is not active", async () => {
+            const { EmployeeDeployed, alice, john, jeff, employer } = await loadFixture(setupFixture);
+            const jeffAddress = jeff.address;
+            const name = "JEFF";
+            const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await expect(EmployeeDeployed.connect(alice)
+                    .addEmployee(jeffAddress, name, taxId, beggining, end, empr))
+                    .to.rejectedWith("Administrator is not active.");
         });
         it("should not add an employee - Employer not exists", async () => {
             const { EmployeeDeployed, alice } = await loadFixture(setupFixture);
@@ -204,7 +222,19 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeById(0))
-                    .to.rejectedWith("Sender must be administrator and be active.");
+                    .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return an employee by id - Administrator is not active", async () => {
+            const { EmployeeDeployed, alice, billy, jeff, employer} = await loadFixture(setupFixture);
+            const jeffAddress = jeff.address;
+            const name = "JEFF";
+            const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await EmployeeDeployed.addEmployee(jeffAddress, name, taxId, beggining, end, empr)
+            await expect(EmployeeDeployed.connect(alice).getEmployeeById(0))
+                    .to.rejectedWith("Administrator is not active.");
         });
         it("should not return an employee by address - Sender is not administrator", async () => {
             const { EmployeeDeployed, alice, billy, employer} = await loadFixture(setupFixture);
@@ -216,7 +246,19 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(aliceAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).getEmployeeByAddress(aliceAddress))
-                    .to.rejectedWith("Sender must be administrator and be active.");
+                    .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return an employee by address - Administrator is not active", async () => {
+            const { EmployeeDeployed, alice, jeff, employer} = await loadFixture(setupFixture);
+            const jeffAddress = jeff.address;
+            const name = "ALICE";
+            const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await EmployeeDeployed.addEmployee(jeffAddress, name, taxId, beggining, end, empr)
+            await expect(EmployeeDeployed.connect(alice).getEmployeeByAddress(jeffAddress))
+                    .to.rejectedWith("Administrator is not active.");
         });
     });
     describe("Update employee", () => {
@@ -269,7 +311,26 @@ describe('EmployeeContract', () => {
             const newState = 0;
             await expect(EmployeeDeployed.connect(billy)
                 .updateEmployee(aliceAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
-                .to.rejectedWith("Sender must be administrator and be active.");
+                .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return an updated employee - Administrator is not active", async () => {
+            const { EmployeeDeployed, alice, billy, jeff, employer } = await loadFixture(setupFixture);
+            const jeffAddress = jeff.address;
+            const name = "JEFF";
+            const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await EmployeeDeployed.addEmployee(jeffAddress, name, taxId, beggining, end, empr)
+            const newAddress = ethers.Wallet.createRandom().address;
+            const newTaxId = 3333333333;
+            const newName = "AMANDA";
+            const newBeggining = 930;
+            const newEnd = 1730;
+            const newState = 0;
+            await expect(EmployeeDeployed.connect(alice)
+                .updateEmployee(jeffAddress, newAddress, newTaxId, newName, newBeggining, newEnd, newState, empr))
+                .to.rejectedWith("Administrator is not active.");
         });
         it("should not return an updated employee - Address not given", async () => {
             const { EmployeeDeployed, alice, employer } = await loadFixture(setupFixture);
@@ -381,7 +442,21 @@ describe('EmployeeContract', () => {
             await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
             await EmployeeDeployed.addEmployee(alice.address, nameEmp3, taxIdEmp3, beggining, end, empr);
             await expect(EmployeeDeployed.connect(jeff).getAllEmployees())
-                    .to.rejectedWith("Sender must be administrator and be active.");
+                    .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return employees - Administrator is not active", async () => {
+            const { EmployeeDeployed, billy, john, alice, jeff, employer } = await loadFixture(setupFixture);
+            const nameEmp1 = "BILLY";
+            const taxIdEmp1 = "1111111111";
+            const nameEmp2 = "JOHN";
+            const taxIdEmp2 = "2222222222";
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await EmployeeDeployed.addEmployee(billy.address, nameEmp1, taxIdEmp1, beggining, end, empr);
+            await EmployeeDeployed.addEmployee(john.address, nameEmp2, taxIdEmp2, beggining, end, empr);
+            await expect(EmployeeDeployed.connect(alice).getAllEmployees())
+                    .to.rejectedWith("Administrator is not active.");
         });
     });
     describe("Checking if employee exists", () => {
@@ -419,7 +494,19 @@ describe('EmployeeContract', () => {
             const empr = employer.address;
             await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
             await expect(EmployeeDeployed.connect(billy).checkIfEmployeeExists(johnAddress))
-                    .to.rejectedWith("Sender must be administrator and be active.");
+                    .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return - Administrator is not active", async () => {
+            const { EmployeeDeployed, billy, john, alice, employer } = await loadFixture(setupFixture);
+            const johnAddress = john.address;
+            const name = "JOHN";
+            const taxId = 2222222222;
+            const beggining = 800;
+            const end = 1800;
+            const empr = employer.address;
+            await EmployeeDeployed.addEmployee(johnAddress, name, taxId, beggining, end, empr)
+            await expect(EmployeeDeployed.connect(alice).checkIfEmployeeExists(johnAddress))
+                    .to.rejectedWith("Administrator is not active.");
         });
     });
     describe("Getting Employer Contract Address", () => {
@@ -434,7 +521,13 @@ describe('EmployeeContract', () => {
             const { EmployeeDeployed, 
                     billy } = await loadFixture(setupFixture);
             await expect(EmployeeDeployed.connect(billy).getEmployerContract())
-                        .to.rejectedWith("Sender must be administrator and be active.");
+                        .to.rejectedWith("Sender must be administrator.");
+        });
+        it("should not return - Administrator is not active", async () => {
+            const { EmployeeDeployed, 
+                    billy, alice } = await loadFixture(setupFixture);
+            await expect(EmployeeDeployed.connect(alice).getEmployerContract())
+                        .to.rejectedWith("Administrator is not active.");
         });
     });
 });
