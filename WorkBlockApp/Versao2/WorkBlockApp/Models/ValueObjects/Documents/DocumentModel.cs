@@ -1,12 +1,18 @@
 using System.Text.RegularExpressions;
+using WorkBlockApp.Interfaces.IModels.IValueObjects.IDocuments;
 
-namespace WorkBlockApp.Models.Utils;
+namespace WorkBlockApp.Models.ValueObjects.Documents;
 
-public class DocumentModel
+public abstract class DocumentModel : IDocument
 {
     private static readonly Regex SWhitespace = new Regex(@"\s+");
-    public static string ChangeWhiteSpace(string input, string replacement)
+    protected static string ChangeWhiteSpace(string input, string replacement)
     {
         return SWhitespace.Replace(input, replacement);
+    }
+    
+    public virtual bool IsValidDocument()
+    {
+        return false;
     }
 }

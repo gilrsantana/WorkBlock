@@ -31,7 +31,7 @@ public static class DependenciesExtension
             });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-        
+
     }
 
     public static void AddContext(this IServiceCollection services, WebApplicationBuilder builder)
@@ -49,7 +49,7 @@ public static class DependenciesExtension
     }
 
     public static void AddCorsConfiguration(this IServiceCollection services)
-    {            
+    {
         services.AddCors(options =>
         {
             options.AddDefaultPolicy(builder =>
@@ -59,17 +59,17 @@ public static class DependenciesExtension
                        .AllowAnyHeader();
             });
         });
-        
-        services.AddCors(options => 
+
+        services.AddCors(options =>
         {
             options.AddPolicy("Production",
-            policy => 
+            policy =>
             {
                 policy.WithOrigins("https://pontoblock.gilmarsantana.com/", "http://pontoblock.gilmarsantana.com/")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
-            
+
         });
     }
 
@@ -77,17 +77,20 @@ public static class DependenciesExtension
     {
         if (app.Environment.IsDevelopment())
         {
+            System.Console.WriteLine("Development");
             app.UseCors();
         }
 
         if (app.Environment.IsProduction())
         {
+            System.Console.WriteLine("Production");
             app.UseCors("Production");
+            app.UseHttpsRedirection();
         }
-        
+
         app.UseSwagger();
         app.UseSwaggerUI();
-        app.UseHttpsRedirection();
+
         app.UseAuthorization();
         app.MapControllers();
 

@@ -1,6 +1,6 @@
 namespace WorkBlockApp.Interfaces.IServices;
 
-public class IEmployerService
+public interface IEmployerService
 {
     
 }

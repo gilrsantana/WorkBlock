@@ -1,4 +1,4 @@
-namespace WorkBlockApp.Interfaces.IModels.IValueObjects;
+namespace WorkBlockApp.Interfaces.IModels.IValueObjects.IDocuments;
 
 public interface IDocument
 {

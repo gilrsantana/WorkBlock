@@ -1,12 +1,22 @@
 using WorkBlockApp.Models.Utils;
+using WorkBlockApp.Models.ValueObjects.Documents;
 
 namespace WorkBlockApp.Models.Documents;
 
 public class CpfModel : DocumentModel
 {
-    public string CpfNumber { get; set; } = null!;
+    public string CpfNumber { get; set; }
+    public CpfModel(string cpfNumber)
+    {
+        CpfNumber = cpfNumber ?? throw new ArgumentNullException(nameof(cpfNumber));
+    }
+
+    public override bool IsValidDocument()
+    {
+        return ValidateCpf(CpfNumber);
+    }
     
-    public static bool ValidateCpf(string cpf)
+    private static bool ValidateCpf(string cpf)
     {
         if (string.IsNullOrEmpty(cpf))
                 return false;

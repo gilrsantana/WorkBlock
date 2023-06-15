@@ -2,18 +2,57 @@
 @model WorkBlockApp.Pages.AdministratorCRUD.Index
 
 @{
-    Layout = null;
+    var administrators = Model.Administrators;
+    ViewData["Title"] = "Administradores";
+    ViewData["Subtitulo"] = "Lista de Administradores";
 }
 
-<!DOCTYPE html>
+<header class="d-flex justify-content-between align-iten-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitulo"]</h1>
+    </div>
+    <div>
+        <a asp-page="/AdministratorCRUD/Cadastrar" class="btn btn-primary">Cadastrar</a>
+    </div>
+</header>
+<hr>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    
-</div>
-</body>
-</html>
+@if (administrators.Any())
+{
+    <table class="table table-striped tabela-produtos">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Estado</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var administrator in administrators)
+        {
+            <tr>
+                <td>@administrator.Nome</td>
+                <td>@administrator.Cpf</td>
+                <td>
+                    @if(@administrator.Ativo == 1)
+                    {
+                        <span class="badge bg-success">Ativo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inativo</span>
+                    }
+                </td>
+                <td>
+                    <a asp-page="/AdministratorCRUD/Cadastrar" asp-route-id="@administrator.Carteira" class="btn btn-secondary btn-sm">Alterar</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Não há nenhum produto cadastrado.</p>
+}

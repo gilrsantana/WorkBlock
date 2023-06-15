@@ -1,5 +1,5 @@
-import { errors, ethers } from "./ethers-5.1.esm.min.js";
-import { contractAddres, contractAbi } from "./constants.js";
+import { errors, ethers } from "../library/ethers-5.1.esm.min.js";
+import { contractAddres, contractAbi } from "../global/constants.js";
 
 const connectButton = document.getElementById("btnConnect");
 const startWorkButton = document.getElementById("btnStartWork");
