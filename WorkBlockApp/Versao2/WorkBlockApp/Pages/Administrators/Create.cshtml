@@ -1,17 +1,17 @@
-@page
-@model AdministratorCRUD.Cadastrar
+@page 
+@model Administrators.Create
 @{
     ViewData["Title"] = "Administrador";
-    ViewData["Subtitulo"] = Model.Id != null ? "Atualização de Administrador" : "Cadastro de Administrador";
+    ViewData["Subtitle"] = Model.Id != null ? "Atualização de Administrador" : "Cadastro de Administrador";
     var action = Model.Id != null ? "Atualizar" : "Cadastrar";
 }
 
 <header class="d-flex justify-content-between align-iten-center">
     <div>
-        <h1 class="text-primary">@ViewData["Subtitulo"]</h1>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
     </div>
     <div>
-        <a asp-page="/AdministratorCRUD/Index" class="btn btn-secondary">Cancelar</a>
+        <a asp-page="/Administrators/Index" class="btn btn-secondary">Cancelar</a>
     </div>
 </header>
 <hr>
@@ -78,8 +78,7 @@
                     <input asp-for="AdministratorUpdateModel.Carteira"
                            class="form-control"
                            value="@Model.AdministratorUpdateModel.Carteira"
-                           readonly
-                           disabled>
+                           readonly>
                     
                     <span asp-validation-for="AdministratorUpdateModel.Carteira" class="text-danger"></span>
                     <div class="invalid-feedback">
@@ -107,7 +106,8 @@
                 </div>
                 <div class="col-12 col-md-7">
                     <label asp-for="AdministratorUpdateModel.NovaCarteira" class="form-label"></label>
-                    <input asp-for="AdministratorUpdateModel.NovaCarteira" class="form-control">
+                    <input asp-for="AdministratorUpdateModel.NovaCarteira" class="form-control"
+                           value="@Model.AdministratorUpdateModel.Carteira">
                     <span asp-validation-for="AdministratorUpdateModel.NovaCarteira" class="text-danger"></span>
                     <div class="invalid-feedback">
                         Você deve informar o endereço da carteira para continuar

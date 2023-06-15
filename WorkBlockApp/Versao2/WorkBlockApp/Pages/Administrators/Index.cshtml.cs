@@ -4,7 +4,7 @@ using WorkBlockApp.DTOs;
 using WorkBlockApp.Interfaces.IServices;
 using WorkBlockApp.Models.Domain;
 
-namespace WorkBlockApp.Pages.AdministratorCRUD;
+namespace WorkBlockApp.Pages.Administrators;
 
 public class Index : PageModel
 {

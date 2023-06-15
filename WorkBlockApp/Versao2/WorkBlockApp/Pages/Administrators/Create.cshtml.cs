@@ -5,9 +5,9 @@ using WorkBlockApp.Interfaces.IServices;
 using WorkBlockApp.Models.Domain;
 using WorkBlockApp.Models.Event;
 
-namespace WorkBlockApp.Pages.AdministratorCRUD;
+namespace WorkBlockApp.Pages.Administrators;
 
-public class Cadastrar : PageModel
+public class Create : PageModel
 {
     [BindProperty] 
     public AdministratorModel AdministratorModel { get; set; } = null!;
@@ -21,7 +21,7 @@ public class Cadastrar : PageModel
     
     public string? Id = "";
     public string HashTransaction = "";
-    public Cadastrar(IAdministratorService administratorService)
+    public Create(IAdministratorService administratorService)
     {
         _administratorService = administratorService;
     }
@@ -52,7 +52,7 @@ public class Cadastrar : PageModel
         }
     }
     
-    public async void OnPost()
+    public async Task OnPostAsync()
     {
         if (ModelState.IsValid)
         {

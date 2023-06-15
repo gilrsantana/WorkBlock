@@ -1,0 +1,110 @@
+@page
+@model Administrators.Update
+@{
+    ViewData["Title"] = "Editar";
+    ViewData["Subtitle"] = "Atualização de Administrador";
+    var action = Model.Id != null ? "Atualizar" : "Cadastrar";
+}
+
+<header class="d-flex justify-content-between align-iten-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
+    </div>
+    <div>
+        <a asp-page="/Administrators/Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</header>
+<hr>
+
+<div class="container m-3 p-5 col-12 col-md-10 col-lg-8">
+    <form method="POST" action="" class="needs-validation" novalidate>
+        <div class="row  mb-3 g-4">
+            @if (Model.Id is not null)
+            {
+                <div class="form-group col-12">
+                    <label asp-for="AdministratorUpdateModel.Nome" class="form-label"></label>
+                    <input asp-for="AdministratorUpdateModel.Nome" class="form-control"
+                           value="@Model.AdministratorUpdateModel.Nome" required>
+                    <span asp-validation-for="AdministratorUpdateModel.Nome" class="text-danger"></span>
+                    <div class="invalid-feedback">
+                        Você deve informar o nome completo para continuar
+                    </div>
+                    <div class="valid-feedback">
+                        nome informado corretamente
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <label asp-for="AdministratorUpdateModel.Carteira" class="form-label"></label>
+                    <input asp-for="AdministratorUpdateModel.Carteira"
+                           class="form-control"
+                           value="@Model.AdministratorUpdateModel.Carteira"
+                           readonly>
+
+                    <span asp-validation-for="AdministratorUpdateModel.Carteira" class="text-danger"></span>
+                    <div class="invalid-feedback">
+                        Você deve informar o endereço da carteira para continuar
+                    </div>
+                    <div class="valid-feedback">
+                        Endereço informado corretamente
+                    </div>
+                </div>
+                <div class="col-12 col-md-5">
+                    <label asp-for="AdministratorUpdateModel.Cpf" class="form-label"></label>
+                    <input asp-for="AdministratorUpdateModel.Cpf" id="txtCPF" class="form-control"
+                           value="@Model.AdministratorUpdateModel.Cpf"
+                           required
+                           onfocus="loadEventCPF()">
+                    <span asp-validation-for="AdministratorUpdateModel.Cpf" class="text-danger"></span>
+                    <div id="cpfStatusInvalid"
+                         class="invalid-feedback">
+                        O CPF deve estar informado em formato correto
+                    </div>
+                    <div cid="cpfStatusValid"
+                         class="valid-feedback">
+                        CPF informado corretamente
+                    </div>
+                </div>
+                <div class="col-12 col-md-7">
+                    <label asp-for="AdministratorUpdateModel.NovaCarteira" class="form-label"></label>
+                    <input asp-for="AdministratorUpdateModel.NovaCarteira" class="form-control"
+                           value="@Model.AdministratorUpdateModel.Carteira">
+                    <span asp-validation-for="AdministratorUpdateModel.NovaCarteira" class="text-danger"></span>
+                    <div class="invalid-feedback">
+                        Você deve informar o endereço da carteira para continuar
+                    </div>
+                    <div class="valid-feedback">
+                        Endereço informado corretamente
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-5">
+                    <input asp-for="IsActive" id="ativo" name="ativo" class="form-check-input"
+                           checked="@Model.AdministratorUpdateModel.Ativo == 1 ? 'true' : 'false'">
+                    <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <button type="submit" class="btn btn-primary">@action</button>
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-bg-warning fw-bold">
+                    <p>"Administrador não encontrado"</p>
+                </div>
+            }
+            
+        </div>
+    </form>
+    @if (Model.HashTransaction.Length > 0)
+    {
+        <p>Operação realizada com sucesso.</p>
+        <p>Código da transação: @Model.HashTransaction</p>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("Shared/ValidateFormPartial");
+    };
+    <script src="~/js/formatDocument.js"></script>
+}

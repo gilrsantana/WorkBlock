@@ -1,12 +1,11 @@
 @{
     var model = Model.ToString();
-    var modelString = (string)model.Substring(model.LastIndexOf(".")+1);
-    var classeMenuPrincipal = modelString == "Index" ? "active" : "";
-    var classeMenuAdministrator = modelString == "Administrator" ? "active" : "";
-    var classeMenuEmployer = modelString == "Employer" ? "active" : "";
-    var classeMenuEmployee = modelString == "Employee" ? "active" : "";
-    var classeMenuPontoBlock = modelString == "PontoBlock" ? "active" : "";
-    var classeMenuPontoBlockReports = modelString == "PontoBlockReports" ? "active" : "";
+    var classeMenuPrincipal = (string)model == "WorkBlockApp.Pages.Index" ? "active" : "";
+    var classeMenuAdministrator = model.Contains("Administrators") ? "active" : "";
+    var classeMenuEmployer = model.Contains("Employers")  ? "active" : "";
+    var classeMenuEmployee = model.Contains("Employees")  ? "active" : "";
+    var classeMenuPontoBlock = model.Contains("PontoBlock")  ? "active" : "";
+    var classeMenuPontoBlockReports = model.Contains("PontoBlockReports")  ? "active" : "";
 }
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container container-fluid">
@@ -19,13 +18,13 @@
                 <a class="nav-link @classeMenuPrincipal" asp-page="/Index">
                     WorkBlock
                 </a>
-                <a class="nav-link @classeMenuAdministrator" asp-page="/AdministratorCRUD/Index">
+                <a class="nav-link @classeMenuAdministrator" asp-page="/Administrators/Index">
                     Administrador
                 </a>
-                <a class="nav-link @classeMenuEmployer" asp-page="/AdministratorCRUD">
+                <a class="nav-link @classeMenuEmployer" asp-page="/Employers">
                     Empregador
                 </a>
-                <a class="nav-link @classeMenuEmployee" asp-page="/Employee">
+                <a class="nav-link @classeMenuEmployee" asp-page="/Employees">
                     Funcionário
                 </a>
                 <a class="nav-link @classeMenuPontoBlock" asp-page="/PontoBlock">

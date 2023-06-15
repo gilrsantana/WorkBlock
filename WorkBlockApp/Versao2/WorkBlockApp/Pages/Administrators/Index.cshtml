@@ -1,18 +1,18 @@
-@page
-@model WorkBlockApp.Pages.AdministratorCRUD.Index
+@page 
+@model WorkBlockApp.Pages.Administrators.Index
 
 @{
     var administrators = Model.Administrators;
     ViewData["Title"] = "Administradores";
-    ViewData["Subtitulo"] = "Lista de Administradores";
+    ViewData["Subtitle"] = "Lista de Administradores";
 }
 
-<header class="d-flex justify-content-between align-iten-center">
+<header class="d-flex justify-content-between align-items-center">
     <div>
-        <h1 class="text-primary">@ViewData["Subtitulo"]</h1>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
     </div>
     <div>
-        <a asp-page="/AdministratorCRUD/Cadastrar" class="btn btn-primary">Cadastrar</a>
+        <a asp-page="/Administrators/Create" class="btn btn-primary">Cadastrar</a>
     </div>
 </header>
 <hr>
@@ -45,7 +45,7 @@
                     }
                 </td>
                 <td>
-                    <a asp-page="/AdministratorCRUD/Cadastrar" asp-route-id="@administrator.Carteira" class="btn btn-secondary btn-sm">Alterar</a>
+                    <a asp-page="/Administrators/Update" asp-route-id="@administrator.Carteira" class="btn btn-secondary btn-sm">Alterar</a>
                 </td>
             </tr>
         }

@@ -20,6 +20,35 @@ public class AdministratorRest : IAdministratorRest
         _appConfiguration = appConfiguration;
     }
 
+    public async Task<ResponseGenerico<List<AdministratorModel>>> GetAll()
+    {
+        var op = "GetAll";
+        var requestUri = $"{_appConfiguration.GetAdministratorEndPoint()}{op}";
+        var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+        var response = new ResponseGenerico<List<AdministratorModel>>();
+        using var client = new HttpClient();
+        var responseRequestApi = await client.SendAsync(request);
+        var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<List<AdministratorModel>>>(contentResponse);
+
+        if (responseRequestApi.IsSuccessStatusCode)
+        {
+            response.CodigoHttp = responseRequestApi.StatusCode;
+            if (objResponse != null)
+                response.DadosRetorno = objResponse.Data;
+        }
+        else
+        {
+            response.CodigoHttp = responseRequestApi.StatusCode;
+            if (objResponse is { Errors: not null })
+                response.ErroRetorno = JsonSerializer
+                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
+        }
+
+        return response;
+    }
+
     public async Task<ResponseGenerico<AdministratorModel>> GetById(int id)
     {
         var op = $"Get/{id}";
@@ -134,32 +163,4 @@ public class AdministratorRest : IAdministratorRest
         return response;
     }
 
-    public async Task<ResponseGenerico<List<AdministratorModel>>> GetAll()
-    {
-        var op = "GetAll";
-        var requestUri = $"{_appConfiguration.GetAdministratorEndPoint()}{op}";
-        var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-
-        var response = new ResponseGenerico<List<AdministratorModel>>();
-        using var client = new HttpClient();
-        var responseRequestApi = await client.SendAsync(request);
-        var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
-        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<List<AdministratorModel>>>(contentResponse);
-
-        if (responseRequestApi.IsSuccessStatusCode)
-        {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse != null)
-                response.DadosRetorno = objResponse.Data;
-        }
-        else
-        {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse is { Errors: not null })
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-        }
-
-        return response;
-    }
 }
