@@ -16,6 +16,7 @@ public class AdministratorUpdateViewModel
     [JsonPropertyName("administratorTaxId")]
     public string AdministratorTaxId { get; set; } = null!;
 
+    [JsonPropertyName("state")]
     public byte State { get; set; }
 
     [JsonPropertyName("time")]

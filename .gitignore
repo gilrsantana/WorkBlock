@@ -10,5 +10,7 @@ WorkBlockApp/Versao2/WorkBlockApp/wwwroot/lib/
 WorkBlockApp/Versao2/WorkBlockApp/appsettings.Development.json
 WorkBlockApp/Versao2/WorkBlockApp/appsettings.json
 WorkBlockApp/Versao2/WorkBlockApp/Properties/launchSettings.json
-/WorkBlockApp/Versao2/WorkBlockApp/obj
-/WorkBlockApp/Versao2/WorkBlockApp/WorkBlockApp.csproj.user
+WorkBlockApp/Versao2/WorkBlockApp/obj/
+WorkBlockApp/Versao2/WorkBlockApp/bin/
+WorkBlockApp/Versao2/WorkBlockApp/idea/
+WorkBlockApp/Versao2/idea/

@@ -24,8 +24,4 @@
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="Pages\Administrators\Administrator.cshtml" />
-  </ItemGroup>
-
 </Project>
