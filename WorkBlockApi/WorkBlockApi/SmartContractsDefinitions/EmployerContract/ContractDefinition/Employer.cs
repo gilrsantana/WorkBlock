@@ -4,7 +4,6 @@ using Nethereum.ABI.FunctionEncoding.Attributes;
 namespace WorkBlockApi.SmartContractsDefinitions.EmployerContract.ContractDefinition;
 
 public partial class Employer : EmployerBase { }
-
 public class EmployerBase 
 {
     [Parameter("uint256", "idEmployer", 1)]
