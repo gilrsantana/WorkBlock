@@ -9,7 +9,7 @@ namespace WorkBlockApp.Pages.Administrators;
 public class Index : PageModel
 {
     [BindProperty] 
-    public List<AdministratorResponse> Administrators { get; set; } = new();
+    public List<AdministratorResponse> Administrators { get; set; } = null!;
     
     private readonly IAdministratorService _administratorService;
 
@@ -18,13 +18,9 @@ public class Index : PageModel
         _administratorService = administratorService;
     }
     
-    public async Task<IActionResult> OnGet()
+    public async Task OnGet()
     {
-        var adms = await Get();
-        if (adms != null)
-            Administrators = adms;
-
-        return Page();
+        Administrators = await Get() ?? new List<AdministratorResponse>();
     }
     
     private async Task<List<AdministratorResponse>?> Get()

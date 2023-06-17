@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Editar";
     ViewData["Subtitle"] = "Atualização de Administrador";
-    var action = Model.Id != null ? "Atualizar" : "Cadastrar";
 }
 
 <header class="d-flex justify-content-between align-iten-center">
@@ -19,8 +18,9 @@
 <div class="container m-3 p-5 col-12 col-md-10 col-lg-8">
     <form method="POST" action="" class="needs-validation" novalidate>
         <div class="row  mb-3 g-4">
-            @if (Model.Id is not null)
+            @if (Model.Carteira is not null)
             {
+                var cpfFormatado = Util.FormatCPF.Format(Model.AdministratorUpdateModel.Cpf);
                 <div class="form-group col-12">
                     <label asp-for="AdministratorUpdateModel.Nome" class="form-label"></label>
                     <input asp-for="AdministratorUpdateModel.Nome" class="form-control"
@@ -51,7 +51,7 @@
                 <div class="col-12 col-md-5">
                     <label asp-for="AdministratorUpdateModel.Cpf" class="form-label"></label>
                     <input asp-for="AdministratorUpdateModel.Cpf" id="txtCPF" class="form-control"
-                           value="@Model.AdministratorUpdateModel.Cpf"
+                           value="@cpfFormatado"
                            required
                            onfocus="loadEventCPF()">
                     <span asp-validation-for="AdministratorUpdateModel.Cpf" class="text-danger"></span>
@@ -82,7 +82,7 @@
                     <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
                 </div>
                 <div class="col-12 col-md-6">
-                    <button type="submit" class="btn btn-primary">@action</button>
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
                 </div>
             }
             else

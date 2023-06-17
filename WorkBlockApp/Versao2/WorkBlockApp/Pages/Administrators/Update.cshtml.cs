@@ -15,28 +15,32 @@ public class Update : PageModel
 
     private readonly IAdministratorService _administratorService;
 
-    public string? Id = "";
+    public string? Carteira = "";
     public string HashTransaction = "";
     public Update(IAdministratorService administratorService)
     {
         _administratorService = administratorService;
     }
-    public async Task OnGetAsync()
+    public async Task OnGetAsync(string carteira)
     {
-        Id = HttpContext.Request.Query["id"];
-        if (!string.IsNullOrEmpty(Id))
-            await SetAdministratorUpdateModel(Id);
+        Carteira = HttpContext.Request.Query["carteira"];
+        if (!string.IsNullOrEmpty(carteira))
+            await SetAdministratorUpdateModel(carteira);
     }
 
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid) return Page();
-        if (Id is null) return Page();
         try
         {
             var result = await _administratorService.Update(AdministratorUpdateModel);
             if (result.DadosRetorno != null)
+            {
                 HashTransaction = result.DadosRetorno.HashTransaction;
+                TempData["success"] = $"Administrador atualizado com sucesso. {HashTransaction}";
+                return RedirectToPage("/Administrators/Index");
+            }
+            TempData["Error"] = "Erro na atualização do administrador";
             return RedirectToPage("/Administrators/Index");
         }
         catch (Exception e)

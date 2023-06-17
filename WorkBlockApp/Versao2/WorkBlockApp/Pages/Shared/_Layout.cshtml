@@ -7,14 +7,16 @@
     <link rel="stylesheet" href="/lib/bootstrap5/dist/css/bootstrap.min.css" asp-append-version="true">
     <link rel="stylesheet" href="/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true">
     <link rel="stylesheet" href="/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" asp-append-version="true">
 
     <title>@ViewData["Title"] - WorkBlock</title>
 </head>
 <body>
 <header>
-    <partial name="Shared/NavMenuPartial"/>
+    <partial name="Shared/_NavMenuPartial"/>
 </header>
 <main>
+    <partial name="Shared/_NotificationPartial" model="@TempData" />
     <div class="container mt-2">
         @RenderBody()
     </div>

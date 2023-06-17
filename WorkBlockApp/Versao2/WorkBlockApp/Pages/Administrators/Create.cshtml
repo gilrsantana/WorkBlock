@@ -2,8 +2,7 @@
 @model Administrators.Create
 @{
     ViewData["Title"] = "Administrador";
-    ViewData["Subtitle"] = Model.Id != null ? "Atualização de Administrador" : "Cadastro de Administrador";
-    var action = Model.Id != null ? "Atualizar" : "Cadastrar";
+    ViewData["Subtitle"] = "Cadastro de Administrador";
 }
 
 <header class="d-flex justify-content-between align-iten-center">
@@ -19,112 +18,46 @@
 <div class="container m-3 p-5 col-12 col-md-10 col-lg-8">
     <form method="POST" action="" class="needs-validation" novalidate>
         <div class="row  mb-3 g-4">
-            @if (Model.Id is null)
-            {
-                <div class="form-group col-12">
-                    <label asp-for="AdministratorModel.Nome" class="form-label"></label>
-                    <input asp-for="AdministratorModel.Nome" class="form-control" required>
-                    <span asp-validation-for="AdministratorModel.Nome" class="text-danger"></span>
-                    <div class="invalid-feedback">
-                        Você deve informar o nome completo para continuar
-                    </div>
-                    <div class="valid-feedback">
-                        nome informado corretamente
-                    </div>
+            <div class="form-group col-12">
+                <label asp-for="AdministratorModel.Nome" class="form-label"></label>
+                <input asp-for="AdministratorModel.Nome" class="form-control" required>
+                <span asp-validation-for="AdministratorModel.Nome" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o nome completo para continuar
                 </div>
-                <div class="col-12 col-md-7">
-                    <label asp-for="AdministratorModel.Carteira" class="form-label"></label>
-                    <input asp-for="AdministratorModel.Carteira" class="form-control" required>
-                    <span asp-validation-for="AdministratorModel.Carteira" class="text-danger"></span>
-                    <div class="invalid-feedback">
-                        Você deve informar o endereço da carteira para continuar
-                    </div>
-                    <div class="valid-feedback">
-                        Endereço informado corretamente
-                    </div>
+                <div class="valid-feedback">
+                    nome informado corretamente
                 </div>
-                <div class="col-12 col-md-5">
-                    <label asp-for="AdministratorModel.Cpf" class="form-label"></label>
-                    <input asp-for="AdministratorModel.Cpf" id="txtCPF" class="form-control"
-                           required
-                           onfocus="loadEventCPF()">
-                    <span asp-validation-for="AdministratorModel.Cpf" class="text-danger"></span>
-                    <div id="cpfStatusInvalid"
-                         class="invalid-feedback">
-                        O CPF deve estar informado em formato correto
-                    </div>
-                    <div cid="cpfStatusValid"
-                         class="valid-feedback">
-                        CPF informado corretamente
-                    </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <label asp-for="AdministratorModel.Carteira" class="form-label"></label>
+                <input asp-for="AdministratorModel.Carteira" class="form-control" required>
+                <span asp-validation-for="AdministratorModel.Carteira" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço da carteira para continuar
                 </div>
-            }
-            else
-            {
-                <div class="form-group col-12">
-                    <label asp-for="AdministratorUpdateModel.Nome" class="form-label"></label>
-                    <input asp-for="AdministratorUpdateModel.Nome" class="form-control" 
-                           value="@Model.AdministratorUpdateModel.Nome" required>
-                    <span asp-validation-for="AdministratorUpdateModel.Nome" class="text-danger"></span>
-                    <div class="invalid-feedback">
-                        Você deve informar o nome completo para continuar
-                    </div>
-                    <div class="valid-feedback">
-                        nome informado corretamente
-                    </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
                 </div>
-                <div class="col-12 col-md-7">
-                    <label asp-for="AdministratorUpdateModel.Carteira" class="form-label"></label>
-                    <input asp-for="AdministratorUpdateModel.Carteira"
-                           class="form-control"
-                           value="@Model.AdministratorUpdateModel.Carteira"
-                           readonly>
-                    
-                    <span asp-validation-for="AdministratorUpdateModel.Carteira" class="text-danger"></span>
-                    <div class="invalid-feedback">
-                        Você deve informar o endereço da carteira para continuar
-                    </div>
-                    <div class="valid-feedback">
-                        Endereço informado corretamente
-                    </div>
+            </div>
+            <div class="col-12 col-md-5">
+                <label asp-for="AdministratorModel.Cpf" class="form-label"></label>
+                <input asp-for="AdministratorModel.Cpf" id="txtCPF" class="form-control"
+                       required
+                       onfocus="loadEventCPF()">
+                <span asp-validation-for="AdministratorModel.Cpf" class="text-danger"></span>
+                <div id="cpfStatusInvalid"
+                     class="invalid-feedback">
+                    O CPF deve estar informado em formato correto
                 </div>
-                <div class="col-12 col-md-5">
-                    <label asp-for="AdministratorUpdateModel.Cpf" class="form-label"></label>
-                    <input asp-for="AdministratorUpdateModel.Cpf" id="txtCPF" class="form-control"
-                           value="@Model.AdministratorUpdateModel.Cpf"
-                           required
-                           onfocus="loadEventCPF()">
-                    <span asp-validation-for="AdministratorUpdateModel.Cpf" class="text-danger"></span>
-                    <div id="cpfStatusInvalid"
-                         class="invalid-feedback">
-                        O CPF deve estar informado em formato correto
-                    </div>
-                    <div cid="cpfStatusValid"
-                         class="valid-feedback">
-                        CPF informado corretamente
-                    </div>
+                <div cid="cpfStatusValid"
+                     class="valid-feedback">
+                    CPF informado corretamente
                 </div>
-                <div class="col-12 col-md-7">
-                    <label asp-for="AdministratorUpdateModel.NovaCarteira" class="form-label"></label>
-                    <input asp-for="AdministratorUpdateModel.NovaCarteira" class="form-control"
-                           value="@Model.AdministratorUpdateModel.Carteira">
-                    <span asp-validation-for="AdministratorUpdateModel.NovaCarteira" class="text-danger"></span>
-                    <div class="invalid-feedback">
-                        Você deve informar o endereço da carteira para continuar
-                    </div>
-                    <div class="valid-feedback">
-                        Endereço informado corretamente
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-5">
-                    <input asp-for="IsActive" id="ativo" name="ativo" class="form-check-input"
-                           checked="@Model.AdministratorUpdateModel.Ativo == 1 ? 'true' : 'false'">
-                    <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
-                </div>
-            }
+            </div>
+            
             <div class="col-12 col-md-6">
-                <button type="submit" class="btn btn-primary">@action</button>
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
             </div>
         </div>
     </form>

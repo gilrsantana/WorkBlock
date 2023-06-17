@@ -24,4 +24,8 @@
     <Folder Include="wwwroot\img\" />
   </ItemGroup>
 
+  <ItemGroup>
+
+  </ItemGroup>
+
 </Project>
