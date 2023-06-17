@@ -12,7 +12,6 @@ public class Update : PageModel
     [BindProperty]
     public AdministratorUpdateModel AdministratorUpdateModel { get; set; } = null!;
     public AdminAddedEventModel? AdminAddedEventModel { get; set; }
-    public bool IsActive { get; set; }
 
     private readonly IAdministratorService _administratorService;
 
@@ -35,18 +34,16 @@ public class Update : PageModel
         if (Id is null) return Page();
         try
         {
-            AdministratorUpdateModel.Ativo = IsActive ? 1 : 0;
             var result = await _administratorService.Update(AdministratorUpdateModel);
             if (result.DadosRetorno != null)
                 HashTransaction = result.DadosRetorno.HashTransaction;
+            return RedirectToPage("/Administrators/Index");
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
-
-        return Page();
     }
 
     private async Task SetAdministratorUpdateModel(string? address)

@@ -2,7 +2,7 @@
 @model Administrators.Update
 @{
     ViewData["Title"] = "Editar";
-    ViewData["Subtitle"] = "Atualização de Administrador";
+    ViewData["Subtitle"] = "AtualizaÃ§Ã£o de Administrador";
     var action = Model.Id != null ? "Atualizar" : "Cadastrar";
 }
 
@@ -27,7 +27,7 @@
                            value="@Model.AdministratorUpdateModel.Nome" required>
                     <span asp-validation-for="AdministratorUpdateModel.Nome" class="text-danger"></span>
                     <div class="invalid-feedback">
-                        Você deve informar o nome completo para continuar
+                        VocÃª deve informar o nome completo para continuar
                     </div>
                     <div class="valid-feedback">
                         nome informado corretamente
@@ -42,10 +42,10 @@
 
                     <span asp-validation-for="AdministratorUpdateModel.Carteira" class="text-danger"></span>
                     <div class="invalid-feedback">
-                        Você deve informar o endereço da carteira para continuar
+                        VocÃª deve informar o endereÃ§o da carteira para continuar
                     </div>
                     <div class="valid-feedback">
-                        Endereço informado corretamente
+                        EndereÃ§o informado corretamente
                     </div>
                 </div>
                 <div class="col-12 col-md-5">
@@ -70,16 +70,15 @@
                            value="@Model.AdministratorUpdateModel.Carteira">
                     <span asp-validation-for="AdministratorUpdateModel.NovaCarteira" class="text-danger"></span>
                     <div class="invalid-feedback">
-                        Você deve informar o endereço da carteira para continuar
+                        VocÃª deve informar o endereÃ§o da carteira para continuar
                     </div>
                     <div class="valid-feedback">
-                        Endereço informado corretamente
+                        EndereÃ§o informado corretamente
                     </div>
                 </div>
 
                 <div class="col-12 col-md-5">
-                    <input asp-for="IsActive" id="ativo" name="ativo" class="form-check-input"
-                           checked="@Model.AdministratorUpdateModel.Ativo == 1 ? 'true' : 'false'">
+                    <input type="checkbox" id="Ativo" name="AdministratorUpdateModel.Ativo" class="form-check-input" value="1"/>
                     <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
                 </div>
                 <div class="col-12 col-md-6">
@@ -89,7 +88,7 @@
             else
             {
                 <div class="text-center text-bg-warning fw-bold">
-                    <p>"Administrador não encontrado"</p>
+                    <p>"Administrador nÃ£o encontrado"</p>
                 </div>
             }
             
@@ -97,8 +96,8 @@
     </form>
     @if (Model.HashTransaction.Length > 0)
     {
-        <p>Operação realizada com sucesso.</p>
-        <p>Código da transação: @Model.HashTransaction</p>
+        <p>OperaÃ§Ã£o realizada com sucesso.</p>
+        <p>CÃ³digo da transaÃ§Ã£o: @Model.HashTransaction</p>
     }
 </div>
 

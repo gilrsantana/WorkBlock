@@ -18,7 +18,7 @@ public class Index : PageModel
         _administratorService = administratorService;
     }
     
-    public async Task<IActionResult?> OnGet()
+    public async Task<IActionResult> OnGet()
     {
         var adms = await Get();
         if (adms != null)
