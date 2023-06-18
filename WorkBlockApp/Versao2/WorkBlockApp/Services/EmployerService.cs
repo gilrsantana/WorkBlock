@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using WorkBlockApp.DTOs;
+using WorkBlockApp.Interfaces.IRepository;
 using WorkBlockApp.Interfaces.IServices;
 using WorkBlockApp.Models.Domain;
 using WorkBlockApp.Models.Domain.Event;
@@ -11,9 +13,19 @@ namespace WorkBlockApp.Services;
 
 public class EmployerService : IEmployerService
 {
-    public Task<ResponseGenerico<IEnumerable<EmployerResponse>>> GetEmployersAsync()
+    private readonly IMapper _mapper;
+    private readonly IEmployerRepository _employerRepository;
+
+    public EmployerService(IMapper mapper, IEmployerRepository employerRepository)
     {
-        throw new NotImplementedException();
+        _mapper = mapper;
+        _employerRepository = employerRepository;
+    }
+
+    public async Task<ResponseGenerico<IEnumerable<EmployerResponse>>> GetEmployersAsync()
+    {
+        var employers = await _employerRepository.GetEmployersAsync();
+        return _mapper.Map<ResponseGenerico<IEnumerable<EmployerResponse>>>(employers);
     }
     
     public Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)

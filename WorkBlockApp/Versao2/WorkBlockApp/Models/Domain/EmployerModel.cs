@@ -26,7 +26,7 @@ namespace WorkBlockApp.Models.Domain
         [JsonPropertyName("address")]
         public string Carteira { get; set; } = null!;
 
-
+        [JsonPropertyName("legalAddress")]
         public AddressModel Endereco { get; set; } = null!;
     }
 }
