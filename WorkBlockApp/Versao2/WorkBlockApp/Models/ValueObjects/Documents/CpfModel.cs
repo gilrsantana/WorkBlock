@@ -1,7 +1,4 @@
-using WorkBlockApp.Models.Utils;
-using WorkBlockApp.Models.ValueObjects.Documents;
-
-namespace WorkBlockApp.Models.Documents;
+namespace WorkBlockApp.Models.ValueObjects.Documents;
 
 public class CpfModel : DocumentModel
 {
@@ -15,11 +12,11 @@ public class CpfModel : DocumentModel
     {
         return ValidateCpf(CpfNumber);
     }
-    
+
     private static bool ValidateCpf(string cpf)
     {
         if (string.IsNullOrEmpty(cpf))
-                return false;
+            return false;
 
         var multiplicador1 = new[] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
         var multiplicador2 = new[] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };

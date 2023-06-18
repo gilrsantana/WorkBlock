@@ -4,18 +4,18 @@ using System.Text;
 using System.Text.Json;
 using WorkBlockApp.DTOs;
 using WorkBlockApp.Interfaces.IEnvironment;
-using WorkBlockApp.Interfaces.IRest;
+using WorkBlockApp.Interfaces.IRepository;
 using WorkBlockApp.Models.Domain;
 using WorkBlockApp.Models.Event;
 using WorkBlockApp.ViewModels.VMAdministrator;
 
 namespace WorkBlockApp.Rest;
 
-public class AdministratorRest : IAdministratorRest
+public class AdministratorRepository : IAdministratorRepository
 {
     private readonly IWorkBlockAppConfiguration _appConfiguration;
 
-    public AdministratorRest(IWorkBlockAppConfiguration appConfiguration)
+    public AdministratorRepository(IWorkBlockAppConfiguration appConfiguration)
     {
         _appConfiguration = appConfiguration;
     }

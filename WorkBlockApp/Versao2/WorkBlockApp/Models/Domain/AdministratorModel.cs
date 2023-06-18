@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using WorkBlockApp.Models.Utils.DataAnnotation;
+using WorkBlockApp.Models.DataAnnotation;
 
 namespace WorkBlockApp.Models.Domain;
 
@@ -20,7 +20,7 @@ public class AdministratorModel
     public string Cpf { get; set; } = null!;
 
     [Required(ErrorMessage = "O campo endereço de carteira é obrigatório")]
-    // [RegularExpression(@"/^0x[a-fA-F0-9]{40}$/g", ErrorMessage = "O  endereço de carteira deve estar em formato correto")]
+    [RegularExpression("^0x[a-fA-F0-9]{40}$", ErrorMessage = "O  endereço de carteira deve estar em formato correto")]
     [Display(Name = "Endereço de Carteira", Prompt = "0x71C7656EC7ab88b098defB751B7401B5f6d89553"), StringLength(42)]
     [JsonPropertyName("address")]
     public string Carteira { get; set; } = null!;
@@ -29,5 +29,3 @@ public class AdministratorModel
     [JsonPropertyName("state")]
     public int Ativo { get; set; }
 }
-// /^0x[a-fA-F0-9]{40}$/g 
-//     ^0x[0-9a-fA-F]{40}$

@@ -1,7 +1,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using WorkBlockApp.Interfaces.IEnvironment;
-using WorkBlockApp.Interfaces.IRest;
+using WorkBlockApp.Interfaces.IRepository;
 using WorkBlockApp.Interfaces.IServices;
 using WorkBlockApp.Mappings;
 using WorkBlockApp.Models.Environment;
@@ -13,7 +13,7 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddSingleton<IWorkBlockAppConfiguration, WorkBlockAppConfiguration>();
 
-builder.Services.AddScoped<IAdministratorRest, AdministratorRest>();
+builder.Services.AddScoped<IAdministratorRepository, AdministratorRepository>();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 
 builder.Services.AddAutoMapper(typeof(AdministratorMapping));

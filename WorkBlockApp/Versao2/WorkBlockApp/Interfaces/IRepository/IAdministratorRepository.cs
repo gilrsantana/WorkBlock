@@ -2,9 +2,9 @@ using WorkBlockApp.DTOs;
 using WorkBlockApp.Models.Domain;
 using WorkBlockApp.Models.Event;
 
-namespace WorkBlockApp.Interfaces.IRest;
+namespace WorkBlockApp.Interfaces.IRepository;
 
-public interface IAdministratorRest
+public interface IAdministratorRepository
 {
     Task<ResponseGenerico<AdministratorModel>> GetById(int id);
     Task<ResponseGenerico<List<AdministratorModel>>> GetAll();
