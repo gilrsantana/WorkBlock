@@ -27,26 +27,21 @@ public class Create : PageModel
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid) return Page();
-        if (ModelState.IsValid)
+        try
         {
-            try
+            var result = await _administratorService.Add(AdministratorModel);
+            if (result.DadosRetorno != null)
             {
-                var result = await _administratorService.Add(AdministratorModel);
-                if (result.DadosRetorno != null)
-                {
-                    HashTransaction = result.DadosRetorno.HashTransaction;
-                    TempData["success"] = $"Administrador criado com sucesso. {HashTransaction}";
-                    return RedirectToPage("/Administrators/Index");
-                }
-                TempData["error"] = "Erro na criação do administrador";
+                HashTransaction = result.DadosRetorno.HashTransaction;
+                TempData["success"] = $"Administrador criado com sucesso. {HashTransaction}";
                 return RedirectToPage("/Administrators/Index");
             }
-            catch (Exception e)
-            {
-                System.Console.WriteLine(e.Message);
-                throw;
-            }
+            TempData["error"] = "Erro na criação do administrador";
+            return RedirectToPage("/Administrators/Index");
         }
-        return Page();
+        catch (Exception)
+        {
+            return Page();
+        }
     }
 }

@@ -1,19 +1,10 @@
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
 using WorkBlockApp.Extensions;
-using WorkBlockApp.Interfaces.IEnvironment;
-using WorkBlockApp.Interfaces.IRepository;
-using WorkBlockApp.Interfaces.IServices;
-using WorkBlockApp.Mappings;
-using WorkBlockApp.Models.Environment;
-using WorkBlockApp.Repository;
-using WorkBlockApp.Rest;
-using WorkBlockApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAppConfiguration();
-
+builder.Services.AddDIConfiguration();
+builder.Services.AddAutoMapperConfiguration();
 builder.Services.LoadConfiguration(builder.Build());
 
 // builder.Services.AddRazorPages().AddRazorRuntimeCompilation();

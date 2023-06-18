@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using WorkBlockApp.DTOs;
 using WorkBlockApp.Interfaces.IRepository;
@@ -25,7 +21,7 @@ public class EmployerService : IEmployerService
     public async Task<ResponseGenerico<IEnumerable<EmployerResponse>>> GetEmployersAsync()
     {
         var employers = await _employerRepository.GetEmployersAsync();
-        return _mapper.Map<ResponseGenerico<IEnumerable<EmployerResponse>>>(employers);
+         return _mapper.Map<ResponseGenerico<IEnumerable<EmployerResponse>>>(employers);
     }
     
     public async Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)

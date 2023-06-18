@@ -18,17 +18,17 @@ public class EmployerRepository : IEmployerRepository
     {
         _appConfiguration = appConfiguration;
     }
-    public async Task<ResponseGenerico<IEnumerable<EmployerModel>>> GetEmployersAsync()
+    public async Task<ResponseGenerico<IEnumerable<EmployerIndexViewModel>>> GetEmployersAsync()
     {
         var op = "GetAll";
         var requestUri = $"{_appConfiguration.GetEmployerEndPoint()}{op}";
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
-        var response = new ResponseGenerico<IEnumerable<EmployerModel>>();
+        var response = new ResponseGenerico<IEnumerable<EmployerIndexViewModel>>();
         using var client = new HttpClient();
         var responseRequestApi = await client.SendAsync(request);
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
-        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<IEnumerable<EmployerModel>>>(contentResponse);
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<IEnumerable<EmployerIndexViewModel>>>(contentResponse);
 
         if (responseRequestApi.IsSuccessStatusCode)
         {
@@ -121,7 +121,7 @@ public class EmployerRepository : IEmployerRepository
         using var client = new HttpClient();
         var responseRequestApi = await 
             client
-                .PostAsJsonAsync(
+                .PostAsync(
                     requestUri, 
                     new StringContent(
                         JsonSerializer.Serialize(model), 
