@@ -28,28 +28,30 @@ public class EmployerService : IEmployerService
         return _mapper.Map<ResponseGenerico<IEnumerable<EmployerResponse>>>(employers);
     }
     
-    public Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)
+    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)
     {
-        throw new NotImplementedException();
+        var employer = await _employerRepository.GetEmployerAsync(id);
+        return _mapper.Map<ResponseGenerico<EmployerResponse>>(employer);
     }
 
-    public Task<ResponseGenerico<EmployerUpdateModel>?> GetEmployerByAddressAsync(string address)
+    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerByAddressAsync(string address)
     {
-        throw new NotImplementedException();
+        var employer = await _employerRepository.GetEmployerByAddressAsync(address);
+        return _mapper.Map<ResponseGenerico<EmployerResponse>>(employer);
     }
 
-    public Task<ResponseGenerico<EmployerAddedEventModel>> AddEmployerAsync(EmployerModel employer)
+    public async Task<ResponseGenerico<EmployerAddedEventModel>> AddEmployerAsync(EmployerModel employer)
     {
-        throw new NotImplementedException();
+        return await _employerRepository.AddEmployerAsync(employer);
     }
 
-    public Task<ResponseGenerico<EmployerUpdateViewModel>> UpdateEmployerAsync(EmployerUpdateModel employer)
+    public async Task<ResponseGenerico<EmployerUpdateViewModel>> UpdateEmployerAsync(EmployerUpdateModel employer)
     {
-        throw new NotImplementedException();
+        return await _employerRepository.UpdateEmployerAsync(employer);
     }
 
     public Task<bool> CheckIfEmployerExistsAsync(string address)
     {
-        throw new NotImplementedException();
+        return _employerRepository.CheckIfEmployerExistsAsync(address);
     }
 }

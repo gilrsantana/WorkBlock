@@ -8,7 +8,7 @@ public interface IEmployerService
 {
     Task<ResponseGenerico<IEnumerable<EmployerResponse>>> GetEmployersAsync();
     Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id);
-    Task<ResponseGenerico<EmployerUpdateModel>?> GetEmployerByAddressAsync(string address);
+    Task<ResponseGenerico<EmployerResponse>> GetEmployerByAddressAsync(string address);
     Task<ResponseGenerico<EmployerAddedEventModel>> AddEmployerAsync(EmployerModel employer);
     Task<ResponseGenerico<EmployerUpdateViewModel>> UpdateEmployerAsync(EmployerUpdateModel employer); 
     Task<bool> CheckIfEmployerExistsAsync(string address);
