@@ -24,17 +24,19 @@
             <th>Nome</th>
             <th>Carteira</th>
             <th>CNPJ</th>
+            <th>Endereço</th>
             <th>Ações</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var employer in Model.Employers)
         {
-            var cpfFormatado = Util.FormatCPF.Format(employer.Cnpj);
+            var cnpjFormatado = Util.FormatCNPJ.Format(employer.Cnpj);
             <tr>
                 <td>@employer.Nome</td>
                 <td>@employer.Carteira.Substring(0, 5)...@employer.Carteira.Substring(@employer.Carteira.Length - 5)</td>
-                <td>@cpfFormatado</td>
+                <td>@cnpjFormatado</td>
+                <td>@employer.Endereco.Substring(0, employer.Endereco.IndexOf("City") - 1)</td>
                 <td>
                     <a asp-page="/Employer/Update" asp-route-carteira="@employer.Carteira" class="btn btn-secondary btn-sm">
                     <i class="bi bi-pencil-square"></i>&nbsp;Alterar
