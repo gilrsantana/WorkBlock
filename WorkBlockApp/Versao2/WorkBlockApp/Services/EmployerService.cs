@@ -1,9 +1,11 @@
+using System.Net.Sockets;
 using AutoMapper;
 using WorkBlockApp.DTOs;
 using WorkBlockApp.Interfaces.IRepository;
 using WorkBlockApp.Interfaces.IServices;
 using WorkBlockApp.Models.Domain;
 using WorkBlockApp.Models.Domain.Event;
+using WorkBlockApp.Models.ValueObjects;
 
 namespace WorkBlockApp.Services;
 
@@ -24,16 +26,38 @@ public class EmployerService : IEmployerService
          return _mapper.Map<ResponseGenerico<IEnumerable<EmployerResponse>>>(employers);
     }
     
-    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)
+    public async Task<ResponseGenerico<EmployerResponseUpdate>> GetEmployerAsync(int id)
     {
         var employer = await _employerRepository.GetEmployerAsync(id);
-        return _mapper.Map<ResponseGenerico<EmployerResponse>>(employer);
+        return _mapper.Map<ResponseGenerico<EmployerResponseUpdate>>(employer);
     }
 
-    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerByAddressAsync(string address)
+    public async Task<ResponseGenerico<EmployerUpdateModel>> GetEmployerByAddressAsync(string address)
     {
         var employer = await _employerRepository.GetEmployerByAddressAsync(address);
-        return _mapper.Map<ResponseGenerico<EmployerResponse>>(employer);
+        var result = employer.DadosRetorno;
+        if (result is null) return new ResponseGenerico<EmployerUpdateModel>
+        {
+            CodigoHttp = employer.CodigoHttp,
+            DadosRetorno = null,
+            ErroRetorno = employer.ErroRetorno
+        };
+
+        var endereco = new AddressModel(result.Endereco);
+        var model = new EmployerUpdateModel
+        {
+            Nome = result.Nome,
+            Cnpj = result.Cnpj,
+            Carteira = result.Carteira,
+            Endereco = endereco
+        };
+
+        return new ResponseGenerico<EmployerUpdateModel>
+        {
+            CodigoHttp = employer.CodigoHttp,
+            DadosRetorno = model,
+            ErroRetorno = employer.ErroRetorno
+        };
     }
 
     public async Task<ResponseGenerico<EmployerAddedEventModel>> AddEmployerAsync(EmployerModel employer)

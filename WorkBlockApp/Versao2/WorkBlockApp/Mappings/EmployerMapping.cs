@@ -10,9 +10,11 @@ public class EmployerMapping : Profile
     public EmployerMapping()
     {
         CreateMap(typeof(ResponseGenerico<>), typeof(ResponseGenerico<>));
-        CreateMap<EmployerModel, EmployerResponse>();
-        CreateMap<EmployerResponse, EmployerModel>();
+        CreateMap<EmployerModel, EmployerResponseUpdate>();
+        CreateMap<EmployerResponseUpdate, EmployerModel>();
         CreateMap<EmployerResponse, EmployerIndexViewModel>();
         CreateMap<EmployerIndexViewModel, EmployerResponse>();
+        CreateMap<EmployerResponse, EmployerModel>();
+        CreateMap<EmployerModel, EmployerResponse>();
     }
 }

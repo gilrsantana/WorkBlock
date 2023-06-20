@@ -47,17 +47,17 @@ public class EmployerRepository : IEmployerRepository
         return response;
     }
 
-    public async Task<ResponseGenerico<EmployerModel>> GetEmployerAsync(int id)
+    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id)
     {
         var op = $"Get/{id}";
         var requestUri = $"{_appConfiguration.GetEmployerEndPoint()}{op}";
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
-        var response = new ResponseGenerico<EmployerModel>();
+        var response = new ResponseGenerico<EmployerResponse>();
         using var client = new HttpClient();
         var responseRequestApi = await client.SendAsync(request);
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
-        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployerModel>>(contentResponse);
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployerResponse>>(contentResponse);
 
         if (responseRequestApi.IsSuccessStatusCode)
         {
@@ -76,17 +76,17 @@ public class EmployerRepository : IEmployerRepository
         return response;
     }
 
-    public async Task<ResponseGenerico<EmployerModel>> GetEmployerByAddressAsync(string address)
+    public async Task<ResponseGenerico<EmployerResponse>> GetEmployerByAddressAsync(string address)
     {
         var op = $"Get/{address}";
         var requestUri = $"{_appConfiguration.GetEmployerEndPoint()}{op}";
         var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
 
-        var response = new ResponseGenerico<EmployerModel>();
+        var response = new ResponseGenerico<EmployerResponse>();
         using var client = new HttpClient();
         var responseRequestApi = await client.SendAsync(request);
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
-        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployerModel>>(contentResponse);
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployerResponse>>(contentResponse);
 
         if (responseRequestApi.IsSuccessStatusCode)
         {

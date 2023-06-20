@@ -8,8 +8,8 @@ namespace WorkBlockApp.Interfaces.IRepository;
 public interface IEmployerRepository
 {
     Task<ResponseGenerico<IEnumerable<EmployerIndexViewModel>>> GetEmployersAsync();
-    Task<ResponseGenerico<EmployerModel>> GetEmployerAsync(int id);
-    Task<ResponseGenerico<EmployerModel>> GetEmployerByAddressAsync(string address);
+    Task<ResponseGenerico<EmployerResponse>> GetEmployerAsync(int id);
+    Task<ResponseGenerico<EmployerResponse>> GetEmployerByAddressAsync(string address);
     Task<ResponseGenerico<EmployerAddedEventModel>> AddEmployerAsync(EmployerModel employer);
     Task<ResponseGenerico<EmployerUpdateViewModel>> UpdateEmployerAsync(EmployerUpdateModel employer);
     Task<bool> CheckIfEmployerExistsAsync(string address);

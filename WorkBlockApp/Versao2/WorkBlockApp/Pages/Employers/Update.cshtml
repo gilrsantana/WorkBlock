@@ -1,0 +1,170 @@
+@page
+@model Employers.Update
+@{
+    ViewData["Title"] = "Editar";
+    ViewData["Subtitle"] = "Atualização de Empregador";
+}
+
+<header class="d-flex justify-content-between align-iten-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
+    </div>
+    <div>
+        <a asp-page="/Employers/Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</header>
+<hr>
+
+<div class="container m-3 p-5 col-12 col-md-10 col-lg-8">
+    <form method="POST" action="" class="needs-validation" novalidate>
+        <div class="row  mb-3 g-4">
+            <div class="form-group col-12">
+                <label asp-for="EmployerUpdateModel.Nome" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Nome" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Nome" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o nome completo para continuar
+                </div>
+                <div class="valid-feedback">
+                    nome informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <label asp-for="EmployerUpdateModel.Carteira" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Carteira" class="form-control" required readonly>
+                <span asp-validation-for="EmployerUpdateModel.Carteira" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço da carteira para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-5">
+                <label asp-for="EmployerUpdateModel.Cnpj" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Cnpj" id="txtCNPJ" class="form-control"
+                       required
+                       onfocus="loadEventCNPJ()"
+                       value="@Util.FormatCNPJ.Format(Model.EmployerUpdateModel.Cnpj)">
+                <span asp-validation-for="EmployerUpdateModel.Cnpj" class="text-danger"></span>
+                <div id="cnpjStatusInvalid"
+                     class="invalid-feedback">
+                    O CNPJ deve estar informado em formato correto
+                </div>
+                <div id="cnpjStatusValid"
+                     class="valid-feedback">
+                    CNPJ informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <label asp-for="EmployerUpdateModel.NovaCarteira" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.NovaCarteira" class="form-control" 
+                required 
+                value="@Model.EmployerUpdateModel.Carteira">
+                <span asp-validation-for="EmployerUpdateModel.NovaCarteira" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o novo endereço da carteira para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="EmployerUpdateModel.Endereco.Zip" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.Zip" id="txtCEP" class="form-control" 
+                    required
+                    onfocus="loadEventCEP()">
+                <span asp-validation-for="EmployerUpdateModel.Endereco.Zip" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o CEP para continuar
+                </div>
+                <div class="valid-feedback">
+                    CEP informado corretamente
+                </div>
+            </div>
+            <div class="col-md8"></div>
+            <div class="col-12 col-md-9">
+                <label asp-for="EmployerUpdateModel.Endereco.Street" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.Street" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.Street" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-3">
+                <label asp-for="EmployerUpdateModel.Endereco.Number" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.Number" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.Number" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o número para continuar
+                </div>
+                <div class="valid-feedback">
+                    Número informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label asp-for="EmployerUpdateModel.Endereco.Neighborhood" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.Neighborhood" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.Neighborhood" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o bairro para continuar
+                </div>
+                <div class="valid-feedback">
+                    Bairro informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label asp-for="EmployerUpdateModel.Endereco.City" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.City" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.City" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar a cidade para continuar
+                </div>
+                <div class="valid-feedback">
+                    Cidade informada corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label asp-for="EmployerUpdateModel.Endereco.State" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.State" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.State" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o estado para continuar
+                </div>
+                <div class="valid-feedback">
+                    Estado informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label asp-for="EmployerUpdateModel.Endereco.Country" class="form-label"></label>
+                <input asp-for="EmployerUpdateModel.Endereco.Country" class="form-control" required>
+                <span asp-validation-for="EmployerUpdateModel.Endereco.Country" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o país para continuar
+                </div>
+                <div class="valid-feedback">
+                    País informado corretamente
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-6">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </form>
+    @if (Model.HashTransaction.Length > 0)
+    {
+        <p>Operação realizada com sucesso.</p>
+        <p>Código da transação: @Model.HashTransaction</p>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("Shared/ValidateFormPartial");
+    };
+    <script src="~/js/formatDocument.js"></script>
+}

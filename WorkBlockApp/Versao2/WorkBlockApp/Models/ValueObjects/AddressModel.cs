@@ -59,11 +59,59 @@ public class AddressModel
     }
 
     public AddressModel()
+    { }
+    
+    public AddressModel (string addressString)
     {
+        int reference = addressString.IndexOf(",");
+        string street = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(".");
+        string number = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(".");
+        string neighborhood = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(":");
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf("-");
+        string city = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(".");
+        string state = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(":");
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf("-");
+        string zipCode = addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference);
+
+        reference = addressString.IndexOf(".");
+        zipCode += addressString.Substring(0, reference).Trim();
+        addressString = addressString.Substring(reference + 1);
+
+        reference = addressString.IndexOf(".");
+        string country = addressString.Substring(0, reference).Trim();
+
+
+        Street = street.Trim();
+        Number = number.Trim();
+        Neighborhood = neighborhood.Trim();
+        City = city.Trim();
+        State = state.Trim();
+        Country = country.Replace('.', ' ').Trim();
+        Zip = zipCode.Trim();
     }
 
     public override string ToString()
     {
-        return $"{Street}, {Number} - {Neighborhood}, {City}/{State} - {Country}";
+        return $"{Street}, {Number} - {Neighborhood}. {City}/{State} - {Country}";
     }
 }
