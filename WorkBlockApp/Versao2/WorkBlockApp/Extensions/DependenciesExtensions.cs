@@ -26,6 +26,9 @@ public static class DependenciesExtensions
 
         services.AddScoped<IEmployerRepository, EmployerRepository>();
         services.AddScoped<IEmployerService, EmployerService>();
+
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IEmployeeService, EmployeeService>();
     }
 
     public static void AddAutoMapperConfiguration(this IServiceCollection services)

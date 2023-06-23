@@ -1,4 +1,5 @@
 namespace WorkBlockApp.Models.ValueObjects.Documents;
+
 public class CnpjModel : DocumentModel
 {
     public string CnpjNumber { get; set; }

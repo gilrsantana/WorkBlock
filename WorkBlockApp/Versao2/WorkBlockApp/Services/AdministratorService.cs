@@ -1,3 +1,4 @@
+using System.Linq;
 using AutoMapper;
 using WorkBlockApp.DTOs;
 using WorkBlockApp.Interfaces.IRepository;
@@ -59,6 +60,12 @@ public class AdministratorService : IAdministratorService
     public async Task<ResponseGenerico<List<AdministratorResponse>>> GetAll()
     {
         var administrators = await _administratorRepository.GetAll();
+        if (administrators.DadosRetorno != null)
+        {
+            var filtered = administrators.DadosRetorno.Where(x => !(x.Nome.Contains("CONTRACT") || x.Nome.Contains("PONTOBLOCK"))).ToList();
+            administrators.DadosRetorno = filtered;
+        }
+        
         return _mapper.Map<ResponseGenerico<List<AdministratorResponse>>>(administrators);
     }
 }

@@ -12,14 +12,14 @@ public class EmployeeModel
 {
     [Required(ErrorMessage = "O campo nome é obrigatório")]
     [MinLength(3, ErrorMessage = "O campo nome deve ter no mínimo 3 caracteres")]
-    [Display(Name = "Nome Completo", Prompt = "Nome do administrador"), StringLength(100)]
+    [Display(Name = "Nome Completo", Prompt = "Nome do colaborador"), StringLength(100)]
     [JsonPropertyName("name")]
     public string Nome { get; set; } = null!;
 
     [Required(ErrorMessage = "O campo PIS é obrigatório")]
     [RegularExpression("\\d{3}\\.\\d{5}\\.\\d{2}-\\d{1}", ErrorMessage = "O campo PIS deve estar em formato correto")]
-    [RequiredValidPis(ErrorMessage = "O CPF informado não é válido")]
-    [Display(Name = "CPF", Prompt = "000.00000.00-0"), StringLength(14)]
+    [RequiredValidPis(ErrorMessage = "O PIS informado não é válido")]
+    [Display(Name = "PIS", Prompt = "000.00000.00-0"), StringLength(14)]
     [JsonPropertyName("taxId")]
     public string Pis { get; set; } = null!;
 

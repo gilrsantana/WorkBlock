@@ -51,3 +51,4 @@ function formatarCEP(e) {
     v = v.replace(/(\d{3})(\d{1,3})/, "$1-$2");
     e.target.value = v;
 }
+

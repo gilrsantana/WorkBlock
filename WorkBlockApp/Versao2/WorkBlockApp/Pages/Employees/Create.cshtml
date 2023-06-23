@@ -1,0 +1,124 @@
+@page
+@model Employees.Create
+@{
+    ViewData["Title"] = "Colaborador";
+    ViewData["Subtitle"] = "Cadastro de Colaborador";
+}
+
+<header class="d-flex justify-content-between align-iten-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
+    </div>
+    <div>
+        <a asp-page="/Employees/Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</header>
+<hr>
+
+<div class="container m-3 p-5 col-12 col-md-10 col-lg-8">
+    <form method="POST" action="" class="needs-validation" novalidate>
+        <div class="row  mb-3 g-4">
+            <div class="form-group col-12">
+                <label asp-for="EmployeeModel.Nome" class="form-label"></label>
+                <input asp-for="EmployeeModel.Nome" class="form-control" required>
+                <span asp-validation-for="EmployeeModel.Nome" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o nome completo para continuar
+                </div>
+                <div class="valid-feedback">
+                    nome informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <label asp-for="EmployeeModel.Carteira" class="form-label"></label>
+                <input asp-for="EmployeeModel.Carteira" class="form-control" required>
+                <span asp-validation-for="EmployeeModel.Carteira" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço da carteira para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-5">
+                <label asp-for="EmployeeModel.Pis" class="form-label"></label>
+                <input type="text" asp-for="EmployeeModel.Pis" id="txtPIS" class="form-control" required
+                    onfocus="loadEventPIS()">
+                <span asp-validation-for="EmployeeModel.Pis" class="text-danger"></span>
+                <div id="cnpjStatusInvalid" class="invalid-feedback">
+                    O PIS deve estar informado em formato correto
+                </div>
+                <div id="cnpjStatusValid" class="valid-feedback">
+                    PIS informado corretamente
+                </div>
+            </div>
+            <div class="col-12 col-md-7 d-flex justify-content-between">
+                <div class="col-4">
+                    <label asp-for="EmployeeModel.InicioJornada" class="form-label"></label>
+                    <input type="time" asp-for="EmployeeModel.InicioJornada" class="form-control" required>
+                    <span asp-validation-for="EmployeeModel.InicioJornada" class="text-danger"></span>
+                    <div class="invalid-feedback">
+                        Você deve informar o início da jornada para continuar
+                    </div>
+                    <div class="valid-feedback">
+                        Início de jornada informado corretamente
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label asp-for="EmployeeModel.FimJornada" class="form-label"></label>
+                    <input type="time" asp-for="EmployeeModel.FimJornada" class="form-control" required>
+                    <span asp-validation-for="EmployeeModel.FimJornada" class="text-danger"></span>
+                    <div class="invalid-feedback">
+                        Você deve informar o fim da jornada para continuar
+                    </div>
+                    <div class="valid-feedback">
+                        Fim de jornada informado corretamente
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-7">
+                <label asp-for="EmployeeModel.Empregador" class="form-label"></label>
+                <input asp-for="EmployeeModel.Empregador" class="form-control" required>
+                <span asp-validation-for="EmployeeModel.Empregador" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço da carteira do empregador para continuar
+                </div>
+                <div class="valid-feedback">
+                    Carteira do empregador informado corretamente
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </form>
+    @if (Model.HashTransaction.Length > 0)
+    {
+        <p>Operação realizada com sucesso.</p>
+        <p>Código da transação: @Model.HashTransaction</p>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("Shared/ValidateFormPartial");
+    };
+<script src="~/js/formatDocument.js"></script>
+<script type="text/javascript">
+
+    function loadEventPIS() {
+        const inputCPF = document.getElementById("txtPIS");
+        inputCPF.addEventListener("keyup", formatarPIS);
+    }
+
+    function formatarPIS(e) {
+        let v = e.target.value.replace(/\D/g, "");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{5})(\d)/, "$1.$2");
+        v = v.replace(/(\d{2})(\d{1,2})$/, "$1-$2");
+        e.target.value = v;
+    }
+
+</script>
+}
