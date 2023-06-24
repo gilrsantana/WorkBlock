@@ -34,13 +34,16 @@ public class Create : PageModel
             {
                 HashTransaction = result.DadosRetorno.HashTransaction;
                 TempData["success"] = $"Administrador criado com sucesso. {HashTransaction}";
+                Thread.Sleep(6000);
                 return RedirectToPage("/Administrators/Index");
             }
-            TempData["error"] = "Erro na criação do administrador";
-            return RedirectToPage("/Administrators/Index");
+            if (result.ErroRetorno is not null)
+                    TempData["Error"] = $"Erro na criação do administrador. {result.ErroRetorno[0]}";
+            return Page();
         }
         catch (Exception)
         {
+            TempData["Error"] = $"Erro na criação do administrador.";
             return Page();
         }
     }

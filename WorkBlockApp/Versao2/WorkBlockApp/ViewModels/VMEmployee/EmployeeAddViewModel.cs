@@ -15,7 +15,6 @@ public class EmployeeAddViewModel
 
     public uint BegginingWorkDay { get; set; }
     
-
     public uint EndWorkDay { get; set; }
 
     public string EmployerAddress { get; set; } = null!;

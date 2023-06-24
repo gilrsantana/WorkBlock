@@ -33,9 +33,32 @@ namespace WorkBlockApp.Services
             throw new NotImplementedException();
         }
 
-        public Task<ResponseGenerico<EmployeeModel>> GetEmployeeByAddressAsync(string address)
+        public async Task<ResponseGenerico<EmployeeUpdateModel>> GetEmployeeByAddressAsync(string address)
         {
-            throw new NotImplementedException();
+            var employee = await _employeeRepository.GetEmployeeByAddressAsync(address);
+            var result = employee.DadosRetorno;
+            if (result is null) return new ResponseGenerico<EmployeeUpdateModel>
+            {
+                CodigoHttp = employee.CodigoHttp,
+                DadosRetorno = null,
+                ErroRetorno = employee.ErroRetorno
+            };
+            var model = new EmployeeUpdateModel
+            {
+                Nome = result.Nome,
+                Pis = result.Pis,
+                Carteira = result.Carteira,
+                InicioJornada = new TimeOnly((int)result.InicioJornada/100, (int)result.InicioJornada%100),
+                FimJornada = new TimeOnly((int)result.FimJornada/100, (int)result.FimJornada%100),
+                Empregador = result.Empregador,
+                Ativo = result.Ativo
+            };
+            return new ResponseGenerico<EmployeeUpdateModel>
+            {
+                CodigoHttp = employee.CodigoHttp,
+                DadosRetorno = model,
+                ErroRetorno = employee.ErroRetorno
+            };
         }
 
         public async Task<ResponseGenerico<EmployeeAddedEventModel>> AddEmployeeAsync(EmployeeModel employee)
@@ -43,9 +66,9 @@ namespace WorkBlockApp.Services
             return await _employeeRepository.AddEmployeeAsync(employee);
         }
 
-        public Task<ResponseGenerico<EmployeeModel>> UpdateEmployeeAsync(EmployerUpdateModel employee)
+        public async Task<ResponseGenerico<EmployeeUpdateViewModel>> UpdateEmployeeAsync(EmployeeUpdateModel employee)
         {
-            throw new NotImplementedException();
+            return await _employeeRepository.UpdateEmployeeAsync(employee);
         }
 
         public Task<bool> CheckIfEmployeeExistsAsync(string address)

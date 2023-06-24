@@ -53,9 +53,30 @@ public class EmployeeRepository : IEmployeeRepository
         throw new NotImplementedException();
     }
 
-    public  Task<ResponseGenerico<EmployeeResponse>> GetEmployeeByAddressAsync(string address)
+    public async Task<ResponseGenerico<EmployeeResponse>> GetEmployeeByAddressAsync(string address)
     {
-        throw new NotImplementedException();
+       var op = $"Get/{address}";
+        var requestUri = $"{_appConfiguration.GetEmployeeEndPoint()}{op}";
+        var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+        var response = new ResponseGenerico<EmployeeResponse>();
+        using var client = new HttpClient();
+        var responseRequestApi = await client.SendAsync(request);
+        var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployeeResponse>>(contentResponse);
+
+        if (objResponse == null) return response;
+
+        response.CodigoHttp = responseRequestApi.StatusCode;
+        if (responseRequestApi.IsSuccessStatusCode)
+            response.DadosRetorno = objResponse.Data;
+        else
+        {
+            if (objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
+        }
+
+        return response;
     }
 
     public async Task<ResponseGenerico<EmployeeAddedEventModel>> AddEmployeeAsync(EmployeeModel employee)
@@ -98,19 +119,55 @@ public class EmployeeRepository : IEmployeeRepository
         else
         {
             if (objResponse.Errors != null)
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-            else    
-                response.ErroRetorno = 
-                    JsonSerializer.Deserialize<List<string>>((string)(objResponse.Errors as IEnumerable ?? 
-                    new List<string>()));
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
+
         return response;
     }
 
-    public  Task<ResponseGenerico<EmployeeModel>> UpdateEmployeeAsync(EmployeeUpdateModel employer)
+    public async Task<ResponseGenerico<EmployeeUpdateViewModel>> UpdateEmployeeAsync(EmployeeUpdateModel employee)
     {
-        throw new NotImplementedException();
+        var op = $"Update/{employee.Carteira}";
+        var requestUri = $"{_appConfiguration.GetEmployeeEndPoint()}{op}";
+
+        var model = new EmployeeAddViewModel();
+
+        model.Name = employee.Nome;
+        model.Address = employee.NovaCarteira;
+        model.EmployerAddress = employee.Empregador;
+        model.State = (byte)employee.Ativo;
+        model.BegginingWorkDay = (((uint)employee.InicioJornada.Hour * 100) + 
+                                  ((uint)employee.InicioJornada.Minute));
+        model.EndWorkDay = (((uint)employee.FimJornada.Hour * 100) + 
+                            ((uint)employee.FimJornada.Minute));
+        var a = Convert.ToUInt64(employee.Pis.Replace(".", "").Replace("-", ""));
+        model.TaxId = a;
+        var response = new ResponseGenerico<EmployeeUpdateViewModel>();
+        using var client = new HttpClient();
+        var responseRequestApi = await
+            client
+                .PutAsync(
+                    requestUri,
+                    new StringContent(
+                        JsonSerializer.Serialize(model),
+                        Encoding.UTF8,
+                         "application/json"));
+
+        var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
+        var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployeeUpdateViewModel>>(contentResponse);
+
+        if (objResponse == null) return response;
+
+        response.CodigoHttp = responseRequestApi.StatusCode;
+        if (responseRequestApi.IsSuccessStatusCode)
+            response.DadosRetorno = objResponse.Data;
+        else
+        {
+            if (objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
+        }
+
+        return response;
     }
 
     public  Task<bool> CheckIfEmployeeExistsAsync(string address)

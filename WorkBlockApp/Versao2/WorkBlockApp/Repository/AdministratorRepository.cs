@@ -32,18 +32,15 @@ public class AdministratorRepository : IAdministratorRepository
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
         var objResponse = JsonSerializer.Deserialize<ResultViewRequest<List<AdministratorModel>>>(contentResponse);
 
+        if (objResponse == null) return response;
+
+        response.CodigoHttp = responseRequestApi.StatusCode;
         if (responseRequestApi.IsSuccessStatusCode)
-        {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse != null)
-                response.DadosRetorno = objResponse.Data;
-        }
+            response.DadosRetorno = objResponse.Data;
         else
         {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse is { Errors: not null })
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
+            if (objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
 
         return response;
@@ -61,18 +58,15 @@ public class AdministratorRepository : IAdministratorRepository
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
         var objResponse = JsonSerializer.Deserialize<ResultViewRequest<AdministratorModel>>(contentResponse);
 
+        if (objResponse == null) return response;
+
+        response.CodigoHttp = responseRequestApi.StatusCode;
         if (responseRequestApi.IsSuccessStatusCode)
-        {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse != null)
-                response.DadosRetorno = objResponse.Data;
-        }
+            response.DadosRetorno = objResponse.Data;
         else
         {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse is { Errors: not null })
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
+            if (objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
 
         return response;
@@ -104,20 +98,16 @@ public class AdministratorRepository : IAdministratorRepository
         var objResponse = JsonSerializer.Deserialize<ResultViewRequest<AdminAddedEventModel>>(contentResponse);
 
         if (objResponse == null) return response;
-        
+
         response.CodigoHttp = responseRequestApi.StatusCode;
-        if (responseRequestApi.IsSuccessStatusCode) 
+        if (responseRequestApi.IsSuccessStatusCode)
             response.DadosRetorno = objResponse.Data;
         else
         {
             if (objResponse.Errors != null)
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-            else response.ErroRetorno =
-                JsonSerializer.Deserialize<List<string>>((string)(objResponse.Errors as IEnumerable ??
-                                                                  new List<string>()));
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
-        
+
         return response;
     }
 
@@ -147,19 +137,16 @@ public class AdministratorRepository : IAdministratorRepository
         var objResponse = JsonSerializer.Deserialize<ResultViewRequest<AdministratorUpdateViewModel>>(contentResponse);
 
         if (objResponse == null) return response;
-        
+
         response.CodigoHttp = responseRequestApi.StatusCode;
-        if (responseRequestApi.IsSuccessStatusCode) 
+        if (responseRequestApi.IsSuccessStatusCode)
             response.DadosRetorno = objResponse.Data;
         else
         {
             if (objResponse.Errors != null)
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-            else
-                response.ErroRetorno = JsonSerializer.Deserialize<List<string>>((string)(objResponse.Errors as IEnumerable ?? new List<string>()));
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
-        
+
         return response;
     }
 

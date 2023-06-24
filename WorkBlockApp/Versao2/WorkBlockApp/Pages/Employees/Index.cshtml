@@ -39,7 +39,17 @@
                 <td>@pisFormatado</td>
                 <td>@await Model.GetNomeEmpregador(employee.Empregador)</td>
                 <td>
-                    <a asp-page="/Employers/Update" asp-route-carteira="@employee.Carteira" class="btn btn-secondary btn-sm">
+                    @if(employee.Ativo == 1)
+                    {
+                        <span class="badge bg-success">Ativo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inativo</span>
+                    }
+                </td>
+                <td>
+                    <a asp-page="/Employees/Update" asp-route-carteira="@employee.Carteira" class="btn btn-secondary btn-sm">
                     <i class="bi bi-pencil-square"></i>&nbsp;Alterar
                     </a>
                 </td>

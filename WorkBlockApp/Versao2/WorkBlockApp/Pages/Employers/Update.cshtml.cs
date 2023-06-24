@@ -42,13 +42,16 @@ namespace WorkBlockApp.Pages.Employers
                 {
                     HashTransaction = result.DadosRetorno.HashTransaction;
                     TempData["success"] = $"Empregador atualizado com sucesso. {HashTransaction}";
+                    Thread.Sleep(6000);
                     return RedirectToPage("/Employers/Index");
                 }
-                TempData["Error"] = "Erro na atualização do empregador";
-                return RedirectToPage("/Employers/Index");
+                if (result.ErroRetorno is not null)
+                    TempData["Error"] = $"Erro na atualização do empregador. {result.ErroRetorno[0]}";
+                return Page();
             }
             catch (Exception)
             {
+                TempData["Error"] = $"Erro na atualização do empregador.";
                 return Page();
             }
         }

@@ -11,6 +11,6 @@ public interface IEmployeeRepository
     Task<ResponseGenerico<EmployeeResponse>> GetEmployeeAsync(int id);
     Task<ResponseGenerico<EmployeeResponse>> GetEmployeeByAddressAsync(string address);
     Task<ResponseGenerico<EmployeeAddedEventModel>> AddEmployeeAsync(EmployeeModel employer);
-    Task<ResponseGenerico<EmployeeModel>> UpdateEmployeeAsync(EmployeeUpdateModel employer);
+    Task<ResponseGenerico<EmployeeUpdateViewModel>> UpdateEmployeeAsync(EmployeeUpdateModel employer);
     Task<bool> CheckIfEmployeeExistsAsync(string address);
 }

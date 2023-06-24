@@ -9,8 +9,8 @@ public interface IEmployeeService
 {
     Task<ResponseGenerico<IEnumerable<EmployeeIndexViewModel>>> GetEmployeesAsync();
     Task<ResponseGenerico<EmployeeModel>> GetEmployeeAsync(int id);
-    Task<ResponseGenerico<EmployeeModel>> GetEmployeeByAddressAsync(string address);
+    Task<ResponseGenerico<EmployeeUpdateModel>> GetEmployeeByAddressAsync(string address);
     Task<ResponseGenerico<EmployeeAddedEventModel>> AddEmployeeAsync(EmployeeModel employee);
-    Task<ResponseGenerico<EmployeeModel>> UpdateEmployeeAsync(EmployerUpdateModel employee); 
+    Task<ResponseGenerico<EmployeeUpdateViewModel>> UpdateEmployeeAsync(EmployeeUpdateModel employee); 
     Task<bool> CheckIfEmployeeExistsAsync(string address);
 }

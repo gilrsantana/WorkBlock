@@ -78,8 +78,18 @@
                 </div>
 
                 <div class="col-12 col-md-5">
-                    <input type="checkbox" id="Ativo" name="AdministratorUpdateModel.Ativo" class="form-check-input" value="1"/>
-                    <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
+                    <label for="AdministratorUpdateModel.Ativo" class="form-label">Estado</label><br>
+                    @if(Model.AdministratorUpdateModel.Ativo == 1)
+                    {
+                        <input type="checkbox" id="Ativo" name="AdministratorUpdateModel.Ativo" class="form-check-input" value="1" checked />
+                        <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
+                    }
+                    else
+                    {
+                        <input type="checkbox" id="Ativo" name="AdministratorUpdateModel.Ativo" class="form-check-input" value="1" />
+                        <label asp-for="AdministratorUpdateModel.Ativo" class="form-label"></label>
+                    }
+                    <span asp-validation-for="AdministratorUpdateModel.Ativo" class="text-danger"></span>
                 </div>
                 <div class="col-12 col-md-6">
                     <button type="submit" class="btn btn-primary">Atualizar</button>

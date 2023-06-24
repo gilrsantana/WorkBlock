@@ -38,13 +38,16 @@ public class Update : PageModel
             {
                 HashTransaction = result.DadosRetorno.HashTransaction;
                 TempData["success"] = $"Administrador atualizado com sucesso. {HashTransaction}";
+                Thread.Sleep(6000);
                 return RedirectToPage("/Administrators/Index");
             }
-            TempData["Error"] = "Erro na atualização do administrador";
-            return RedirectToPage("/Administrators/Index");
+            if (result.ErroRetorno is not null)
+                TempData["Error"] = $"Erro na atualização do administrador. {result.ErroRetorno[0]}";
+            return Page();
         }
         catch (Exception e)
         {
+            TempData["Error"] = $"Erro na atualização do administrador.";
             Console.WriteLine(e);
             throw;
         }

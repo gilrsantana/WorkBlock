@@ -88,18 +88,15 @@ public class EmployerRepository : IEmployerRepository
         var contentResponse = await responseRequestApi.Content.ReadAsStringAsync();
         var objResponse = JsonSerializer.Deserialize<ResultViewRequest<EmployerResponse>>(contentResponse);
 
+        if (objResponse == null) return response;
+
+        response.CodigoHttp = responseRequestApi.StatusCode;
         if (responseRequestApi.IsSuccessStatusCode)
-        {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse != null)
-                response.DadosRetorno = objResponse.Data;
-        }
+            response.DadosRetorno = objResponse.Data;
         else
         {
-            response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse is { Errors: not null })
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
+            if (objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
 
         return response;
@@ -139,13 +136,9 @@ public class EmployerRepository : IEmployerRepository
         else
         {
             if (objResponse.Errors != null)
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-            else    
-                response.ErroRetorno = 
-                    JsonSerializer.Deserialize<List<string>>((string)(objResponse.Errors as IEnumerable ?? 
-                    new List<string>()));
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
+
         return response;
     }
 
@@ -184,12 +177,7 @@ public class EmployerRepository : IEmployerRepository
         else
         {
             if (objResponse.Errors != null)
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
-            else
-                response.ErroRetorno =
-                    JsonSerializer.Deserialize<List<string>>((string)(objResponse.Errors as IEnumerable ??
-                    new List<string>()));
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
 
         return response;
@@ -219,9 +207,8 @@ public class EmployerRepository : IEmployerRepository
         else
         {
             response.CodigoHttp = responseRequestApi.StatusCode;
-            if (objResponse is { Errors: not null })
-                response.ErroRetorno = JsonSerializer
-                    .Deserialize<List<string>>((string)((IEnumerable)objResponse.Errors ?? new List<string>()));
+            if (objResponse != null && objResponse.Errors != null)
+                response.ErroRetorno = objResponse.Errors.ToList();
         }
 
         return false;

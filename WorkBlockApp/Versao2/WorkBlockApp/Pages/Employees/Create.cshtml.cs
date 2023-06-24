@@ -32,13 +32,16 @@ public class Create : PageModel
             {
                 HashTransaction = result.DadosRetorno.HashTransaction;
                 TempData["success"] = $"Empregador criado com sucesso. {HashTransaction}";
+                Thread.Sleep(6000);
                 return RedirectToPage("/Employees/Index");
             }
-            TempData["error"] = "Erro na criação do empregador";
-            return RedirectToPage("/Employees/Index");
+            if (result.ErroRetorno is not null)
+                TempData["Error"] = $"Erro na criação do colaborador. {result.ErroRetorno[0]}";
+            return Page();
         }
         catch (System.Exception)
         {
+            TempData["Error"] = $"Erro na criação do colaborador.";
             return Page();
         }
     }
