@@ -6,9 +6,7 @@ const startWorkButton = document.getElementById("btnStartWork");
 const breakStartTimeButton = document.getElementById("btnBreakStartTime");
 const breakEndTimeButton = document.getElementById("btnBreakEndTime");
 const endWorkButton = document.getElementById("btnEndWork");
-const btnHistoryButton = document.getElementById("btnHistory");
 const txtAddress = document.getElementById("txtAddress");
-const txtDate = document.getElementById("txtDate");
 
 let account;
 
@@ -16,19 +14,14 @@ startWorkButton.disabled =
   breakStartTimeButton.disabled =
   breakEndTimeButton.disabled =
   endWorkButton.disabled =
-  btnHistoryButton.disabled =
   txtAddress.disabled =
-  txtDate.disabled =
   true;
-
-txtAddress.value = txtDate.value = "";
 
 connectButton.onclick = connect;
 startWorkButton.onclick = startWorkFunction;
 breakStartTimeButton.onclick = breakStartTimeFunction;
 breakEndTimeButton.onclick = breakEndTimeFunction;
 endWorkButton.onclick = endWorkFunction;
-btnHistoryButton.onclick = getEmployeeRecordsFunction;
 
 async function connect() {
   if (typeof window.ethereum !== "undefined") {
@@ -42,29 +35,32 @@ async function connect() {
     address.innerHTML = account;
     address.value = account;
     await getEmployeeRecordsFunction().then(() => {
+      debugger;
       if (document.getElementById("txtInicioResult").innerHTML == "") {
         startWorkButton.disabled = false;
+        let field = document.getElementById("fieldInicioJornada");
+        field.style.backgroundColor = "#10c027";
+        field.style.color = "#000";
       }
       if (document.getElementById("txtPausaInicioResult").innerHTML == "") {
         breakStartTimeButton.disabled = false;
+        let field = document.getElementById("fieldInicioPausa");
+        field.style.backgroundColor = "#1e5ed6";
+        field.style.color = "#000";
       }
       if (document.getElementById("txtPausaFimResult").innerHTML == "") {
         breakEndTimeButton.disabled = false;
+        let field = document.getElementById("fieldFimPausa");
+        field.style.backgroundColor = "#facc00";
+        field.style.color = "#000";
       }
       if (document.getElementById("txtFimResult").innerHTML == "") {
         endWorkButton.disabled = false;
+        let field = document.getElementById("fieldFimJornada");
+        field.style.backgroundColor = "#df3c51";
+        field.style.color = "#000";
       }
     });
-    // startWorkButton.disabled =
-    //   breakStartTimeButton.disabled =
-    //   breakEndTimeButton.disabled =
-    //   endWorkButton.disabled =
-    //   btnHistoryButton.disabled =
-    //   txtDate.disabled =
-    //   false;
-    // if (document.getElementById("txtInicioResult").value == "") {
-    //   startWorkButton.disabled = false;
-    // }
   } else {
     connectButton.innerHTML = "Please, install Metamask";
   }
@@ -130,6 +126,19 @@ async function endWorkFunction() {
   }
 }
 
+async function getEmployeeData() {
+  // fetch(`http://localhost:5075/v1/contracts/pontoblock/GetEmployeeRecords?address=${account}&timestamp=1685750054`)
+  // .then(response => response.json())
+  // .then(result => {
+  //   // Handle the response data
+  //   console.log(new Date(result.data.startWork).toUTCString());
+  // })
+  // .catch(error => {
+  //   // Handle any errors
+  //   console.error('Error:', error);
+  // });
+}
+
 async function getEmployeeRecordsFunction() {
   if (typeof window.ethereum !== "undefined") {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -137,17 +146,6 @@ async function getEmployeeRecordsFunction() {
 
     const contract = new ethers.Contract(pontoBlockReportsAddress, pontoBlockReportsABI, signer);
     const utilContract = new ethers.Contract(utilAddress, utilABI, signer);
-
-    // fetch(`http://localhost:5075/v1/contracts/pontoblock/GetEmployeeRecords?address=${account}&timestamp=1685750054`)
-    // .then(response => response.json())
-    // .then(result => {
-    //   // Handle the response data
-    //   console.log(new Date(result.data.startWork).toUTCString());
-    // })
-    // .catch(error => {
-    //   // Handle any errors
-    //   console.error('Error:', error);
-    // });
 
     try {
       const secondsUTC = Math.floor(new Date() / 1000);
@@ -177,24 +175,11 @@ async function getEmployeeRecordsFunction() {
           ? new Date(parseInt(response[1]._hex) * 1000).toString()
           : "Sem registro";
 
-      document.getElementById("resultHistory").innerHTML = "";
-      document.getElementById("resultHistory").innerHTML +=
-        "<br>Início da Jornada: " + inicioJornada;
-      document.getElementById("resultHistory").innerHTML +=
-        "<br>Início da Pausa: " + inicioPausa;
-      document.getElementById("resultHistory").innerHTML +=
-        "<br>Fim da Pausa: " + fimPausa;
-      document.getElementById("resultHistory").innerHTML +=
-        "<br>Fim da Jornada: " + fimJornada;
-
       inicioJornada != "Sem registro" ? (document.getElementById("txtInicioResult").innerHTML = formatarData(inicioJornada)) : "";
       inicioPausa != "Sem registro" ? (document.getElementById("txtPausaInicioResult").innerHTML = formatarData(inicioPausa)) : "";
       fimPausa != "Sem registro" ? (document.getElementById("txtPausaFimResult").innerHTML = formatarData(fimPausa)) : "";
       fimJornada != "Sem registro" ? (document.getElementById("txtFimResult").innerHTML = formatarData(fimJornada)) : "";
-      //   document.getElementById("txtInicioResult").innerHTML = formatarData(inicioJornada);
-      // document.getElementById("txtPausaInicioResult").innerHTML = formatarData(inicioPausa);
-      // document.getElementById("txtPausaFimResult").innerHTML = formatarData(fimPausa);
-      // document.getElementById("txtFimResult").innerHTML = formatarData(fimJornada);
+
     } catch (error) {
       console.log(error);
     }
