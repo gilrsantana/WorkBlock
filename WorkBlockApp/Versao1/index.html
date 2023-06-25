@@ -21,6 +21,22 @@
         <br>
         <button id="btnEndWork">Terminar Jornada</button>
         <br><br>
+        <div style="width: 150px; height: 150px; background-color: blueviolet; display: inline-block">
+            <p>Iniciar Jornada</p>
+            <p id="txtInicioResult"></p>
+        </div>
+        <div style="width: 150px; height: 150px; background-color: blue; display: inline-block">
+            <p>Iniciar Pausa</p>
+            <p id="txtPausaInicioResult"></p>
+        </div>
+        <div style="width: 150px; height: 150px; background-color: aqua; display: inline-block">
+            <p>Terminar Pausa</p>
+            <p id="txtPausaFimResult"></p>
+        </div>
+        <div style="width: 150px; height: 150px; background-color: violet; display: inline-block">
+            <p>Terminar Jornada</p>
+            <p id="txtFimResult"></p>
+        </div>
         <h4>Histórico</h4>
         <label for="records">Endereço</label>
         <input type="text" id="txtAddress" placeholder="0x23a...fe23"/>
@@ -28,7 +44,7 @@
         <label for="dateRecord">Data</label>
         <input type="text" id="txtDate"/>
         <br>
-        <button id="btnHistory">Buscar</button>
+        <button id="btnHistory">Atualizar Registros</button>
         <div id="resultHistory"></div>
     </div>
 </body>

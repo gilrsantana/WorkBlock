@@ -43,16 +43,14 @@ public class PontoBlockReportsController : ControllerBase
             if (PontoBlockReports == null)
                 return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-            if (await IsValidTimestamp(timestamp))
+            if (!await IsValidTimestamp(timestamp))
                 return NotFound(new ResultViewModel<string>("Invalid timestamp"));
 
             var service = new PontoBlockReportsService(_web3, PontoBlockReports.AddressContract);
 
             var date = await ValidateDateAsync(timestamp);
             if (date == null)
-            {
                 return NotFound(new ResultViewModel<string>("Invalid timestamp"));
-            }
 
             var result = await service.GetWorkTimesFromEmployeeAtDateQueryAsync(address, (ulong)date);
 
@@ -239,9 +237,13 @@ public class PontoBlockReportsController : ControllerBase
     {
         if (timestamp <= 0)
             return false;
+        var date = await ValidateDateAsync(timestamp);
+        var creationDate = await GetCreationDateContractAsync();
 
-        return await ValidateDateAsync(timestamp) != null &&
-               await GetCreationDateContractAsync() != null &&
-               !(await ValidateDateAsync(timestamp) < await GetCreationDateContractAsync());
+        if (date == null || creationDate == null) return false;
+
+        if (date < creationDate) return false;
+
+        return true;
     }
 }
