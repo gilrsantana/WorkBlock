@@ -21,7 +21,7 @@
 </head>
 <body>
     <h1 class="bg-warning">Blockchain</h1>
-    <div id='blockchain' class="container col-12 col-md-6">
+    <div id='blockchain' class="container col-sm-12 col-md-11 col-lg-10 col-xl-9 col-xxl-7">
         <br>
         <button id="btnConnect" class="btn btn-primary">Conectar</button>
         <br>
@@ -40,44 +40,58 @@
             </div>
 
         </div>
-        <hr>
+ 
         <br><br>
-        <div class="d-flex justify-content-between">
-            <div id="fieldInicioJornada" class="p-3 flex-item" style="background-color: #076614; color: #efefef">
-                <i class="bi bi-1-square fs-1"></i>
-                <p class="fs-1 text-center">Iniciar</p>
-                <p class="text-center"><span class="material-symbols-outlined fs-1">business_center</span></p>
-                <p class=" text-center"><i class="fa-regular fa-briefcase"></i></p>
-                <button id="btnStartWork" class="btn btn-light" style="width: 150px">Iniciar Jornada</button>
-                <hr>
-                <p id="txtInicioResult" class="w-100 text-center"></p>
+
+        <div class="d-flex justify-content-center justify-content-md-between flex-wrap">
+            <div class="col-8 col-md-6 col-lg-3 d-flex justify-content-center mb-3">
+                <div id="fieldInicioJornada" class="p-3 col-11" style="background-color: #076614; color: #efefef">
+                    <i class="bi bi-1-square fs-1"></i>
+                    <p class="fs-1 text-center">Iniciar</p>
+                    <p class="text-center"><span class="material-symbols-outlined fs-1">business_center</span></p>
+                    <p class=" text-center"><i class="fa-regular fa-briefcase"></i></p>
+                    <div class="text-center"><button id="btnStartWork" class="btn btn-light w-100" >Iniciar Jornada</button></div>
+                    <hr>
+                    <p id="txtInicioResult" class="w-100 text-center"></p>
+                </div>
             </div>
-            <div id="fieldInicioPausa" class="p-3 flex-item" style="background-color: #1c3c77; color: #efefef">
-                <i class="bi bi-2-square fs-1"></i>
-                <p class="fs-1 text-center">Pausa</p>
-                <p class="text-center"><span class="material-symbols-outlined fs-1">restaurant</span></p>
-                <button id="btnBreakStartTime" class="btn btn-light" style="width: 150px">Iniciar Pausa</button>
-                <hr>
-                <p id="txtPausaInicioResult" class="w-100 text-center"></p>
+            
+            <div class="col-8 col-md-6 col-lg-3 d-flex justify-content-center mb-3">
+                <div id="fieldInicioPausa" class="p-3 col-11" style="background-color: #1c3c77; color: #efefef">
+                    <i class="bi bi-2-square fs-1"></i>
+                    <p class="fs-1 text-center">Pausa</p>
+                    <p class="text-center"><span class="material-symbols-outlined fs-1">restaurant</span></p>
+                    <div class="text-center"><button id="btnBreakStartTime" class="btn btn-light w-100">Iniciar Pausa</button></div>
+                    <hr>
+                    <p id="txtPausaInicioResult" class="w-100 text-center"></p>
+                </div>
             </div>
-            <div id="fieldFimPausa" class="p-3 flex-item" style="background-color: #8b740a; color: #efefef">
-                <i class="bi bi-3-square fs-1"></i>
-                <p class="fs-1 text-center">Retorno</p>
-                <p class="text-center"><span class="material-symbols-outlined fs-1">no_meals</span></p>
-                <button id="btnBreakEndTime" class="btn btn-light" style="width: 150px">Terminar Pausa</button>
-                <hr>
-                <p id="txtPausaFimResult" class="w-100 text-center"></p>
+            
+            <div class="col-8 col-md-6 col-lg-3 d-flex justify-content-center mb-3">
+                <div id="fieldFimPausa" class="p-3 col-11" style="background-color: #8b740a; color: #efefef">
+                    <i class="bi bi-3-square fs-1"></i>
+                    <p class="fs-1 text-center">Retorno</p>
+                    <p class="text-center"><span class="material-symbols-outlined fs-1">no_meals</span></p>
+                    <div class="text-center"><button id="btnBreakEndTime" class="btn btn-light w-100" >Terminar Pausa</button></div>
+                    <hr>
+                    <p id="txtPausaFimResult" class="w-100 text-center"></p>
+                </div>
             </div>
-            <div id="fieldFimJornada" class="p-3 flex-item" style="background-color: #74222d; color: #efefef">
-                <i class="bi bi-4-square fs-1"></i>
-                <p class="fs-1 text-center">Saída</p>
-                <p class="text-center"><span class="material-symbols-outlined fs-1">home</span></p>
-                <button id="btnEndWork" class="btn btn-light" style="width: 150px">Terminar Jornada</button>
-                <hr>
-                <p id="txtFimResult" class="w-100 text-center"></p>
+            
+            <div class="col-8 col-md-6 col-lg-3 d-flex justify-content-center mb-3">
+                <div id="fieldFimJornada" class="p-3 col-11" style="background-color: #74222d; color: #efefef">
+                    <i class="bi bi-4-square fs-1"></i>
+                    <p class="fs-1 text-center">Saída</p>
+                    <p class="text-center"><span class="material-symbols-outlined fs-1">home</span></p>
+                    <div class="text-center"><button id="btnEndWork" class="btn btn-light w-100" >Terminar Jornada</button></div>
+                    <hr>
+                    <p id="txtFimResult" class="w-100 text-center"></p>
+                </div>
             </div>
+            
         </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
             crossorigin="anonymous"></script>
