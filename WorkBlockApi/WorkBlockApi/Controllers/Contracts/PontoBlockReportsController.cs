@@ -74,10 +74,10 @@ public class PontoBlockReportsController : ControllerBase
             if (PontoBlockReports == null)
                 return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-            if (await IsValidTimestamp(startTimestamp))
+            if (!await IsValidTimestamp(startTimestamp))
                 return NotFound(new ResultViewModel<string>("Invalid startTimestamp"));
 
-            if (await IsValidTimestamp(endTimestamp))
+            if (!await IsValidTimestamp(endTimestamp))
                 return NotFound(new ResultViewModel<string>("Invalid endTimestamp"));
 
             var service = new PontoBlockReportsService(_web3, PontoBlockReports.AddressContract);

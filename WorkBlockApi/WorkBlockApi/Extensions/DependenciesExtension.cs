@@ -79,6 +79,7 @@ public static class DependenciesExtension
         {
             System.Console.WriteLine("Development");
             app.UseCors();
+            app.UseHttpsRedirection();
         }
 
         if (app.Environment.IsProduction())

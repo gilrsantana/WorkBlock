@@ -1,3 +1,5 @@
+export const endPoint = "https://localhost:7031/v1/contracts/";
+
 export const pontoBlockAddress = "0x6BdD0030280da0170E9fe8544b18D2134925F3EE";
 
 export const pontoBlockAbi = [
@@ -517,3 +519,5 @@ export const utilABI = [
         "type": "function"
     }
 ];
+
+export const timeZone = -3 * 3600;
