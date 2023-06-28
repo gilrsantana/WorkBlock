@@ -16,7 +16,7 @@ const breakStartTimeButton = document.getElementById("btnBreakStartTime");
 const breakEndTimeButton = document.getElementById("btnBreakEndTime");
 const endWorkButton = document.getElementById("btnEndWork");
 const txtAddress = document.getElementById("txtAddress");
-// const btnHistorico = document.getElementById("btnHistorico");
+const btnHistorico = document.getElementById("btnHistorico");
 
 let account;
 
@@ -32,7 +32,7 @@ startWorkButton.onclick = startWorkFunction;
 breakStartTimeButton.onclick = breakStartTimeFunction;
 breakEndTimeButton.onclick = breakEndTimeFunction;
 endWorkButton.onclick = endWorkFunction;
-// btnHistorico.onclick = getHistoric;
+btnHistorico.onclick = getHistoric;
 
 async function connect() {
   if (typeof window.ethereum !== "undefined") {
@@ -45,12 +45,19 @@ async function connect() {
     let address = document.getElementById("txtAddress");
     address.innerHTML = account;
     address.value = account;
+    btnHistorico.style.display = "block";
     getEmployeeData();
     await getEmployeeRecordsFunction().then(() => {
       handleCards();
     });
   } else {
     connectButton.innerHTML = "Please, install Metamask";
+    connectButton.addEventListener('click', function () {
+      window.open('https://metamask.io/download/');
+    });
+
+
+
   }
 }
 
@@ -344,76 +351,83 @@ async function getHistoric() {
         endPauseArray.push(parseInt(response[4][i]._hex, 16).toString());
       }
 
-      console.log(dateArray);
-      console.log(startWorkArray);
-      console.log(endWorkArray);
-      console.log(startPauseArray);
-      console.log(endPauseArray);
-
-      // Dados de exemplo
-      const data = [
-        ["Dado 1", "Dado 2"],
-        ["Dado 3", "Dado 4"],
-        ["Dado 5", "Dado 6"],
-        // ... adicione mais dados conforme necessário
-      ];
-
-
-      // Selecionar a div
       const divElement = document.getElementById("historico");
 
-      // Criar a tabela
       const tableElement = document.createElement("table");
-      
-      // Criar a linha de cabeçalho
-const headerRow = document.createElement("tr");
+      tableElement.className += "table-striped table-bordered text-center w-100 table-success";
 
-// Criar as células de cabeçalho
-const headerCell1 = document.createElement("th");
-headerCell1.textContent = "Coluna 1";
+      const headerRow = document.createElement("tr");
 
-const headerCell2 = document.createElement("th");
-headerCell2.textContent = "Coluna 2";
+      const headerCell1 = document.createElement("th");
+      headerCell1.textContent = "Data";
 
+      const headerCell2 = document.createElement("th");
+      headerCell2.textContent = "Início";
 
-// Adicionar as células de cabeçalho à linha de cabeçalho
-headerRow.appendChild(headerCell1);
-headerRow.appendChild(headerCell2);
+      const headerCell3 = document.createElement("th");
+      headerCell3.textContent = "Pausa";
 
-tableElement.appendChild(headerRow);
-      // Percorrer os dados
-      for (let i = 0; i < data.length; i++) {
-        const rowData = data[i];
+      const headerCell4 = document.createElement("th");
+      headerCell4.textContent = "Retorno";
 
-        // Criar uma linha
+      const headerCell5 = document.createElement("th");
+      headerCell5.textContent = "Saída";
+
+      headerRow.appendChild(headerCell1);
+      headerRow.appendChild(headerCell2);
+      headerRow.appendChild(headerCell3);
+      headerRow.appendChild(headerCell4);
+      headerRow.appendChild(headerCell5);
+
+      tableElement.appendChild(headerRow);
+
+      for (let i = 0; i < dateArray.length; i++) {
         const row = document.createElement("tr");
+        const rowCell1 = document.createElement("td");
+        rowCell1.textContent = formatDate(dateArray[i]);
 
-        // Percorrer os valores dos dados em cada linha
-        for (let j = 0; j < rowData.length; j++) {
-          const cellData = rowData[j];
+        const rowCell2 = document.createElement("td");
+        rowCell2.textContent = startWorkArray[i] !== "0" ? formatTime(startWorkArray[i]) : "--:--:--";
 
-          // Criar uma célula de dados
-          const cell = document.createElement("td");
-          cell.textContent = cellData;
+        const rowCell3 = document.createElement("td");
+        rowCell3.textContent = startPauseArray[i] !== "0" ? formatTime(startPauseArray[i]) : "--:--:--";
 
-          // Adicionar a célula de dados à linha
-          row.appendChild(cell);
-        }
+        const rowCell4 = document.createElement("td");
+        rowCell4.textContent = endPauseArray[i] !== "0" ? formatTime(endPauseArray[i]) : "--:--:--";
 
-        // Adicionar a linha à tabela
+        const rowCell5 = document.createElement("td");
+        rowCell5.textContent = endWorkArray[i] !== "0" ? formatTime(endWorkArray[i]) : "--:--:--";
+
+        row.appendChild(rowCell1);
+        row.appendChild(rowCell2);
+        row.appendChild(rowCell3);
+        row.appendChild(rowCell4);
+        row.appendChild(rowCell5);
+
         tableElement.appendChild(row);
       }
-
-      // Adicionar a tabela à div selecionada
+      
       divElement.appendChild(tableElement);
-
-
-
-
     } catch (error) {
       console.log(error);
     }
   }
+}
+
+function formatDate(date) {
+  return date.substring(6) + "/" + date.substring(4, 6) + "/" + date.substring(0, 4);
+}
+
+function formatTime(value) {
+  let date = new Date(+value);
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+
+  hours = hours < 10 ? "0" + hours : hours;
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  seconds = seconds < 10 ? "0" + seconds : seconds;
+  return hours + ":" + minutes + ":" + seconds;
 }
 
 function listenForTransaction(transactionResponse, provider) {
