@@ -40,28 +40,34 @@ async function connect() {
       method: "eth_requestAccounts",
     });
     connectButton.innerHTML = "Connected";
-
+    toastr.success("Conectado ao Metamask com sucesso!");
     account = accounts[0];
     let address = document.getElementById("txtAddress");
     address.innerHTML = account;
     address.value = account;
-    btnHistorico.style.display = "block";
     getEmployeeData();
-    await getEmployeeRecordsFunction().then(() => {
-      handleCards();
-    });
+    
   } else {
     connectButton.innerHTML = "Please, install Metamask";
+    toastr.error("Por favor, instale o Metamask para continuar!");
     connectButton.addEventListener('click', function () {
       window.open('https://metamask.io/download/');
     });
-
-
-
   }
 }
 
 function handleCards() {
+  debugger;
+  let title = document.getElementById("title-noticia");
+  title.classList.remove("d-none");
+
+  let card = document.getElementById("infos");
+  card.classList.remove("d-none");
+
+  btnHistorico.style.display = "block";
+
+  document.getElementById("infos").style.display = "block";
+
   if (document.getElementById("txtInicioResult").innerHTML == "") {
     startWorkButton.disabled = false;
     let field = document.getElementById("fieldInicioJornada");
@@ -105,9 +111,9 @@ async function startWorkFunction() {
           }
         });
       });
-      alert("Início de jornada registrado com sucesso!");
+      toastr.success("Início de jornada registrado com sucesso! Você é muito importante pra nós. Tenha um excelente dia!");
     } catch (error) {
-      alert(error.data.message);
+      toastr.error(error.data.message);
     }
   }
 }
@@ -129,9 +135,9 @@ async function breakStartTimeFunction() {
           }
         });
       });
-      alert("Início de pausa registrado com sucesso!");
+      toastr.success("Início de pausa registrado com sucesso! Tenha uma boa pausa!");
     } catch (error) {
-      alert(error.data.message);
+      toastr.error(error.data.message);
     }
   }
 }
@@ -153,9 +159,9 @@ async function breakEndTimeFunction() {
           }
         });
       });
-      alert("Fim de pausa registrado com sucesso!");
+      toastr.success("Fim de pausa registrado com sucesso! É bom ter você de volta. Tenha um bom retorno!");
     } catch (error) {
-      alert(error.data.message);
+      toastr.error(error.data.message);
     }
   }
 }
@@ -177,9 +183,9 @@ async function endWorkFunction() {
           }
         });
       });
-      alert("Fim de Jornada registrado com sucesso!");
+      toastr.success("Fim de Jornada registrado com sucesso! Obrigado por sua dedicação. Tenha um bom descanso!");
     } catch (error) {
-      alert(error.data.message);
+      toastr.error(error.data.message);
     }
   }
 }
@@ -189,18 +195,28 @@ function getEmployeeData() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
 
-  xhr.onload = function () {
+  xhr.onload = async function () {
     if (xhr.status >= 200 && xhr.status < 400) {
+      debugger
       var resultRequest = JSON.parse(xhr.responseText);
+      if (resultRequest.data.address === "0x0000000000000000000000000000000000000000"){
+        toastr.error('Funcionário não encontrado.');
+        return;
+      }
       setEmployeeName(resultRequest.data.name);
+      setBegginingWorkDay(resultRequest.data.begginingWorkDay);
+      setEndWorkDay(resultRequest.data.endWorkDay);
       getEmployerName(resultRequest.data.employerAddress);
+      await getEmployeeRecordsFunction().then(() => {
+        handleCards();
+      });
     } else {
-      console.error('Ocorreu um erro:', xhr.status);
+      toastr.error('Ocorreu um erro:', xhr.status);
     }
   };
 
   xhr.onerror = function () {
-    console.error('Erro de conexão');
+    toastr.error('Erro de conexão. Não foi possível obter os dados do funcionário.');
   };
 
   xhr.send();
@@ -210,6 +226,25 @@ function setEmployeeName(name) {
   document.getElementById("txtNome").value = name;
 }
 
+function setBegginingWorkDay(begginingWorkDay) {
+  begginingWorkDay = begginingWorkDay.toString();
+  let minute = begginingWorkDay.substring(begginingWorkDay.length - 2, begginingWorkDay.length);
+  let hour = begginingWorkDay.substring(0, begginingWorkDay.length - 2);
+  hour >= 10 ? hour : hour = `0${hour}`;
+  let title = "Entrada: ";
+  begginingWorkDay = `${title}${hour}:${minute}`;
+  document.getElementById("txtInicioJornada").value = begginingWorkDay;
+}
+
+function setEndWorkDay(endWorkDay) {
+  endWorkDay = endWorkDay.toString();
+  let minute = endWorkDay.substring(endWorkDay.length - 2, endWorkDay.length);
+  let hour = endWorkDay.substring(0, endWorkDay.length - 2);
+  hour >= 10 ? hour : hour = `0${hour}`;
+  let title = "Saída: ";
+  endWorkDay = `${title}${hour}:${minute}`;
+  document.getElementById("txtFimJornada").value = endWorkDay;
+}
 function setEmployer(employer) {
   document.getElementById("txtEmpregador").value = employer;
 }
@@ -224,12 +259,12 @@ function getEmployerName(employerAddress) {
       var resultRequest = JSON.parse(xhr.responseText);
       setEmployer(resultRequest.data.name);
     } else {
-      console.error('Ocorreu um erro:', xhr.status);
+      toastr.error('Ocorreu um erro:', xhr.status);
     }
   };
 
   xhr.onerror = function () {
-    console.error('Erro de conexão');
+    toastr.error('Erro de conexão. Não foi possível obter os dados do empregador.');
   };
 
   xhr.send();
@@ -276,7 +311,7 @@ async function getEmployeeRecordsFunction() {
       fimJornada != "Sem registro" ? (document.getElementById("txtFimResult").innerHTML = formatarData(fimJornada)) : "";
 
     } catch (error) {
-      console.log(error);
+      toastr.error(error);
     }
   }
 }
@@ -314,7 +349,7 @@ async function getHistoric() {
 
       const currentDate = new Date();
       const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(currentDate.getDate() - 20);
+      thirtyDaysAgo.setDate(currentDate.getDate() - 25);
       const timestampMilliseconds = thirtyDaysAgo.getTime();
 
       secondsUTC = Math.floor(timestampMilliseconds / 1000);
@@ -406,10 +441,12 @@ async function getHistoric() {
 
         tableElement.appendChild(row);
       }
-      
+
       divElement.appendChild(tableElement);
+
     } catch (error) {
-      console.log(error);
+      
+      toastr.error(error.data.message);
     }
   }
 }
@@ -419,7 +456,7 @@ function formatDate(date) {
 }
 
 function formatTime(value) {
-  let date = new Date(+value);
+  let date = new Date(+value * 1000);
   let hours = date.getHours();
   let minutes = date.getMinutes();
   let seconds = date.getSeconds();
@@ -433,7 +470,7 @@ function formatTime(value) {
 function listenForTransaction(transactionResponse, provider) {
   return new Promise((resolve, reject) => {
     provider.once(transactionResponse.hash, (transactionReceipt) => {
-      alert(`Operação realizada com ${transactionReceipt.confirmations} confirmações!`);
+      toastr.success(`Operação realizada com ${transactionReceipt.confirmations} confirmações!`);
       resolve();
     });
   });
