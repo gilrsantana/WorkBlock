@@ -28,7 +28,7 @@ public class UtilContractController : ControllerBase
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        UtilContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
+        UtilContract = GetContractsInMemory()!.Result.Find(x => x.Name == ContractName);
     }
 
     [HttpGet("getdate")]

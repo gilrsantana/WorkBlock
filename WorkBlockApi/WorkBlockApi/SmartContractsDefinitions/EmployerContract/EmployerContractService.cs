@@ -43,12 +43,6 @@ public partial class EmployerContractService
     {
          return ContractHandler.SendRequestAsync(addEmployerFunction);
     }
-    public Task<TransactionReceipt> AddEmployerRequestAndWaitForReceiptAsync(
-        AddEmployerFunction addEmployerFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(addEmployerFunction, cancellationToken);
-    }
     public Task<string> AddEmployerRequestAsync(string address, BigInteger taxId, string name, string legalAddress)
     {
         var addEmployerFunction = new AddEmployerFunction();
@@ -59,6 +53,13 @@ public partial class EmployerContractService
         
          return ContractHandler.SendRequestAsync(addEmployerFunction);
     }
+    public Task<TransactionReceipt> AddEmployerRequestAndWaitForReceiptAsync(
+        AddEmployerFunction addEmployerFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(addEmployerFunction, cancellationToken);
+    }
+    
     public Task<TransactionReceipt> AddEmployerRequestAndWaitForReceiptAsync(
         string address, 
         BigInteger taxId, 
@@ -131,12 +132,6 @@ public partial class EmployerContractService
     {
          return ContractHandler.SendRequestAsync(updateEmployerFunction);
     }
-    public Task<TransactionReceipt> UpdateEmployerRequestAndWaitForReceiptAsync(
-        UpdateEmployerFunction updateEmployerFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateEmployerFunction, cancellationToken);
-    }
     public Task<string> UpdateEmployerRequestAsync(string addressKey, string address, BigInteger taxId, string name, string legalAddress)
     {
         var updateEmployerFunction = new UpdateEmployerFunction();
@@ -148,6 +143,13 @@ public partial class EmployerContractService
         
          return ContractHandler.SendRequestAsync(updateEmployerFunction);
     }
+    public Task<TransactionReceipt> UpdateEmployerRequestAndWaitForReceiptAsync(
+        UpdateEmployerFunction updateEmployerFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateEmployerFunction, cancellationToken);
+    }
+    
     public Task<TransactionReceipt> UpdateEmployerRequestAndWaitForReceiptAsync(
         string addressKey, 
         string address, 

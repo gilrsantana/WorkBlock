@@ -32,7 +32,7 @@ public class PontoBlockReportsController : ControllerBase
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        PontoBlockReports = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
+        PontoBlockReports = GetContractsInMemory()!.Result.Find(x => x.Name == ContractName);
     }
 
     [HttpGet("GetWorkTimesFromEmployeeAtDate")]
@@ -194,7 +194,7 @@ public class PontoBlockReportsController : ControllerBase
     {
         try
         {
-            var utilContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == "UtilContract");
+            var utilContract = GetContractsInMemory()!.Result.Find(x => x.Name == "UtilContract");
             if (utilContract == null)
                 return null;
 
@@ -216,7 +216,7 @@ public class PontoBlockReportsController : ControllerBase
     {
         try
         {
-            var pontoBlock = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == "PontoBlock");
+            var pontoBlock = GetContractsInMemory()!.Result.Find(x => x.Name == "PontoBlock");
             if (pontoBlock == null)
                 return null;
 

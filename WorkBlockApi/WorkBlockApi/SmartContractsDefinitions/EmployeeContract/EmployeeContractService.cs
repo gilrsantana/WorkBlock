@@ -43,12 +43,6 @@ public partial class EmployeeContractService
     {
          return ContractHandler.SendRequestAsync(addEmployeeFunction);
     }
-    public Task<TransactionReceipt> AddEmployeeRequestAndWaitForReceiptAsync(
-        AddEmployeeFunction addEmployeeFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(addEmployeeFunction, cancellationToken);
-    }
     public Task<string> AddEmployeeRequestAsync(
         string address, 
         string name, 
@@ -67,6 +61,13 @@ public partial class EmployeeContractService
         
          return ContractHandler.SendRequestAsync(addEmployeeFunction);
     }
+    public Task<TransactionReceipt> AddEmployeeRequestAndWaitForReceiptAsync(
+        AddEmployeeFunction addEmployeeFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(addEmployeeFunction, cancellationToken);
+    }
+    
     public Task<TransactionReceipt> AddEmployeeRequestAndWaitForReceiptAsync(
         string address, 
         string name, 
@@ -145,12 +146,6 @@ public partial class EmployeeContractService
     {
          return ContractHandler.SendRequestAsync(updateEmployeeFunction);
     }
-    public Task<TransactionReceipt> UpdateEmployeeRequestAndWaitForReceiptAsync(
-        UpdateEmployeeFunction updateEmployeeFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateEmployeeFunction, cancellationToken);
-    }
     public Task<string> UpdateEmployeeRequestAsync(
         string addressKey, 
         string address, 
@@ -173,6 +168,13 @@ public partial class EmployeeContractService
         
          return ContractHandler.SendRequestAsync(updateEmployeeFunction);
     }
+    public Task<TransactionReceipt> UpdateEmployeeRequestAndWaitForReceiptAsync(
+        UpdateEmployeeFunction updateEmployeeFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateEmployeeFunction, cancellationToken);
+    }
+    
     public Task<TransactionReceipt> UpdateEmployeeRequestAndWaitForReceiptAsync(
         string addressKey, 
         string address, 

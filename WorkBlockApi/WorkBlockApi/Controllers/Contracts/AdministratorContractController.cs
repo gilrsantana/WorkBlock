@@ -36,7 +36,7 @@ public class AdministratorContractController : ControllerBase
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        AdministratorContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
+        AdministratorContract = GetContractsInMemory()!.Result.Find(x => x.Name == ContractName);
     }
 
     [HttpGet("Get/{id:int}")]
@@ -119,28 +119,6 @@ public class AdministratorContractController : ControllerBase
             var service = new AdministratorContractService(_web3, AdministratorContract.AddressContract);
             
             var result = await service.AddAdministratorRequestAsync(model.Address, model.Name.ToUpper(), model.TaxId);
-
-            #region Event
-            //var adminAddedEventHandler =
-            //    _web3.Eth.GetEvent<AdminAddedEventDTOBase>(AdministratorContract.AddressContract);
-            //var filter = adminAddedEventHandler.CreateFilterInput(null, new[] { model.Address });
-
-            //var logs = await adminAddedEventHandler.GetAllChangesAsync(filter);
-
-            //if (logs.Count <= 0)
-            //    return NotFound(new ResultViewModel<AdminAddedEventViewModel>("Not found event from model address"));
-
-            //var resultAdd = new AdminAddedEventModel()
-            //{
-            //    AddressFrom = logs[0].Event.From,
-            //    AdministratorAddress = logs[0].Event.Address,
-            //    AdministratorName = logs[0].Event.Name,
-            //    AdministratorTaxId = ((ulong)logs[0].Event.Taxid).ToString(),
-            //    Time = DateTimeOffset.FromUnixTimeSeconds((long)logs[0].Event.Timestamp).DateTime,
-            //    HashTransaction = result
-            //};
-
-            #endregion
 
             var resultAdd = new AdminAddedEventModel
             {
