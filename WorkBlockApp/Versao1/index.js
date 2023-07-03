@@ -57,7 +57,6 @@ async function connect() {
 }
 
 function handleCards() {
-  debugger;
   let title = document.getElementById("title-noticia");
   title.classList.remove("d-none");
 
@@ -197,7 +196,6 @@ function getEmployeeData() {
 
   xhr.onload = async function () {
     if (xhr.status >= 200 && xhr.status < 400) {
-      debugger
       var resultRequest = JSON.parse(xhr.responseText);
       if (resultRequest.data.address === "0x0000000000000000000000000000000000000000"){
         toastr.error('Funcionário não encontrado.');
@@ -344,47 +342,80 @@ async function getHistoric() {
     const utilContract = new ethers.Contract(utilAddress, utilABI, signer);
 
     try {
-      let secondsUTC = Math.floor(new Date() / 1000);
-      const endDate = await utilContract.getDate(secondsUTC + timeZone);
+      let dateArray = [];
+      let startWorkArray = [];
+      let endWorkArray = [];
+      let startPauseArray = [];
+      let endPauseArray = [];
+
+      //////// -- Busca os dados por período -- ////////
+      let secondsUTCfinal = Math.floor(new Date() / 1000);
+
+      const endDate = await utilContract.getDate(secondsUTCfinal + timeZone);
 
       const currentDate = new Date();
       const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(currentDate.getDate() - 25);
+      thirtyDaysAgo.setDate(currentDate.getDate() - 29);
       const timestampMilliseconds = thirtyDaysAgo.getTime();
 
-      secondsUTC = Math.floor(timestampMilliseconds / 1000);
-      const startDate = await utilContract.getDate(secondsUTC + timeZone);
+      let secondsUTCinicial = Math.floor(timestampMilliseconds / 1000);
+
+      const startDate = await utilContract.getDate(secondsUTCinicial + timeZone);
+
       const response = await contract.getWorkTimeFromEmployeeBetweenTwoDates(
         account,
         startDate,
         endDate
       );
 
-      const dateArray = [];
-      const startWorkArray = [];
-      const endWorkArray = [];
-      const startPauseArray = [];
-      const endPauseArray = [];
-
+      const montArrayLimit = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+      
       for (let i = 0; i < response[0].length; i++) {
-        dateArray.push(parseInt(response[0][i]._hex, 16).toString());
+        const value = parseInt(response[0][i]._hex, 16).toString();
+        const day = parseInt(value.substring(6, 8));
+        const month = parseInt(value.substring(4, 6));
+        
+        if (day <= montArrayLimit[month - 1] && day > 0)
+          dateArray.push(parseInt(response[0][i]._hex, 16).toString());
       }
 
       for (let i = 0; i < response[1].length; i++) {
+        const value = parseInt(response[0][i]._hex, 16).toString();
+        const day = parseInt(value.substring(6, 8));
+        const month = parseInt(value.substring(4, 6));
+        
+        if (day <= montArrayLimit[month - 1] && day > 0)
         startWorkArray.push(parseInt(response[1][i]._hex, 16).toString());
       }
 
       for (let i = 0; i < response[2].length; i++) {
+        const value = parseInt(response[0][i]._hex, 16).toString();
+        const day = parseInt(value.substring(6, 8));
+        const month = parseInt(value.substring(4, 6));
+        
+        if (day <= montArrayLimit[month - 1] && day > 0)
         endWorkArray.push(parseInt(response[2][i]._hex, 16).toString());
       }
 
       for (let i = 0; i < response[3].length; i++) {
+        const value = parseInt(response[0][i]._hex, 16).toString();
+        const day = parseInt(value.substring(6, 8));
+        const month = parseInt(value.substring(4, 6));
+        
+        if (day <= montArrayLimit[month - 1] && day > 0)
         startPauseArray.push(parseInt(response[3][i]._hex, 16).toString());
       }
 
       for (let i = 0; i < response[4].length; i++) {
+        const value = parseInt(response[0][i]._hex, 16).toString();
+        const day = parseInt(value.substring(6, 8));
+        const month = parseInt(value.substring(4, 6));
+        
+        if (day <= montArrayLimit[month - 1] && day > 0)
         endPauseArray.push(parseInt(response[4][i]._hex, 16).toString());
       }
+      ////// -- (FIM) Busca os dados por período -- ///////
+
 
       const divElement = document.getElementById("historico");
 
