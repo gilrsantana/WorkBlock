@@ -4,8 +4,7 @@
     var classeMenuAdministrator = model.Contains("Administrators") ? "active" : "";
     var classeMenuEmployer = model.Contains("Employers")  ? "active" : "";
     var classeMenuEmployee = model.Contains("Employees")  ? "active" : "";
-    var classeMenuPontoBlock = model.Contains("PontoBlock")  ? "active" : "";
-    var classeMenuPontoBlockReports = model.Contains("PontoBlockReports")  ? "active" : "";
+    var classeMenuPontoBlockReports = model.Contains("Reports")  ? "active" : "";
 }
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container container-fluid">
@@ -27,10 +26,7 @@
                 <a class="nav-link @classeMenuEmployee" asp-page="/Employees/Index">
                     Colaborador
                 </a>
-                <a class="nav-link @classeMenuPontoBlock" asp-page="/PontoBlock">
-                    Ponto
-                </a>
-                <a class="nav-link @classeMenuPontoBlockReports" asp-page="/PontoBlockReports">
+                <a class="nav-link @classeMenuPontoBlockReports" asp-page="/Reports/Index">
                     Relatórios
                 </a>
             </div>

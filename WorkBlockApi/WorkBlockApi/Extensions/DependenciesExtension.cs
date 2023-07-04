@@ -52,6 +52,17 @@ public static class DependenciesExtension
     {
         services.AddCors(options =>
         {
+            options.AddPolicy("Development",
+            policy =>
+            {
+                policy.WithOrigins("http://localhost:5500", "https://localhost:50630")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+
+        });
+        services.AddCors(options =>
+        {
             options.AddPolicy("Production",
             policy =>
             {
@@ -68,15 +79,7 @@ public static class DependenciesExtension
         if (app.Environment.IsDevelopment())
         {
             System.Console.WriteLine("Development");
-            services.AddCors(options => 
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
-                });
-            });
+            
             app.UseCors();
         }
 
