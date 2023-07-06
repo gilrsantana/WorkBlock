@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Web3;
@@ -52,9 +53,19 @@ public class PontoBlockReportsController : ControllerBase
             if (date == null)
                 return NotFound(new ResultViewModel<string>("Invalid timestamp"));
 
-            var result = await service.GetWorkTimesFromEmployeeAtDateQueryAsync(address, (ulong)date);
+            var data = await service.GetWorkTimesFromEmployeeAtDateQueryAsync(address, (ulong)date);
 
-            return StatusCode(200, new ResultViewModel<GetWorkTimesFromEmployeeAtDateOutputDTO>(result));
+            var result = new EmployeeDateViewModel
+            {
+                Date = new List<ulong> { (ulong)date },
+                Address = new List<List<string>> { new List<string> { address } },
+                StartWork = new List<List<ulong>> { new List<ulong> { (ulong)data.StartWork } },
+                EndWork = new List<List<ulong>> { new List<ulong> { (ulong)data.EndWork } },
+                BreakStartTime = new List<List<ulong>> { new List<ulong> { (ulong)data.BreakStartTime } },
+                BreakEndTime = new List<List<ulong>> { new List<ulong> { (ulong)data.BreakEndTime } }
+            };
+
+            return StatusCode(200, new ResultViewModel<EmployeeDateViewModel>(result));
         }
         catch (SmartContractRevertException e)
         {
@@ -90,9 +101,19 @@ public class PontoBlockReportsController : ControllerBase
             if (endDate == null)
                 return NotFound(new ResultViewModel<string>("Invalid endTimestamp"));
 
-            var result = await service.GetWorkTimeFromEmployeeBetweenTwoDatesQueryAsync(address, (ulong)startDate, (ulong) endDate);
+            var data = await service.GetWorkTimeFromEmployeeBetweenTwoDatesQueryAsync(address, (ulong)startDate, (ulong) endDate);
 
-            return StatusCode(200, new ResultViewModel<GetWorkTimeFromEmployeeBetweenTwoDatesOutputDTO>(result));
+            var result = new EmployeeDateViewModel
+            {
+                Date = data.Date.Select(bigInteger => (ulong)bigInteger).ToList(),
+                Address = new List<List<string>> { new List<string> { address } },
+                StartWork = new List<List<ulong>> { data.StartWork.Select(bigInteger => (ulong)bigInteger).ToList() },
+                EndWork = new List<List<ulong>> { data.EndWork.Select(bigInteger => (ulong)bigInteger).ToList() },
+                BreakStartTime = new List<List<ulong>> { data.BreakStartTime.Select(bigInteger => (ulong)bigInteger).ToList() },
+                BreakEndTime = new List<List<ulong>> { data.BreakEndTime.Select(bigInteger => (ulong)bigInteger).ToList() }
+            };
+
+            return StatusCode(200, new ResultViewModel<EmployeeDateViewModel>(result));
         }
         catch (SmartContractRevertException e)
         {
@@ -112,7 +133,7 @@ public class PontoBlockReportsController : ControllerBase
             if (PontoBlockReports == null)
                 return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-            if (await IsValidTimestamp(timestamp))
+            if (!await IsValidTimestamp(timestamp))
                 return NotFound(new ResultViewModel<string>("Invalid timestamp"));
 
             var service = new PontoBlockReportsService(_web3, PontoBlockReports.AddressContract);
@@ -121,9 +142,19 @@ public class PontoBlockReportsController : ControllerBase
             if (date == null)
                 return NotFound(new ResultViewModel<string>("Invalid timestamp"));
 
-            var result = await service.GetWorkTimesForAllEmployeesAtDateQueryAsync((ulong)date);
+            var data = await service.GetWorkTimesForAllEmployeesAtDateQueryAsync((ulong)date);
 
-            return StatusCode(200, new ResultViewModel<GetWorkTimesForAllEmployeesAtDateOutputDTO>(result));
+            var result = new EmployeeDateViewModel
+            {
+                Date = new List<ulong> { (ulong)date },
+                Address = new List<List<string>> {  data.EmpAddress  },
+                StartWork = new List<List<ulong>> { data.StartWork.Select(bigInteger => (ulong)bigInteger).ToList() },
+                EndWork = new List<List<ulong>> { data.EndWork.Select(bigInteger => (ulong)bigInteger).ToList() },
+                BreakStartTime = new List<List<ulong>> { data.BreakStartTime.Select(bigInteger => (ulong)bigInteger).ToList() },
+                BreakEndTime = new List<List<ulong>> { data.BreakEndTime.Select(bigInteger => (ulong)bigInteger).ToList() }
+            };
+
+            return StatusCode(200, new ResultViewModel<EmployeeDateViewModel>(result));
         }
         catch (SmartContractRevertException e)
         {
@@ -143,10 +174,10 @@ public class PontoBlockReportsController : ControllerBase
             if (PontoBlockReports == null)
                 return NotFound(new ResultViewModel<string>("Contract Not Found"));
 
-            if (await IsValidTimestamp(startTimestamp))
+            if (!await IsValidTimestamp(startTimestamp))
                 return NotFound(new ResultViewModel<string>("Invalid startTimestamp"));
 
-            if (await IsValidTimestamp(endTimestamp))
+            if (!await IsValidTimestamp(endTimestamp))
                 return NotFound(new ResultViewModel<string>("Invalid endTimestamp"));
 
             var service = new PontoBlockReportsService(_web3, PontoBlockReports.AddressContract);
@@ -159,9 +190,19 @@ public class PontoBlockReportsController : ControllerBase
             if (endDate == null)
                 return NotFound(new ResultViewModel<string>("Invalid endTimestamp"));
 
-            var result = await service.GetWorkTimesForAllEmployeesBetweenTwoDatesQueryAsync((ulong)startDate, (ulong) endDate);
+            var data = await service.GetWorkTimesForAllEmployeesBetweenTwoDatesQueryAsync((ulong)startDate, (ulong) endDate);
 
-            return StatusCode(200, new ResultViewModel<GetWorkTimesForAllEmployeesBetweenTwoDatesOutputDTO>(result));
+            var result = new EmployeeDateViewModel
+            {
+                Date = data.Date.Select(bigInteger => (ulong)bigInteger).ToList(),
+                Address = data.EmpAddress,
+                StartWork = data.StartWork.Select(bigInteger => bigInteger.Select(bigInteger1 => (ulong)bigInteger1).ToList()).ToList(),
+                EndWork = data.EndWork.Select(bigInteger => bigInteger.Select(bigInteger1 => (ulong)bigInteger1).ToList()).ToList(),
+                BreakStartTime = data.BreakEndTime.Select(bigInteger => bigInteger.Select(bigInteger1 => (ulong)bigInteger1).ToList()).ToList(),
+                BreakEndTime = data.BreakEndTime.Select(bigInteger => bigInteger.Select(bigInteger1 => (ulong)bigInteger1).ToList()).ToList()
+            };
+
+            return StatusCode(200, new ResultViewModel<EmployeeDateViewModel>(result));
         }
         catch (SmartContractRevertException e)
         {
