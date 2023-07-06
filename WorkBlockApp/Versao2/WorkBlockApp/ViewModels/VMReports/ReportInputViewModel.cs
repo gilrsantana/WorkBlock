@@ -5,8 +5,8 @@ namespace WorkBlockApp.ViewModels.VMReports;
 
 public class ReportInputViewModel
 {
-    // [JsonPropertyName("date")]
-    // public ulong Date { get; set; }
+    [JsonPropertyName("date")]
+    public ulong Date { get; set; }
 
     [JsonPropertyName("startWork")]
     public BigInteger StartWork { get; set; }

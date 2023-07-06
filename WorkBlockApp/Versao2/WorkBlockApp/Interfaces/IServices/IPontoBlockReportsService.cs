@@ -6,7 +6,7 @@ namespace WorkBlockApp.Interfaces.IServices;
 
 public interface IPontoBlockReportsService
 {
-    Task<ResponseGenerico<ReportInputViewModel>> GetWorkTimesFromEmployeeAtDate(ReportModel model);
+    Task<ResponseGenerico<ReportModel>> GetWorkTimesFromEmployeeAtDate(ReportModel model);
     Task<ResponseGenerico<ReportInputViewModel>> GetWorkTimesFromEmployeeBetweenTwoDates(ReportModel model);
     // Task<ResponseGenerico<List<AdministratorResponse>>> GetAll();
     // Task<ResponseGenerico<AdminAddedEventModel>> Add(AdministratorModel administrator);

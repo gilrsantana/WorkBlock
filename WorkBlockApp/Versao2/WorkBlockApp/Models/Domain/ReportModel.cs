@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WorkBlockApp.Models.Domain;
 
@@ -16,4 +12,10 @@ public class ReportModel
     [Required(ErrorMessage = "O campo período é obrigatório")]
     [Display(Name = "Período de pesquisa"), StringLength(35)]
     public string Periodo { get; set; } = null!;
+
+    public string Data { get; set; } = "";
+    public string InicioJornada { get; set; } = "";
+    public string InicioPausa { get; set; } = "";
+    public string FimPausa { get; set; } = "";
+    public string FimJornada { get; set; } = "";
 }
