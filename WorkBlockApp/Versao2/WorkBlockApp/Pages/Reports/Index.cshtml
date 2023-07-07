@@ -12,7 +12,7 @@
 </header>
 <hr>
 
-<div class="container  m-3 p-5 col-12 col-md-10 col-lg-8">
+<div class="container  m-3 p-5 col-12 col-md-11 col-lg-9">
     <form method="POST" action="" class="needs-validation" novalidate>
         <div class="row mb-3 g-4">
             <div class="form-group col-12">
@@ -58,7 +58,69 @@
             </div>
         </div>
     </form>
-    <hr>
+    <hr class="mb-5 mt-5">
+    @if(Model.EmployeeDateViewModel.Date != null && Model.EmployeeDateViewModel.Date[0] != (ulong)0)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Colaborador</th>
+                    <th scope="col">Entrada</th>
+                    <th scope="col">Início Pausa</th>
+                    <th scope="col">Fim Pausa</th>
+                    <th scope="col">Saída</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.EmployeeDateViewModel.Date.Count; i++)
+                {
+                    <tr>
+                        <td>@Util.FormatDate.Format(Model.EmployeeDateViewModel.Date[i])</td>
+                        @for (int j = 0; j < Model.EmployeeDateViewModel.Address[0].Count; j++)
+                        {
+                            var carteira = Model.EmployeeDateViewModel.Address[0][j];
+                            carteira = $"{carteira.Substring(0, 5)}...{carteira.Substring(carteira.Length -5)}";
+                            <td>@carteira</td>
+                            @if (Model.EmployeeDateViewModel.StartWork[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.StartWork[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.BreakStartTime[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.BreakStartTime[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.BreakEndTime[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.BreakEndTime[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.EndWork[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.EndWork[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                        }
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
 </div>
 
 @section Scripts {
