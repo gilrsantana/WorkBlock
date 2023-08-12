@@ -1,0 +1,63 @@
+@page 
+@model WorkBlockApp.Pages.Administrators.Index
+
+@{
+    var administradores = Model.Administrators;
+    ViewData["Title"] = "Administradores";
+    ViewData["Subtitle"] = "Lista de Administradores";
+}
+
+<header class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
+    </div>
+    <div>
+        <a asp-page="/Administrators/Create" class="btn btn-primary"> <i class="bi bi-plus-square"></i>&nbsp; Cadastrar</a>
+    </div>
+</header>
+<hr>
+
+@if (administradores != null && administradores.Count > 0)
+{
+    <table class="table table-striped" aria-describedby="Lista de Administradores">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Carteira</th>
+            <th>CPF</th>
+            <th>Estado</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var administrator in Model.Administrators)
+        {
+            var cpfFormatado = Util.FormatCPF.Format(administrator.Cpf);
+            <tr>
+                <td>@administrator.Nome</td>
+                <td>@administrator.Carteira.Substring(0, 5)...@administrator.Carteira.Substring(@administrator.Carteira.Length - 5)</td>
+                <td>@cpfFormatado</td>
+                <td>
+                    @if(@administrator.Ativo == 1)
+                    {
+                        <span class="badge bg-success">Ativo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inativo</span>
+                    }
+                </td>
+                <td>
+                    <a asp-page="/Administrators/Update" asp-route-carteira="@administrator.Carteira" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-pencil-square"></i>&nbsp;Alterar
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Não há nenhum administrador cadastrado.</p>
+}

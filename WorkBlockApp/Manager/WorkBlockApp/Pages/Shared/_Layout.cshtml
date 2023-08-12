@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/img/favicon.png" />
+
+    <link rel="stylesheet" href="/lib/bootstrap5/dist/css/bootstrap.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true">
+    <link rel="stylesheet" href="/css/style.css" asp-append-version="true">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" asp-append-version="true">
+
+    <title>@ViewData["Title"] - WorkBlock</title>
+</head>
+<body>
+<header>
+    <partial name="Shared/_NavMenuPartial"/>
+</header>
+<main>
+    <partial name="Shared/_NotificationPartial" model="@TempData" />
+    <div class="container mt-2">
+        @RenderBody()
+    </div>
+</main>
+<footer>
+    
+</footer>
+    <script src="/lib/bootstrap5/dist/js/bootstrap.bundle.min.js" defer asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

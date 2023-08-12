@@ -1,0 +1,170 @@
+@page
+@model Reports.Index
+@{
+    ViewData["Title"] = "Relatórios";
+    ViewData["Subtitle"] = "Registros de Ponto";
+}
+
+<header class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="text-primary">@ViewData["Subtitle"]</h1>
+    </div>
+</header>
+<hr>
+
+<div class="container  m-3 p-5 col-12 col-md-11 col-lg-9">
+    <form method="POST" action="" class="needs-validation" novalidate>
+        <div class="row mb-3 g-4">
+            <div class="form-group col-12">
+                <label asp-for="ReportModel.Carteira" class="form-label"></label>
+                <input asp-for="ReportModel.Carteira" class="form-control" required>
+                <span asp-validation-for="ReportModel.Carteira" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+            </div>
+
+            <div class="col-12 col-md-7 col-lg-6 col-xl-5">
+                <label asp-for="ReportModel.Periodo" class="form-label"></label>
+                <input type="hidden" id="txtRange" asp-for="ReportModel.Periodo" class="form-control" required>
+                <span asp-validation-for="ReportModel.Periodo" class="text-danger"></span>
+                <div class="invalid-feedback">
+                    Você deve informar o endereço para continuar
+                </div>
+                <div class="valid-feedback">
+                    Endereço informado corretamente
+                </div>
+                <label for="range" class="form-label">Período</label>
+                <div id="reportrange" class="form-control" 
+                    required 
+                    style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                    <i class="fa fa-calendar"></i>&nbsp;
+                    <span id="dateRange"></span>
+                    <i class="fa fa-caret-down"></i>
+                </div>
+                @* <input type="hidden" id="txtRange" name="range"> *@
+                <div class="invalid-feedback">
+                    Você deve informar o período para continuar
+                </div>
+                <div class="valid-feedback">
+                    Período informado corretamente
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <hr class="mb-5 mt-5">
+    @if(Model.EmployeeDateViewModel.Date != null && Model.EmployeeDateViewModel.Date[0] != (ulong)0)
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col">Colaborador</th>
+                    <th scope="col">Entrada</th>
+                    <th scope="col">Início Pausa</th>
+                    <th scope="col">Fim Pausa</th>
+                    <th scope="col">Saída</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.EmployeeDateViewModel.Date.Count; i++)
+                {
+                    <tr>
+                        <td>@Util.FormatDate.Format(Model.EmployeeDateViewModel.Date[i])</td>
+                        @for (int j = 0; j < Model.EmployeeDateViewModel.Address[0].Count; j++)
+                        {
+                            var carteira = Model.EmployeeDateViewModel.Address[0][j];
+                            carteira = $"{carteira.Substring(0, 5)}...{carteira.Substring(carteira.Length -5)}";
+                            <td>@carteira</td>
+                            @if (Model.EmployeeDateViewModel.StartWork[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.StartWork[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.BreakStartTime[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.BreakStartTime[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.BreakEndTime[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.BreakEndTime[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                            @if (Model.EmployeeDateViewModel.EndWork[j][i] == (ulong)0)
+                            {
+                                <td>--:--:--</td>
+                            }
+                            else
+                            {
+                                <td>@DateTimeOffset.FromUnixTimeSeconds((long)Model.EmployeeDateViewModel.EndWork[j][i]).LocalDateTime.TimeOfDay</td>
+                            }
+                        }
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("Shared/ValidateFormPartial");
+    };
+    <script src="~/js/formatDocument.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <script type="text/javascript">
+        $(function () {
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+            
+            function updateDateRange(start, end) {
+                var dateRange = start.format('DD-MMMM-YYYY') + ' / ' + end.format('DD-MMMM-YYYY');
+                $('#dateRange').text(dateRange);
+                $('#txtRange').val(dateRange);
+            }
+            
+            function cb(start, end) {
+                updateDateRange(start, end);
+            }
+            
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                ranges: {
+                'Hoje': [moment(), moment()],
+                'Ontem': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                'Este Mês': [moment().startOf('month'), moment().endOf('month')],
+                'Mês Passado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+            
+            cb(start, end);
+        });
+    </script>
+
+    
+}
