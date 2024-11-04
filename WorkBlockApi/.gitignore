@@ -9,8 +9,6 @@
 appsettings.json
 appSettings.Development.json
 
-# Sonarqube
-.sonarqube/
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml

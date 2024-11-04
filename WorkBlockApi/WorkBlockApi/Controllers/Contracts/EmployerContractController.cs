@@ -35,7 +35,7 @@ public class EmployerContractController : ControllerBase
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        EmployerContract = GetContractsInMemory()!.Result.Find(x => x.Name == ContractName);
+        EmployerContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
     }
 
     [HttpGet("Get/{id:int}")]

@@ -78,6 +78,12 @@ public partial class PontoBlockService
     {
          return ContractHandler.SendRequestAsync(changeOwnerFunction);
     }
+    public Task<TransactionReceipt> ChangeOwnerRequestAndWaitForReceiptAsync(
+        ChangeOwnerFunction changeOwnerFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(changeOwnerFunction, cancellationToken);
+    }
     public Task<string> ChangeOwnerRequestAsync(string newOwner)
     {
         var changeOwnerFunction = new ChangeOwnerFunction();
@@ -85,13 +91,6 @@ public partial class PontoBlockService
         
          return ContractHandler.SendRequestAsync(changeOwnerFunction);
     }
-    public Task<TransactionReceipt> ChangeOwnerRequestAndWaitForReceiptAsync(
-        ChangeOwnerFunction changeOwnerFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(changeOwnerFunction, cancellationToken);
-    }
-    
     public Task<TransactionReceipt> ChangeOwnerRequestAndWaitForReceiptAsync(string newOwner, CancellationTokenSource? cancellationToken = null)
     {
         var changeOwnerFunction = new ChangeOwnerFunction();

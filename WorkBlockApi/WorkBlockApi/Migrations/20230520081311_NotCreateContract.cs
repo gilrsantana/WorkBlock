@@ -14,6 +14,9 @@ namespace WorkBlockApi.Migrations
         }
 
         /// <inheritdoc />
-        
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+
+        }
     }
 }

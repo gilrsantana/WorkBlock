@@ -52,21 +52,20 @@ public static class DependenciesExtension
     {
         services.AddCors(options =>
         {
-            options.AddPolicy("Development",
-            policy =>
+            options.AddDefaultPolicy(builder =>
             {
-                policy.WithOrigins("http://localhost:5500", "https://localhost:50630")
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
-
         });
+
         services.AddCors(options =>
         {
             options.AddPolicy("Production",
             policy =>
             {
-                policy.WithOrigins("https://pontoblock.gilmarsantana.com/")
+                policy.WithOrigins("https://pontoblock.gilmarsantana.com/", "http://pontoblock.gilmarsantana.com/")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });
@@ -79,7 +78,6 @@ public static class DependenciesExtension
         if (app.Environment.IsDevelopment())
         {
             System.Console.WriteLine("Development");
-            
             app.UseCors();
         }
 
@@ -87,9 +85,9 @@ public static class DependenciesExtension
         {
             System.Console.WriteLine("Production");
             app.UseCors("Production");
+            app.UseHttpsRedirection();
         }
 
-        app.UseHttpsRedirection();
         app.UseSwagger();
         app.UseSwaggerUI();
 

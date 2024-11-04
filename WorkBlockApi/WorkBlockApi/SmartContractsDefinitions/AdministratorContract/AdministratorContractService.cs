@@ -43,6 +43,12 @@ public partial class AdministratorContractService
     {
          return ContractHandler.SendRequestAsync(addAdministratorFunction);
     }
+    public Task<TransactionReceipt> AddAdministratorRequestAndWaitForReceiptAsync(
+        AddAdministratorFunction addAdministratorFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(addAdministratorFunction, cancellationToken);
+    }
     public Task<string> AddAdministratorRequestAsync(string address, string name, BigInteger taxId)
     {
         var addAdministratorFunction = new AddAdministratorFunction();
@@ -52,13 +58,6 @@ public partial class AdministratorContractService
         
          return ContractHandler.SendRequestAsync(addAdministratorFunction);
     }
-    public Task<TransactionReceipt> AddAdministratorRequestAndWaitForReceiptAsync(
-        AddAdministratorFunction addAdministratorFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(addAdministratorFunction, cancellationToken);
-    }
-    
     public Task<TransactionReceipt> AddAdministratorRequestAndWaitForReceiptAsync(
         string address, 
         string name, 
@@ -131,6 +130,12 @@ public partial class AdministratorContractService
     {
          return ContractHandler.SendRequestAsync(updateAdministratorFunction);
     }
+    public Task<TransactionReceipt> UpdateAdministratorRequestAndWaitForReceiptAsync(
+        UpdateAdministratorFunction updateAdministratorFunction, 
+        CancellationTokenSource? cancellationToken = null)
+    {
+         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateAdministratorFunction, cancellationToken);
+    }
     public Task<string> UpdateAdministratorRequestAsync(string addressKey, string address, BigInteger taxId, string name, byte state)
     {
         var updateAdministratorFunction = new UpdateAdministratorFunction();
@@ -141,12 +146,6 @@ public partial class AdministratorContractService
             updateAdministratorFunction.State = state;
         
          return ContractHandler.SendRequestAsync(updateAdministratorFunction);
-    }
-    public Task<TransactionReceipt> UpdateAdministratorRequestAndWaitForReceiptAsync(
-        UpdateAdministratorFunction updateAdministratorFunction, 
-        CancellationTokenSource? cancellationToken = null)
-    {
-         return ContractHandler.SendRequestAndWaitForReceiptAsync(updateAdministratorFunction, cancellationToken);
     }
     public Task<TransactionReceipt> UpdateAdministratorRequestAndWaitForReceiptAsync(
         string addressKey, 
@@ -165,6 +164,4 @@ public partial class AdministratorContractService
         
          return ContractHandler.SendRequestAndWaitForReceiptAsync(updateAdministratorFunction, cancellationToken);
     }
-    
-    
 }

@@ -36,7 +36,7 @@ public class EmployeeContractController : ControllerBase
         _web3 = new Web3(new Account(configuration.PrivateKey), configuration.Provider);
         _contractModelRepository = contractModelRepository;
         _memoryCache = memoryCache;
-        EmployeeContract = GetContractsInMemory()!.Result.Find(x => x.Name == ContractName);
+        EmployeeContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == ContractName);
     }
 
     [HttpGet("Get/{id:int}")]
@@ -157,7 +157,7 @@ public class EmployeeContractController : ControllerBase
             if (!ModelState.IsValid)
                 return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
 
-            var utilContract = GetContractsInMemory()!.Result.Find(x => x.Name == "UtilContract");
+            var utilContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == "UtilContract");
             if (utilContract == null)
                 return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
 
@@ -218,7 +218,7 @@ public class EmployeeContractController : ControllerBase
             if (string.IsNullOrEmpty(key))
                 return BadRequest(new ResultViewModel<string>("Key is a mandatory parameter"));
 
-            var utilContract = GetContractsInMemory()!.Result.Find(x => x.Name == "UtilContract");
+            var utilContract = GetContractsInMemory()!.Result.FirstOrDefault(x => x.Name == "UtilContract");
             if (utilContract == null)
                 return NotFound(new ResultViewModel<ulong>("Contract Not Found"));
 
