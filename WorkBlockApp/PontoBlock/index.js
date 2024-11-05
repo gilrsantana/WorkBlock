@@ -19,6 +19,8 @@ const txtAddress = document.getElementById("txtAddress");
 const btnHistorico = document.getElementById("btnHistorico");
 
 let account;
+let createContractValue;
+let createContractDate;
 
 startWorkButton.disabled =
   breakStartTimeButton.disabled =
@@ -46,6 +48,7 @@ async function connect() {
     address.innerHTML = account;
     address.value = account;
     getEmployeeData();
+    await getCreationDateContract();
     
   } else {
     connectButton.innerHTML = "Please, install Metamask";
@@ -112,7 +115,7 @@ async function startWorkFunction() {
       });
       toastr.success("Início de jornada registrado com sucesso! Você é muito importante pra nós. Tenha um excelente dia!");
     } catch (error) {
-      toastr.error(error.data.message);
+      toastr.error(error.error.message);
     }
   }
 }
@@ -136,7 +139,7 @@ async function breakStartTimeFunction() {
       });
       toastr.success("Início de pausa registrado com sucesso! Tenha uma boa pausa!");
     } catch (error) {
-      toastr.error(error.data.message);
+      toastr.error(error.error.message);
     }
   }
 }
@@ -160,7 +163,7 @@ async function breakEndTimeFunction() {
       });
       toastr.success("Fim de pausa registrado com sucesso! É bom ter você de volta. Tenha um bom retorno!");
     } catch (error) {
-      toastr.error(error.data.message);
+      toastr.error(error.error.message);
     }
   }
 }
@@ -184,7 +187,7 @@ async function endWorkFunction() {
       });
       toastr.success("Fim de Jornada registrado com sucesso! Obrigado por sua dedicação. Tenha um bom descanso!");
     } catch (error) {
-      toastr.error(error.data.message);
+      toastr.error(error.error.message);
     }
   }
 }
@@ -268,6 +271,31 @@ function getEmployerName(employerAddress) {
   xhr.send();
 }
 
+async function getCreationDateContract() {
+  var url = `${endPoint}pontoblock/GetCreationDate`;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+
+  xhr.onload = function () {
+    if (xhr.status >= 200 && xhr.status < 400) {
+      var resultRequest = JSON.parse(xhr.responseText);
+      createContractValue = resultRequest.data;
+      const year_1 = Math.floor(createContractValue / 10000);
+      const month_1 = Math.floor((createContractValue % 10000) / 100) - 1; 
+      const day_1 = createContractValue % 100; 
+      createContractDate = new Date(year_1, month_1, day_1);
+    } else {
+      createContractDate = new Date();
+    }
+  };
+
+  xhr.onerror = function () {
+    toastr.error('Erro de conexão. Não foi possível obter a data de criação do contrato.');
+  };
+
+  xhr.send();
+}
+
 async function getEmployeeRecordsFunction() {
   if (typeof window.ethereum !== "undefined") {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -334,6 +362,18 @@ function formatarData(data) {
   return dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos;
 }
 
+function setStartDateHistoric() {
+  const currentDate = new Date();
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(currentDate.getDate() - 29);
+  if (thirtyDaysAgo < createContractDate) {
+    return createContractDate;
+  } else {
+    return thirtyDaysAgo;
+  }
+  
+}
+
 async function getHistoric() {
   if (typeof window.ethereum !== "undefined") {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -347,19 +387,17 @@ async function getHistoric() {
       let endWorkArray = [];
       let startPauseArray = [];
       let endPauseArray = [];
-
+  
       //////// -- Busca os dados por período -- ////////
+
       let secondsUTCfinal = Math.floor(new Date() / 1000);
 
       const endDate = await utilContract.getDate(secondsUTCfinal + timeZone);
-
-      const currentDate = new Date();
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(currentDate.getDate() - 29);
-      const timestampMilliseconds = thirtyDaysAgo.getTime();
+      const daysAgo = setStartDateHistoric();
+      const timestampMilliseconds = daysAgo.getTime();
 
       let secondsUTCinicial = Math.floor(timestampMilliseconds / 1000);
-
+    
       const startDate = await utilContract.getDate(secondsUTCinicial + timeZone);
 
       const response = await contract.getWorkTimeFromEmployeeBetweenTwoDates(
@@ -418,6 +456,7 @@ async function getHistoric() {
 
 
       const divElement = document.getElementById("historico");
+      divElement.innerHTML = "";
 
       const tableElement = document.createElement("table");
       tableElement.className += "table-striped table-bordered text-center w-100 table-success";
@@ -477,7 +516,7 @@ async function getHistoric() {
 
     } catch (error) {
       
-      toastr.error(error.data.message);
+      toastr.error(error.error.message);
     }
   }
 }
